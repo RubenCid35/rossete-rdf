@@ -6,17 +6,20 @@ use super::parts;
 
 pub struct Mapping{
     pub components: Vec<parts::Parts>,
-    pub identificador: String
+    pub identificador: String,
+    pub base_uri: String
 }
 
 impl Mapping{
-    // Allows to create an empty mapping from the identificator.
     pub fn new(identificador: String) -> Self{
         Self{
             components: Vec::with_capacity(3),
-            identificador
+            identificador,
+            base_uri: String::new()
         }
     }
+
+
     /// This function allows to check if the mapping is correct according to the number of some type of components
     pub fn is_valid(&self) -> crate::ResultApp<()>{
         let mut n_logical = 0;

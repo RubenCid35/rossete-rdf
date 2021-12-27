@@ -5,5 +5,6 @@ pub type ResultApp<T> = Result<T, errors::ApplicationErrors>;
 
 pub mod mappings;
 pub mod logging;
+pub mod parser;
 
 pub use logging::*;
