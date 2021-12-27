@@ -1,0 +1,23 @@
+[package]
+name = "rossete-rdf"
+version = "0.1.0"
+edition = "2021"
+authors = ["Rubén Cid Costa<https://github.com/RubenCid35>"]
+readme = "./README.md"
+keywords = [
+    "rdf",
+    "linked-data"
+]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "2.33"              # Interfaz CLI
+colored = "2.0.0"          # Sirve para tener outputs de colores. Para la interfaz
+chrono = "0.4.19"
+encoding_rs = "0.8.29"     # Lectura de datos
+encoding_rs_io = "0.1.7"   # Lectura de datos en diferentes encodings
+# Operaciones Regex: Son mejores para buscar dentro de texto.
+regex = {version="1.5.4", features=["perf-inline"]}
+lazy_static = "1.4.0"      # Faster Regex
+serde_json = "1.0.73"
+serde_yaml = "0.8.23"

@@ -1,0 +1,7 @@
+# Rust Default Exclude Files
+/target
+Cargo.lock
+
+
+# Notas: Mejor no subirlas a internet
+*.txt
