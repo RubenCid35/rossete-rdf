@@ -23,7 +23,7 @@ pub enum Parts{
         join_condiction: [String;2]
     },
     // rr:graphMaps
-    GraphMap{components: Vec<Self>},
+    GraphMap(Box<Self>),
     // rr:class
     Class(String),
     // rml:reference
@@ -79,16 +79,8 @@ impl std::fmt::Debug for Parts{
 
                 }
             }
-            Self::GraphMap{components} => {
-                if components.len() == 1{
-                    writeln!(f, "rr:graphMap {:?}", components[0])
-                }else{
-                    writeln!(f, "rr:graphMap [")?;
-                    for comp in components{
-                        writeln!(f, "{:?}", comp)?;
-                    }
-                    write!(f, "\t\t]")
-                }
+            Self::GraphMap(inside) => {
+                writeln!(f, "rr:graphMap {:?}", inside)
             }
             Self::Reference(data) => {
                 write!(f, "rml:reference \"{}\"", data)

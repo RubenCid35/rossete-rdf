@@ -1,0 +1,18 @@
+{
+    "base_uri": "http://rossete.linkeddata.es/",
+    "plugins": [],
+    "threads": {
+        "injecting_data": 100,
+        "splitting_data": 100,
+        "linking_data": 100
+    },
+    "repository": {
+        "type": "RDF4JMemoryCache",
+        "id": "rossete-tmp",
+        "max-memory-usage": 500
+    },
+    "input-encoding": "UTF-8",
+    "output-encoding": "UTF-8",
+    "output-format": "ttl",
+    "mapping-search-level": 1
+}

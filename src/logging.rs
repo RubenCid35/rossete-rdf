@@ -17,13 +17,13 @@ macro_rules! error {
 
 #[macro_export]
 macro_rules! warning {
-    ($($arg:tt)*) => {
+    ($($arg:tt)*) => {{
         use $crate::colored::*;
         let msg = format!($($arg)*);
         let now = format!("{}",$crate::Local::now().format("[%Y-%m-%d][%H:%M:%S]"));
         let error = format!("{} [WARNING] {}", now, msg).yellow();
         eprintln!("{}", error);
-    }
+    }}
 }
 
 #[macro_export]

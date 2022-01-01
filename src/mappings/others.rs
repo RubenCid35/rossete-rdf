@@ -20,3 +20,19 @@ impl fmt::Display for AcceptedType{
         }
     }
 }
+
+impl AcceptedType{
+    pub fn from_str(file: &str) -> Self{
+        if file.contains("csv"){
+            AcceptedType::CSV
+        }else if file.contains("JSON"){
+            AcceptedType::JSON
+        }else if file.contains("TSV"){
+            AcceptedType::TSV
+        }else if file.contains("XML"){
+            AcceptedType::XML
+        }else{
+            AcceptedType::Other
+        }
+    }
+}

@@ -21,7 +21,7 @@ fn main() -> ResultApp<()>{
             components: vec![
                 Parts::Template{ template: String::from("http://loc.example.com/latlong/{},{}"), input_fields: vec![String::from("longitude"), String::from("latitude")] },
                 Parts::Class(String::from("schema:Coordinates")),
-                Parts::GraphMap{components: vec![Parts::Constant("ex:Stop".into())]}
+                Parts::GraphMap(Box::new(Parts::Constant("ex:Stop".into())))
             ],
         }
     );

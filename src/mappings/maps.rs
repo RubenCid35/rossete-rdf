@@ -73,7 +73,7 @@ impl Mapping{
 
 impl fmt::Debug for Mapping{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(f, "<#{}>", self.identificador)?;
+        writeln!(f, "<#{}> a rr:TriplesMap", self.identificador)?;
         for comp in &self.components{
             writeln!(f, "\t{:?}", comp)?;
         }
