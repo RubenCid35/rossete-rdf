@@ -15,12 +15,12 @@ pub enum Parts{
     // rr:predicateObjectMap
     PredicateObjectMap{
         predicate: String,
-        object_map: Vec<Self>
+        object_map: Vec<Parts>
     },
     // rr:parentTriplesMap
     ParentTriplesMap{
         other_map: String,
-        join_condiction: [String;2]
+        join_condition: [String;2]
     },
     // rr:graphMaps
     GraphMap(Box<Self>),
@@ -62,17 +62,16 @@ impl std::fmt::Debug for Parts{
             Self::PredicateObjectMap{predicate, object_map} => {
                 writeln!(f, "rr:predicateObjectMap [")?;
                 writeln!(f, "\t\trr:predicate {}", predicate)?;
-                for obj in object_map{
-                    writeln!(f, "\t\t{:?}", obj)?;
-                }
+                writeln!(f, "\t\trr:objectMap [")?;
+                writeln!(f, "\t\t{:?}", object_map)?;
                 writeln!(f, "\t]")
             }
-            Self::ParentTriplesMap{other_map, join_condiction} => {
+            Self::ParentTriplesMap{other_map, join_condition} => {
                 writeln!(f, "rr:parentTriplesMap <#{}>;", other_map)?;
-                if !join_condiction.iter().all(|x| x.is_empty()){
+                if !join_condition.iter().all(|x| x.is_empty()){
                     writeln!(f, "\t\trr:joinCondition [")?;
-                    writeln!(f, "\t\t\trr:child {};", join_condiction[0])?;
-                    writeln!(f, "\t\t\trr:child {};", join_condiction[1])?;
+                    writeln!(f, "\t\t\trr:child {};", join_condition[0])?;
+                    writeln!(f, "\t\t\trr:child {};", join_condition[1])?;
                     writeln!(f, "\t]")
                 }else{
                     Ok(())

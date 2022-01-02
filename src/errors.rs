@@ -1,5 +1,8 @@
+use std::error::Error;
 use std::io;
 use std::sync::mpsc;
+
+use crate::error;
 
 #[derive(Debug, Clone)]
 pub enum ApplicationErrors{
@@ -10,7 +13,7 @@ pub enum ApplicationErrors{
     FileCantWrite,
     NotEnoughMemory,
     ActionInterrumped,
-
+    PrefixActionsInterrumped,
    // Reading Mapping Errors.
     MissingLogicalSource,
     MissingSubjectMap,
@@ -45,5 +48,14 @@ impl<T> From<mpsc::SendError<T>> for ApplicationErrors{
 impl From<mpsc::RecvError> for ApplicationErrors{
     fn from(_: mpsc::RecvError) -> Self {
         Self::FailedToTransmitDataBetweenThreads
+    }
+}
+
+impl<T> From<std::sync::PoisonError<T>> for ApplicationErrors{
+    fn from(error: std::sync::PoisonError<T>) -> Self {
+        if let Some(src) = error.source(){
+            error!("Something enabled the prefix writting or reading, SOURCe: {:?}", src);
+        }
+        Self::PrefixActionsInterrumped
     }
 }

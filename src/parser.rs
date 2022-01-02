@@ -13,13 +13,13 @@ use crate::{warning, info, error};
 
 use std::path;
 use std::fs;
-use std::io::prelude::{Read, BufRead};
-use std::sync;
-
+use std::io::prelude::{Read};
+use std::sync::{RwLock, Arc, mpsc};
+use std::collections::HashMap;
 use regex::Regex;
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
-pub fn parse_text(file: path::PathBuf, transmitter: sync::mpsc::Sender<ResultApp<Mapping>>) -> ResultApp<()>{
+pub fn parse_text(file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Mapping>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>) -> ResultApp<()>{
     // File Reading
     let mut map_file = fs::File::open(file)?;
     let meta = map_file.metadata()?; // Para sacar los metadatos y prelocate memory for the buffer.
@@ -30,7 +30,7 @@ pub fn parse_text(file: path::PathBuf, transmitter: sync::mpsc::Sender<ResultApp
     let tokens = tokenize(buffer);
 
     // Get the tokens into diferent mappings and prefixes.
-    match parse_tokens(tokens){
+    match parse_tokens(tokens, prefix_transmiter){
         Ok(mappings) => {
             for map in mappings{
                 transmitter.send(Ok(map))?;
@@ -44,14 +44,13 @@ pub fn parse_text(file: path::PathBuf, transmitter: sync::mpsc::Sender<ResultApp
     }
 }
 
-
 /// Divide the file into words or tokens so they can be processed quickier.
 fn tokenize(text: String) -> Vec<String>{
     text
     .split('\n')
-    .flat_map(|sentence| sentence.split(' ').rev().map(|word| word.trim()))
-    .filter(|word| word.is_empty())
-    .map(|word| word.to_string())
+    .flat_map(|sentence| sentence.split(' ').map(|word| word.trim()))
+    .map(|token| token.replace(';', "").replace('"', ""))
+    .filter(|word| !word.is_empty())
     .collect()
 }
 
@@ -78,10 +77,10 @@ fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{
 }
 
 /// Parse the main 5 Mapping Parts and create all the mappings and prefixes.
-fn parse_tokens(tokens: Vec<String>) -> ResultApp<Vec<Mapping>>{
+fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>) -> ResultApp<Vec<Mapping>>{
 
     let mut mappings: Vec<Mapping> = Vec::with_capacity(2);
-    let mut prefixes: std::collections::HashMap<&str, String> = std::collections::HashMap::new();
+    // let mut prefixes: std::collections::HashMap<String, String> = std::collections::HashMap::new();
     let mut base_uri = String::new();
     let mut idx = 0;
     while idx < tokens.len(){
@@ -97,7 +96,7 @@ fn parse_tokens(tokens: Vec<String>) -> ResultApp<Vec<Mapping>>{
             static ref PREDICATEOBJECTMAP: Regex = Regex::new(r#"(rr)?:predicateObjectMap"#).unwrap();
         }
         if PREFIX.is_match(&tokens[idx]) && (idx + 2) < tokens.len(){
-            let pre = &tokens[idx + 1][..];
+            let pre = tokens[idx + 1].clone();
             let url = {
                 match PREFIX_URL.captures(&tokens[idx + 2]){
                     Some(cap) => {
@@ -110,7 +109,12 @@ fn parse_tokens(tokens: Vec<String>) -> ResultApp<Vec<Mapping>>{
                 }
             };
             info!("Line: {} Added Prefix: {}", idx, pre);
-            prefixes.insert(pre, url);
+            // Se manda a una zona central.
+            let mut prefix_zone = prefix_transmiter.write()?;
+            prefix_zone.insert(pre, url);
+            drop(prefix_zone);
+
+            // prefixes.insert(pre, url);
             idx += 2;
         }else if BASE.is_match(&tokens[idx]) && (idx + 1) < tokens.len(){
             let url = {
@@ -129,7 +133,7 @@ fn parse_tokens(tokens: Vec<String>) -> ResultApp<Vec<Mapping>>{
             idx += 1;
         }else if let Some(cap) = MAPPING_INIT.captures(&tokens[idx]){
             let name = cap.get(1).unwrap().as_str().to_string();
-            info!("The following parser was found {}. Starting Parsing", &name);
+            info!("The following mapping was found {}. Starting Parsing", &name);
             let map = Mapping::new(name);
 
             mappings.push(map);
@@ -220,12 +224,12 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize) -> Result
     let mut iterator = String::new();
     let mut file_type = AcceptedType::Unspecify;
 
-    while idx != end {
+    while idx < end {
         lazy_static!{
-            static ref SOURCE: Regex = Regex::new("(rml:)?source").unwrap();
-            static ref ITERATOR: Regex = Regex::new("(rml:)?iterator").unwrap();
-            static ref IS_FILE_TYPE: Regex = Regex::new("(rml:)?reference_formulation").unwrap();
-            static ref FILE_TYPE: Regex = Regex::new("ql:([[:alphanum:]]+)").unwrap();
+            static ref SOURCE: Regex = Regex::new("rml:source").unwrap();
+            static ref ITERATOR: Regex = Regex::new("rml:iterator").unwrap();
+            static ref IS_FILE_TYPE: Regex = Regex::new("rml:reference_formulation").unwrap();
+            static ref FILE_TYPE: Regex = Regex::new(r#"ql:(\w+)"#).unwrap();
         }
         if SOURCE.is_match(&tokens[idx]){
             file_path = tokens[idx + 1].clone();
@@ -337,21 +341,28 @@ fn parse_input_field(elem_uri: &str) -> ResultApp<(String, Vec<String>)>{
 fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<Parts>{
     let mut i = init;
     let mut predicate = String::new();
-    let mut object_map: Vec<Parts> = Vec::with_capacity(2);
+    let mut object_map = Vec::with_capacity(1);
 
     while i < end {
         if (&tokens[i]).contains("predicate") {
             predicate = tokens[i+ 1].clone();
             i += 1;
         }else if (&tokens[i]).contains("objectMap"){
-            if let Some(end) = find_closing_bracket(&tokens, i + 1) {
-            let object = parse_object_map(&tokens, i + 2, end)?;
-            object_map.extend(object);
+            if tokens[i + 1].contains('['){
+                if let Some(end) = find_closing_bracket(&tokens, i + 1) {
+                    let obj = parse_object_map(&tokens, i + 2, end)?;
+                    object_map.extend(obj);
+                    i = end;
+                }
+                else{
+                    error!("Missing Closing Bracket in a predicate map");
+                    return Err(ApplicationErrors::IncorrectMappingFormat)
+                }        
             }
             else{
-                error!("Missing Closing Bracket in a predicate map");
-                return Err(ApplicationErrors::IncorrectMappingFormat)
-            }        
+                object_map = vec![Parts::Term(tokens[i + 1].clone())];
+                i += 1;
+            }
         }else{
             error!("Unknown Token has Appeared in a PredicateMap: {}", &tokens[i]);
             return Err(ApplicationErrors::IncorrectMappingFormat);
@@ -368,18 +379,78 @@ fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultA
 
 fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<Vec<Parts>>{
     let mut i = init;
-    while i < end{
-        lazy_static!{
-            static ref PARENT: Regex = Regex::new("rr:parentTriplesMap").unwrap();
-            static ref JOIN: Regex = Regex::new("rr:joinCondition").unwrap();
-            static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
-            static ref REFERENCE: Regex = Regex::new("rml:reference").unwrap();
-            static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
-            static ref DATATYPE: Regex = Regex::new("rr:dataType").unwrap();    
-        };
-        i += 1;
+    lazy_static!{
+        static ref PARENT: Regex = Regex::new("rr:parentTriplesMap").unwrap();
+        static ref MAPPING: Regex = Regex::new(r#"<#([a-zA-Z0-9_\-]*)>"#).unwrap();
+        static ref JOIN: Regex = Regex::new("rr:joinCondition").unwrap();
+        static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
+        static ref REFERENCE: Regex = Regex::new("rml:reference").unwrap();
+        static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
+        static ref DATATYPE: Regex = Regex::new("rr:dataType").unwrap();    
+    };
+    if PARENT.is_match(&tokens[i]) || JOIN.is_match(&tokens[i]){
+        let mut other_map = String::new();
+        let mut join_condition = [String::new(),String::new()];
+        while i < end{
+            if PARENT.is_match(&tokens[i]){
+                if let Some(cap) = MAPPING.captures(&tokens[i + 1]){
+                    other_map = cap.get(1).unwrap().as_str().to_string();
+                }else{
+                    error!("The mapping reference in a parentTriplesMap has an incorrect format. TOKEN: {}", &tokens[i + 1]);
+                    return Err(ApplicationErrors::IncorrectMappingFormat)
+                }
+            }
+            else if JOIN.is_match(&tokens[i]){
+                let end = find_closing_bracket(&tokens, i + 1).unwrap();
+                parse_join_condition(&tokens, i + 2, end, &mut join_condition)?;
+            }
+            i += 1;
+        }  
+        return Ok(vec![Parts::ParentTriplesMap{ other_map, join_condition}]);
     }
-    Ok(Vec::new())
+    else{
+        let mut objs = Vec::with_capacity(2);
+        while i < end{
+            if REFERENCE.is_match(&tokens[i]){
+                objs.push(Parts::Reference(tokens[i+1].clone()));
+            }
+            else if CONSTANT.is_match(&tokens[i]){
+                objs.push(Parts::Constant(tokens[i+1].clone()));
+            }
+            else if DATATYPE.is_match(&tokens[i]){
+                objs.push(Parts::DataType(tokens[i+1].clone()));
+            }else if TERMTYPE.is_match(&tokens[i]){
+                objs.push(Parts::TermType(tokens[i+1].clone()));
+            }else{
+                warning!("An unknown tokens has appeared in the objectMap parser, TOKEN: {}, NEXT TOKEN: {}", &tokens[i], &tokens[i + 1]);
+            }
+            i += 2;
+        }
+
+        return Ok(objs)
+    }
 }
 
 
+fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, join: &mut [String;2]) -> ResultApp<()>{
+    lazy_static!{
+        static ref CHILD: Regex = Regex::new("rr:child").unwrap();
+        static ref PARENT_CON: Regex = Regex::new("rr:parent").unwrap();
+    };
+    let mut i = init;
+    while i < end{
+        if CHILD.is_match(&tokens[i]){
+            join[0] = tokens[i + 1].clone();
+            i += 1;
+        }else if PARENT_CON.is_match(&tokens[i]){
+            join[1] = tokens[i + 1].clone();
+            i += 1;
+        }else{
+            error!("JOIN CONDITION ERROR: An unknown token appeared in the join condiction: {}", &tokens[i]);
+            return Err(ApplicationErrors::IncorrectMappingFormat)
+        }
+        i += 1;
+    }
+
+    Ok(())
+}
