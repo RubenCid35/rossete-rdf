@@ -60,9 +60,9 @@ You can take the binary as a standalone binary and move whereever you want to.
 
 | Format           | Working in Progress   | Ready     |
 |------------------|-----------|-----------|
-| Turttle          |  &#x2611; |  &#x2613; |    
-| TriplesMap       |  &#x2613; |  &#x2613; |    
-| Yarm             |  &#x2611; |  &#x2613; |
+| Turttle          |  &#x2613; |  &#x2613; |    
+| TriplesMap       |  &#x2611; |  &#x2613; |    
+| Yarm             |  &#x2613; |  &#x2613; |
 
 # Autors:
 
