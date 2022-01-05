@@ -2,6 +2,7 @@ pub extern crate colored;
 pub extern crate chrono;
 
 pub use chrono::Local;
+use std::time;
 
 
 #[macro_export]
@@ -31,8 +32,13 @@ macro_rules! info {
     ($($arg:tt)*) => {
         use $crate::colored::*;
         let msg = format!($($arg)*);
-        let now = format!("{}",$crate::Local::now().format("[%Y-%m-%d][%H:%M:%S]"));
-        let error = format!("{} [INFO] {}", now, msg).white();
+        let error = format!("{} [INFO] {}", $crate::Local::now().format("[%Y-%m-%d][%H:%M:%S]"), msg).white();
         eprintln!("{}", error);
     }
+}
+
+pub fn time_info(procedure: &str, start_time: time::Instant){
+    use colored::*;
+    let error = format!("{} [PERFORMANCE INFO] The Procedure: \"{}\" Requiered the following time: {} ms", Local::now().format("[%Y-%m-%d][%H:%M:%S]"), procedure, start_time.elapsed().as_millis()).green();
+    eprintln!("{}", error);
 }

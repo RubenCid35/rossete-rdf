@@ -63,19 +63,21 @@ impl std::fmt::Debug for Parts{
                 writeln!(f, "rr:predicateObjectMap [")?;
                 writeln!(f, "\t\trr:predicate {}", predicate)?;
                 writeln!(f, "\t\trr:objectMap [")?;
-                writeln!(f, "\t\t{:?}", object_map)?;
+                for part in object_map.iter(){
+                    writeln!(f, "\t\t\t{:?}", part)?;
+                }
+                writeln!(f, "\t\t]")?;
                 writeln!(f, "\t]")
             }
             Self::ParentTriplesMap{other_map, join_condition} => {
                 writeln!(f, "rr:parentTriplesMap <#{}>;", other_map)?;
                 if !join_condition.iter().all(|x| x.is_empty()){
-                    writeln!(f, "\t\trr:joinCondition [")?;
-                    writeln!(f, "\t\t\trr:child {};", join_condition[0])?;
-                    writeln!(f, "\t\t\trr:child {};", join_condition[1])?;
-                    writeln!(f, "\t]")
+                    writeln!(f, "\t\t\trr:joinCondition [")?;
+                    writeln!(f, "\t\t\t\trr:child \"{}\";", join_condition[0])?;
+                    writeln!(f, "\t\t\t\trr:child \"{}\";", join_condition[1])?;
+                    writeln!(f, "\t\t\t]")
                 }else{
                     Ok(())
-
                 }
             }
             Self::GraphMap(inside) => {

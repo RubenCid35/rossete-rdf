@@ -7,8 +7,8 @@ use crate::mappings::{
     AcceptedType
 };
 
-use super::ResultApp;
-use super::errors::ApplicationErrors;
+use crate::ResultApp;
+use crate::errors::ApplicationErrors;
 use crate::{warning, info, error};
 
 use std::path;
@@ -55,12 +55,16 @@ fn tokenize(text: String) -> Vec<String>{
 }
 
 /// Get the index of the closing bracket if there is.
-fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{    
+fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{
     let mut close = initial;
     let mut closing = 0;
     loop{
         if map_str.len() <= close{
             return None
+        }
+        if map_str[close].len() > 2{
+            close += 1;
+            continue
         }
         if map_str[close].contains(']'){
             if closing == 1{
@@ -198,7 +202,7 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                 }
                 None => "No Map Was Created"
             };
-            warning!("An Identified Element has appeared in the Term Index: {}. Term: {}. Last Mapping: {}", idx, &tokens[idx], last_map);
+            warning!("An Identified Element has appeared in the Term Index: {}. Term: {}. Last Mapping: {} Last Token: {}", idx, &tokens[idx], last_map, &tokens[idx - 1]);
         }
         
         idx += 1;
@@ -228,7 +232,7 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize) -> Result
         lazy_static!{
             static ref SOURCE: Regex = Regex::new("rml:source").unwrap();
             static ref ITERATOR: Regex = Regex::new("rml:iterator").unwrap();
-            static ref IS_FILE_TYPE: Regex = Regex::new("rml:reference_formulation").unwrap();
+            static ref IS_FILE_TYPE: Regex = Regex::new("rml:referenceFormulation").unwrap();
             static ref FILE_TYPE: Regex = Regex::new(r#"ql:(\w+)"#).unwrap();
         }
         if SOURCE.is_match(&tokens[idx]){
@@ -385,8 +389,9 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
         static ref JOIN: Regex = Regex::new("rr:joinCondition").unwrap();
         static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
         static ref REFERENCE: Regex = Regex::new("rml:reference").unwrap();
-        static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
-        static ref DATATYPE: Regex = Regex::new("rr:dataType").unwrap();    
+        static ref TERMTYPE: Regex = Regex::new("rr:termtype").unwrap();
+        static ref DATATYPE: Regex = Regex::new("rr:datatype").unwrap();    
+        static ref TEMPLATE: Regex = Regex::new("rr:template").unwrap();    
     };
     if PARENT.is_match(&tokens[i]) || JOIN.is_match(&tokens[i]){
         let mut other_map = String::new();
@@ -421,7 +426,15 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
                 objs.push(Parts::DataType(tokens[i+1].clone()));
             }else if TERMTYPE.is_match(&tokens[i]){
                 objs.push(Parts::TermType(tokens[i+1].clone()));
-            }else{
+            }else if TEMPLATE.is_match(&tokens[i]){
+                let (template, input_fields) = parse_input_field(&tokens[i + 1])?;
+                objs.push(Parts::Template{
+                    template,
+                    input_fields,
+                });
+                i += 1;
+            }
+            else{
                 warning!("An unknown tokens has appeared in the objectMap parser, TOKEN: {}, NEXT TOKEN: {}", &tokens[i], &tokens[i + 1]);
             }
             i += 2;
