@@ -2,6 +2,8 @@ use std::error::Error;
 use std::io;
 use std::sync::mpsc;
 
+use clap::App;
+
 use crate::error;
 
 #[derive(Debug, Clone)]
@@ -15,6 +17,7 @@ pub enum ApplicationErrors{
     // Configuration Errors
     MissingFilePathInConfiguration,
     InvalidDataEntry,
+    IncorrectJsonFile,
 
     // Reading Mapping Errors.
     PrefixActionsInterrumped,
@@ -60,5 +63,11 @@ impl<T> From<std::sync::PoisonError<T>> for ApplicationErrors{
             error!("Something enabled the prefix writting or reading, SOURCE: {:?}", src);
         }
         Self::PrefixActionsInterrumped
+    }
+}
+impl From<json::Error> for ApplicationErrors{
+    fn from(_: json::Error) -> Self {
+        error!("The Configuration File Is Incorrect. It couldn't be parsed to JSON Values");
+        Self::IncorrectJsonFile
     }
 }

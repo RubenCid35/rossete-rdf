@@ -1,0 +1,21 @@
+{
+    "files-data": [
+        {
+            "path": "./examples/data/file-1.csv",
+            "file-type": "csv",
+            "delimiter": ";"
+        },
+        {
+            "path": "./examples/data/file-2.json",
+            "encoding": "ISO_2022_JP"
+        }
+    ],
+    "threads": {
+        "reading": 5,
+        "parsing": 5,
+        "writting": 2
+    },
+    "max-memory-usage": 1000,
+    "output-encoding": "windows_1258",
+    "output-format": "TTL"
+}

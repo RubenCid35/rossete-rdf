@@ -38,11 +38,11 @@ impl AcceptedType{
     pub fn from_str(file: &str) -> Self{
         if file.contains("csv"){
             AcceptedType::CSV
-        }else if file.contains("JSON"){
+        }else if file.contains("json"){
             AcceptedType::JSON
-        }else if file.contains("TSV"){
+        }else if file.contains("tsv"){
             AcceptedType::TSV
-        }else if file.contains("XML"){
+        }else if file.contains("xml"){
             AcceptedType::XML
         }else{
             AcceptedType::Other

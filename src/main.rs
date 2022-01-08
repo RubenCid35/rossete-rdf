@@ -12,6 +12,7 @@ mod config;
 use logging::*;
 
 use parsing::parser;
+use std::io::Read;
 use std::path;
 use std::sync::{mpsc, Arc, RwLock};
 use std::collections::HashMap;
@@ -19,12 +20,20 @@ use std::collections::HashMap;
 use std::time;
 
 fn main() -> ResultApp<()>{
-    let file_name = path::PathBuf::from("./examples/mappings/rml-mappings.ttl");
-    
-    println!("DEBUG INFORMATION: \nFILE NAME: {}", file_name.display());
-    println!("CURRENT DIR: {}", std::env::current_dir().unwrap().display());
-    println!("CURRENT EXE: {}\n\n", std::env::current_exe().unwrap().display());
 
+    let output_file = path::PathBuf::from("output.ttl");
+    let config_file = path::PathBuf::from("config_example.json");
+
+    let mut json_tmp = String::with_capacity(1000);
+    let mut f = std::fs::File::open(config_file)?;
+    f.read_to_string(&mut json_tmp)?;
+
+
+    let json_config = json::parse(&json_tmp)?;
+    let configuration = config::AppConfiguration::from_json(output_file, json_config)?;
+    println!("{:?}", configuration);
+
+    let file_name = path::PathBuf::from("./examples/mappings/rml-mappings.ttl");
     let now = time::Instant::now();
     let (transmitter, receiver) = mpsc::channel();
     let prefixes = Arc::new(RwLock::new(HashMap::new()));
