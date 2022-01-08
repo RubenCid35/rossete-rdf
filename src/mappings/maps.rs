@@ -53,7 +53,7 @@ impl Mapping{
     }
 
     /// Give the specified file in the logicalSource.
-    pub fn source(&self) -> Option<&path::PathBuf>{
+    pub fn source_file(&self) -> Option<&path::PathBuf>{
         self.components.iter()
         .find_map(|comp| { 
             match comp{

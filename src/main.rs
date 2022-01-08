@@ -1,14 +1,15 @@
 
 mod errors;
 
-pub type ResultApp<T> = Result<T, errors::ApplicationErrors>;
+type ResultApp<T> = Result<T, errors::ApplicationErrors>;
 
-pub mod mappings;
-pub mod logging;
-pub mod parsing;
-pub mod input;
+mod mappings;
+mod logging;
+mod parsing;
+mod input;
+mod config;
 
-pub use logging::*;
+use logging::*;
 
 use parsing::parser;
 use std::path;

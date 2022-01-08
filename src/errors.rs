@@ -11,10 +11,13 @@ pub enum ApplicationErrors{
     FilePermissionDenied,
     FileCantRead,
     FileCantWrite,
-    NotEnoughMemory,
     ActionInterrumped,
+    // Configuration Errors
+    MissingFilePathInConfiguration,
+    InvalidDataEntry,
+
+    // Reading Mapping Errors.
     PrefixActionsInterrumped,
-   // Reading Mapping Errors.
     MissingLogicalSource,
     MissingSubjectMap,
     InvalidSourceDataFormat,
@@ -24,9 +27,9 @@ pub enum ApplicationErrors{
     MissingRMlNamespace,
     FailedToTransmitDataBetweenThreads,
     // Other errors
+    NotEnoughMemory,
     Miscelaneous
 }
-// TODO: Implement Custon Error Trait
 
 impl From<io::Error> for ApplicationErrors{
     fn from(error: io::Error) -> Self{
@@ -54,7 +57,7 @@ impl From<mpsc::RecvError> for ApplicationErrors{
 impl<T> From<std::sync::PoisonError<T>> for ApplicationErrors{
     fn from(error: std::sync::PoisonError<T>) -> Self {
         if let Some(src) = error.source(){
-            error!("Something enabled the prefix writting or reading, SOURCe: {:?}", src);
+            error!("Something enabled the prefix writting or reading, SOURCE: {:?}", src);
         }
         Self::PrefixActionsInterrumped
     }

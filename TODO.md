@@ -20,3 +20,4 @@
 
 
 ### FEATURES
+- [ ] Create an example and/or Json Schema of the Configuration to Show
