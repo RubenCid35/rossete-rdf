@@ -13,7 +13,7 @@
     ],
     "threads": {
         "reading": 5,
-        "parsing": 5,
+        "parsing": 2,
         "writting": 2
     },
     "max-memory-usage": 1000,

@@ -19,12 +19,25 @@ use std::collections::HashMap;
 use regex::Regex;
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
-pub fn parse_text(file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Mapping>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<bool>) -> ResultApp<()>{
+pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<i32>) -> ResultApp<()>{
+    info!("Parsing File ID: {:2.} PATH: {}",  id, file.display());
     // File Reading
-    let mut map_file = fs::File::open(file)?;
-    let meta = map_file.metadata()?; // Para sacar los metadatos y prelocate memory for the buffer.
+    let mut map_file = match fs::File::open(file){
+        Ok(file) => file,
+        Err(error) => {
+            status_transmitter.send(- id)?;
+            return Err(error.into())
+        }
+    };
+    let meta = map_file.metadata().unwrap(); // Para sacar los metadatos y prelocate memory for the buffer.
     let mut buffer = String::with_capacity(meta.len() as usize);
-    map_file.read_to_string(&mut buffer)?;
+    match map_file.read_to_string(&mut buffer){
+        Ok(_) => {},
+        Err(error) => {
+            status_transmitter.send(2)?;
+            return Err(error.into());
+        }
+    }
 
     // Tokenize the file so we can be parsed.
     let tokens = tokenize(buffer);
@@ -32,16 +45,17 @@ pub fn parse_text(file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Mappi
     // Get the tokens into diferent mappings and prefixes.
     match parse_tokens(tokens, prefix_transmiter){
         Ok(mappings) => {
-            for map in mappings{
-                transmitter.send(Ok(map))?;
-            }
+            transmitter.send(Ok(mappings))?;
+            status_transmitter.send(id)?;
             return Ok(())    
         }
         Err(error) => {
             transmitter.send(Err(error.clone()))?;
+            status_transmitter.send(id)?;
             return Err(error)
         }
     }
+
 }
 
 /// Divide the file into words or tokens so they can be processed quickier.
@@ -112,7 +126,7 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                     }
                 }
             };
-            info!("Line: {} Added Prefix: {}", idx, pre);
+            //info!("Line: {} Added Prefix: {}", idx, pre);
             // Se manda a una zona central.
             let mut prefix_zone = prefix_transmiter.write()?;
             prefix_zone.insert(pre, url);
@@ -132,17 +146,17 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                     }
                 }
             };
-            info!("BASE URI WAS FOUND: {}", &url);
+            ////info!("BASE URI WAS FOUND: {}", &url);
             base_uri = url;
             idx += 1;
         }else if let Some(cap) = MAPPING_INIT.captures(&tokens[idx]){
             let name = cap.get(1).unwrap().as_str().to_string();
-            info!("The following mapping was found {}. Starting Parsing", &name);
+            //info!("The following mapping was found {}. Starting Parsing", &name);
             let map = Mapping::new(name);
 
             mappings.push(map);
         }else if LOGICALSOURCE.is_match(&tokens[idx]){
-            info!("A Logical Source was parsed in the line {}", idx);
+            ////info!("A Logical Source was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("The Mapping {} requires at least a rml:source component", map_name);
@@ -160,7 +174,7 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             }
 
         }else if SUBJECTMAP.is_match(&tokens[idx]){
-            info!("A SubjectMap was parsed in the line {}", idx);
+            ////info!("A SubjectMap was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("The Mapping {} requires at least a rr:template component", map_name);
@@ -178,7 +192,7 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             }
 
         }else if PREDICATEOBJECTMAP.is_match(&tokens[idx]){
-            info!("A predicateObjectMap was parsed in the line {}", idx);
+            ////info!("A predicateObjectMap was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("In the Mapping {}, the rr:predicateObjectMap requires at least a rr:predicate and rr:objectMap component", map_name);

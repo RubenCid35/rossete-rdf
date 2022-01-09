@@ -108,6 +108,17 @@ impl AppConfiguration{
             self.file_specs.insert(path, configuration);
         }
     }
+    pub fn get_parsing_theads(&self) -> u8{
+        self.threads[0]
+    }
+
+    pub fn get_reading_theads(&self) -> u8{
+        self.threads[1]
+    }
+
+    pub fn get_writing_theads(&self) -> u8{
+        self.threads[2]
+    }
 
     pub fn can_be_in_memory_db(&self, total_memory_usage: u32) -> bool{
         self.memory_threshold <= total_memory_usage
@@ -174,12 +185,10 @@ impl AppConfiguration{
                         current_data.set_encoding(get_encoding_from_str(enc));
                     }
                     if file.has_key("delimiter") && file["delimiter"].is_string(){
-                        // FIXME: Only chars are valid.
                         let del = file["delimiter"].as_str().unwrap().chars().next().unwrap_or(',');
                         current_data.set_delimiter(del);
                     }
                     if file.has_key("header") && file["header"].is_number(){
-                        // FIXME: Error if not valid?
                         let header = file["header"].as_u32().unwrap_or(0);
                         current_data.set_header_pos(header);
                     }

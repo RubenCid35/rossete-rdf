@@ -1,8 +1,7 @@
+use std::any::Any;
 use std::error::Error;
 use std::io;
 use std::sync::mpsc;
-
-use clap::App;
 
 use crate::error;
 
@@ -11,9 +10,9 @@ pub enum ApplicationErrors{
     // Input and Data Errors
     FileNotFound,
     FilePermissionDenied,
-    FileCantRead,
     FileCantWrite,
     ActionInterrumped,
+
     // Configuration Errors
     MissingFilePathInConfiguration,
     InvalidDataEntry,
@@ -28,8 +27,8 @@ pub enum ApplicationErrors{
     MissingKeyPart,
     IncorrectMappingFormat,
     MissingRMlNamespace,
-    FailedToTransmitDataBetweenThreads,
     // Other errors
+    FailedToTransmitDataBetweenThreads,
     NotEnoughMemory,
     Miscelaneous
 }
@@ -41,6 +40,7 @@ impl From<io::Error> for ApplicationErrors{
              io::ErrorKind::Interrupted => Self::ActionInterrumped,
              io::ErrorKind::PermissionDenied => Self::FilePermissionDenied,
              io::ErrorKind::WriteZero => Self::FileCantWrite,
+             io::ErrorKind::NotFound => Self::FileNotFound,
              _ => Self::Miscelaneous
          } 
     }
@@ -69,5 +69,11 @@ impl From<json::Error> for ApplicationErrors{
     fn from(_: json::Error) -> Self {
         error!("The Configuration File Is Incorrect. It couldn't be parsed to JSON Values");
         Self::IncorrectJsonFile
+    }
+}
+
+impl From<Box<dyn Any + Send>> for ApplicationErrors{
+    fn from(_: Box<dyn Any + Send>) -> Self {
+        Self::FailedToTransmitDataBetweenThreads
     }
 }
