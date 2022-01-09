@@ -54,11 +54,11 @@ impl std::fmt::Debug for AppConfiguration{
         
         writeln!(f, "File Custom Data:")?;
         writeln!(f, "------------------------------------------")?;
-        writeln!(f, "Note: Some Information is useless as its delimiter and header in no JSON File")?;
+        writeln!(f, "Note: Some Information is useless as its delimiter and header in no CSV Files")?;
         for (idx, path) in self.file_specs.keys().enumerate(){
             writeln!(f, "File: {}", idx + 1)?;
             writeln!(f, "File Path: {}", path.display())?;
-            writeln!(f, "Information: \n{:?}\n", &self.file_specs[path])?;
+            writeln!(f, "Information: \n{:?}", &self.file_specs[path])?;
             writeln!(f, "---------------------------------")?;
         }
         
@@ -273,45 +273,46 @@ impl FileSpecs{
 fn get_encoding_from_str(value: &str) -> &'static encoding_rs::Encoding{
    match value {
       "BIG5" => encoding_rs::BIG5,
-      "EUC_JP" => encoding_rs::EUC_JP,
-      "EUC_KR" => encoding_rs::EUC_KR,
+      "EUC-JP" => encoding_rs::EUC_JP,
+      "EUC-KR" => encoding_rs::EUC_KR,
       "GB18030" => encoding_rs::GB18030,
       "GBK" => encoding_rs::GBK,
       "IBM866" => encoding_rs::IBM866,
-      "ISO_2022_JP" => encoding_rs::ISO_2022_JP,
-      "ISO_8859_2" => encoding_rs::ISO_8859_2,
-      "ISO_8859_3" => encoding_rs::ISO_8859_3,
-      "ISO_8859_4" => encoding_rs::ISO_8859_4,
-      "ISO_8859_5" => encoding_rs::ISO_8859_5,
-      "ISO_8859_6" => encoding_rs::ISO_8859_6,
-      "ISO_8859_7" => encoding_rs::ISO_8859_7,
-      "ISO_8859_8" => encoding_rs::ISO_8859_8,
-      "ISO_8859_8_I" => encoding_rs::ISO_8859_8_I,
-      "ISO_8859_10" => encoding_rs::ISO_8859_10,
-      "ISO_8859_13" => encoding_rs::ISO_8859_13,
-      "ISO_8859_14" => encoding_rs::ISO_8859_14,
-      "ISO_8859_15" => encoding_rs::ISO_8859_15,
-      "ISO_8859_16" => encoding_rs::ISO_8859_16,
-      "KOI8_R" => encoding_rs::KOI8_R,
-      "KOI8_U" => encoding_rs::KOI8_U,
+      "ISO-2022-JP" => encoding_rs::ISO_2022_JP,
+      "ISO-8859-2" => encoding_rs::ISO_8859_2,
+      "ISO-8859-3" => encoding_rs::ISO_8859_3,
+      "ISO-8859-4" => encoding_rs::ISO_8859_4,
+      "ISO-8859-5" => encoding_rs::ISO_8859_5,
+      "ISO-8859-6" => encoding_rs::ISO_8859_6,
+      "ISO-8859-7" => encoding_rs::ISO_8859_7,
+      "ISO-8859-8" => encoding_rs::ISO_8859_8,
+      "ISO-8859-8-I" => encoding_rs::ISO_8859_8_I,
+      "ISO-8859-10" => encoding_rs::ISO_8859_10,
+      "ISO-8859-13" => encoding_rs::ISO_8859_13,
+      "ISO-8859-14" => encoding_rs::ISO_8859_14,
+      "ISO-8859-15" => encoding_rs::ISO_8859_15,
+      "ISO-8859-16" => encoding_rs::ISO_8859_16,
+      "KOI8-R" => encoding_rs::KOI8_R,
+      "KOI8-U" => encoding_rs::KOI8_U,
       "MACINTOSH" => encoding_rs::MACINTOSH,
       "REPLACEMENT" => encoding_rs::REPLACEMENT,
       "SHIFT_JIS" => encoding_rs::SHIFT_JIS,
-      "UTF_8" => encoding_rs::UTF_8,
-      "UTF_16BE" => encoding_rs::UTF_16BE,
-      "UTF_16LE" => encoding_rs::UTF_16LE,
-      "WINDOWS_874" => encoding_rs::WINDOWS_874,
-      "WINDOWS_1250" => encoding_rs::WINDOWS_1250,
-      "WINDOWS_1251" => encoding_rs::WINDOWS_1251,
-      "WINDOWS_1252" => encoding_rs::WINDOWS_1252,
-      "WINDOWS_1253" => encoding_rs::WINDOWS_1253,
-      "WINDOWS_1254" => encoding_rs::WINDOWS_1254,
-      "WINDOWS_1255" => encoding_rs::WINDOWS_1255,
-      "WINDOWS_1256" => encoding_rs::WINDOWS_1256,
-      "WINDOWS_1257" => encoding_rs::WINDOWS_1257,
-      "WINDOWS_1258" => encoding_rs::WINDOWS_1258,
-      "X_MAC_CYRILLIC" => encoding_rs::X_MAC_CYRILLIC,
-      "X_USER_DEFINED" => encoding_rs::X_USER_DEFINED,
+      "UTF-8" => encoding_rs::UTF_8,
+      "UTF-16" => encoding_rs::UTF_16LE,
+      "UTF-16BE" => encoding_rs::UTF_16BE,
+      "UTF-16LE" => encoding_rs::UTF_16LE,
+      "WINDOWS-874" => encoding_rs::WINDOWS_874,
+      "WINDOWS-1250" => encoding_rs::WINDOWS_1250,
+      "WINDOWS-1251" => encoding_rs::WINDOWS_1251,
+      "WINDOWS-1252" => encoding_rs::WINDOWS_1252,
+      "WINDOWS-1253" => encoding_rs::WINDOWS_1253,
+      "WINDOWS-1254" => encoding_rs::WINDOWS_1254,
+      "WINDOWS-1255" => encoding_rs::WINDOWS_1255,
+      "WINDOWS-1256" => encoding_rs::WINDOWS_1256,
+      "WINDOWS-1257" => encoding_rs::WINDOWS_1257,
+      "WINDOWS-1258" => encoding_rs::WINDOWS_1258,
+      "X-MAC-CYRILLIC" => encoding_rs::X_MAC_CYRILLIC,
+      "X-USER-DEFINED" => encoding_rs::X_USER_DEFINED,
       _ => encoding_rs::UTF_8
    }
 }

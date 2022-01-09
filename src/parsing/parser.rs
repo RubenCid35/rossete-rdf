@@ -19,7 +19,7 @@ use std::collections::HashMap;
 use regex::Regex;
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
-pub fn parse_text(file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Mapping>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>) -> ResultApp<()>{
+pub fn parse_text(file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Mapping>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<bool>) -> ResultApp<()>{
     // File Reading
     let mut map_file = fs::File::open(file)?;
     let meta = map_file.metadata()?; // Para sacar los metadatos y prelocate memory for the buffer.

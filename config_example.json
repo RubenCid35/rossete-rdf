@@ -3,11 +3,12 @@
         {
             "path": "./examples/data/file-1.csv",
             "file-type": "csv",
-            "delimiter": ";"
+            "delimiter": ";",
+            "header": 0
         },
         {
             "path": "./examples/data/file-2.json",
-            "encoding": "ISO_2022_JP"
+            "encoding": "utf-16"
         }
     ],
     "threads": {
@@ -16,6 +17,6 @@
         "writting": 2
     },
     "max-memory-usage": 1000,
-    "output-encoding": "windows_1258",
-    "output-format": "TTL"
+    "output-encoding": "utf-8",
+    "output-format": "NT"
 }

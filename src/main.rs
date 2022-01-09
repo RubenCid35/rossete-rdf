@@ -14,6 +14,7 @@ use logging::*;
 use parsing::parser;
 use std::io::Read;
 use std::path;
+use std::sync::mpsc::channel;
 use std::sync::{mpsc, Arc, RwLock};
 use std::collections::HashMap;
 
@@ -36,9 +37,15 @@ fn main() -> ResultApp<()>{
     let file_name = path::PathBuf::from("./examples/mappings/rml-mappings.ttl");
     let now = time::Instant::now();
     let (transmitter, receiver) = mpsc::channel();
+    let (st_tx, st_rc) = channel::<bool>();
     let prefixes = Arc::new(RwLock::new(HashMap::new()));
-    parser::parse_text(file_name, transmitter, prefixes.clone())?;
-
+    let status_tx = st_tx.clone();
+    let prefix_zone = prefixes.clone();
+    let map_tranmitter = transmitter.clone();
+    let hand = std::thread::spawn(move || -> ResultApp<()>{
+        parser::parse_text(file_name, map_tranmitter, prefix_zone, status_tx)
+    });
+    
     time_info("PARSING TEST FILE", now);
     for map in receiver.iter(){
         if let Err(error) = map{
