@@ -17,7 +17,8 @@
 
 ### USAGE
 - [ ] Add CLI Interface. Using CLAP.
-
+- [ ] Read and Load into the database all the data files and the used fields.
+- [ ] Iterate over the json and xml files to retrive the data.
 
 ### FEATURES
 - [x] Create an example and/or Json Schema of the Configuration to Show

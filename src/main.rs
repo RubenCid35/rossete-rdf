@@ -25,6 +25,7 @@ use std::time::Instant;
 
 fn main() -> ResultApp<()>{
 
+    // This will be given by the user.
     let output_file = path::PathBuf::from("output.ttl");
     let config_file = path::PathBuf::from("config_example.json");
     let debug = false;
@@ -47,8 +48,6 @@ fn main() -> ResultApp<()>{
             config::AppConfiguration::new(output_file.clone())
         }
     };
-
-
 
     if debug{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();

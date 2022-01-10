@@ -39,7 +39,7 @@ impl Mapping{
                 }
                 _ => {
                     crate::error!("Invalid term appears at the wrong level in  the mapping: {}", self.identificador);
-                    return Err(ApplicationErrors::MissingKeyPart)
+                    return Err(ApplicationErrors::ComponentInIncorrectLocation)
                 }
             }
         }

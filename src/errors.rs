@@ -24,11 +24,11 @@ pub enum ApplicationErrors{
     PrefixActionsInterrumped,
     MissingLogicalSource,
     MissingSubjectMap,
-    InvalidSourceDataFormat,
+    InvalidSourceDataFormat, // Maybe it will be eliminated
     NoInputFieldURISubject,
-    MissingKeyPart,
+    ComponentInIncorrectLocation,
     IncorrectMappingFormat,
-    MissingRMlNamespace,
+    MissingRMlNamespace, // Future use
     // Other errors
     FailedToTransmitDataBetweenThreads,
     NotEnoughMemory,

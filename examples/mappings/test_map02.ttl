@@ -1,0 +1,271 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#>.          
+@prefix ex: <http://example.com/ns#>.
+@prefix xsd: <https://www.w3.org/XMLSchema/>.
+@prefix schema: <http://www.schema.org/>.
+@prefix owl: <http://www.w3.org/2002/07/owl>.
+@prefix cult: <https://www.mapmadrid.org/ontologia/>.
+@base <https://www.mapmadrid.org/resources/>.
+
+<#Museos_Mapping> 
+    a rr:TriplesMap;
+    rml:logicalSource [
+    rml:source "./data/museos_linked.csv" ;
+    rml:referenceFormulation ql:CSV
+  ];
+  rr:subjectMap [
+    rr:template "https://www.mapmadrid.org/resources/Museo/{PK}";
+    rr:termType rr:IRI;
+    rr:class cult:Museo;
+  ];
+
+  # Data Properties
+  rr:predicateObjectMap [
+    rr:predicate cult:tienePK;
+    rr:objectMap [
+      rml:reference "PK"; 
+      rr:datatype xsd:positiveInteger
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:horasApertura;
+    rr:objectMap [
+      rml:reference "HORARIO" ;
+      rr:datatype xsd:string;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:transporteCercano;
+    rr:objectMap [
+      rml:reference "TRANSPORTE";
+      rr:datatype xsd:string; 
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:TelefonoContacto;
+    rr:objectMap [
+      rml:reference "TELEFONO";
+      rr:datatype xsd:string; 
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:Descripcion;
+    rr:objectMap [
+      rml:reference "DESCRIPCION";
+      rr:datatype xsd:string; 
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate  cult:Equipamiento;
+    rr:objectMap [
+      rml:reference "EQUIPAMIENTO";
+      rr:datatype xsd:string; 
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:tieneDescripcionEntidad ;
+    rr:objectMap [
+      rml:reference "DESCRIPCION-ENTIDAD";
+      rr:datatype xsd:string; 
+    ]
+  ];
+
+    rr:predicateObjectMap [
+    rr:predicate cult:emailContacto;
+    rr:objectMap [
+      rml:reference "EMAIL";
+      rr:datatype xsd:string;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:tieneNombre;
+    rr:objectMap [
+      rml:reference "NOMBRE";
+      rr:datatype xsd:string;
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:estaLocalizado;
+    rr:objectMap [ 
+        rr:parentTriplesMap <#Localizaciones_Mapping>;
+        rr:joinCondition [
+            rr:child "ParsedStreet";  rr:parent "ParsedStreet";];
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:clasificacion;
+    rr:objectMap [ 
+        rml:reference "TIPO";
+        rr:datatype xsd:string;
+    ];
+  ].
+
+<#Localizaciones_Mapping> a rr:TriplesMap;
+  rml:logicalSource [
+    rml:source "./data/museos_linked.csv" ;
+    rml:referenceFormulation ql:CSV
+  ];
+  rr:subjectMap [
+    rr:template "https://www.mapmadrid.org/resources/Localizacion/{ParsedStreet}";
+    rr:termType rr:IRI;
+    rr:class cult:Localizaciones;
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:enDistrito;
+    rr:objectMap [ 
+        rr:parentTriplesMap <#Distrito_Mapping>;
+        rr:joinCondition [
+            rr:child "DISTRITO";  rr:parent "DISTRITO";];
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate cult:enBarrio;
+    rr:objectMap [ 
+        rr:parentTriplesMap <#Barrio_Mapping>;
+        rr:joinCondition [
+            rr:child "BARRIO";  rr:parent "BARRIO";];
+    ]
+  ];
+  rr:predicateObjectMap [
+    rr:predicate cult:tieneDirreccion;
+    rr:objectMap [ 
+        rr:parentTriplesMap <#Postaldress_Mapping>;
+        rr:joinCondition [
+            rr:child "ParsedPostal";  rr:parent "ParsedPostal";];
+    ]
+  ];
+  rr:predicateObjectMap [
+    rr:predicate cult:tieneCoordenadas;
+    rr:objectMap [ 
+        rr:parentTriplesMap <#Coordenadas_Mapping>;
+        rr:joinCondition [
+            rr:child "CoorParsed";
+            rr:parent "CoorParsed";
+        ];
+    ];
+].
+
+<#Coordenadas_Mapping> a rr:TriplesMap;
+    rml:logicalSource [
+        rml:source "./data/museos.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+    
+    rr:subjectMap [
+      rr:template "https://www.mapmadrid.org/resources/Localizacion/Coordenadas/{CoorParsed}";
+      rr:termType rr:IRI;
+      rr:class schema:GeoCoordinatess;
+    ];
+    
+    rr:predicateObjectMap [
+      rr:predicate schema:latitude;
+      rr:objectMap [
+        rml:reference "LATITUD";
+        rr:datatype schema:Number
+      ]
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate schema:longitude;
+      rr:objectMap [
+        rml:reference "LONGITUD";
+        rr:datatype schema:Number
+      ]
+    ].
+
+<#Postaldress_Mapping> a rr:TriplesMap;
+    rml:logicalSource [
+        rml:source "./data/museos_linked.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+    rr:subjectMap [
+        rr:template "https://www.mapmadrid.org/resources/Localizacion/Postal/{ParsedPostal}";
+        rr:termType rr:IRI;
+        rr:class schema:PostalAddress
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate schema:addressCountry;
+      rr:objectMap [
+        rml:constant "España";
+        rr:termType rr:Literal
+      ]
+    ]; 
+
+    rr:predicateObjectMap [
+      rr:predicate schema:addressLocality;
+      rr:objectMap [
+        rml:reference "LOCALIDAD" 
+      ]
+    ]; 
+
+    rr:predicateObjectMap [
+      rr:predicate schema:addressRegion;
+      rr:objectMap [
+        rml:reference "PROVINCIA" 
+      ]
+    ]; 
+
+    rr:predicateObjectMap [
+      rr:predicate schema:postalCode;
+      rr:objectMap [
+        rml:reference "CODIGO-POSTAL" 
+      ]
+    ];
+
+    rr:predicateObjectMap [
+      rr:predicate schema:streetAddress;
+      rr:objectMap [
+        rml:reference "DIRECCION" 
+      ]
+    ].
+
+<#Barrio_Mapping> a rr:TriplesMap;
+    rml:logicalSource [
+        rml:source "./data/museos_linked.csv";
+        rml:referenceFormulation ql:CSV;
+    ];
+    rr:subjectMap [
+        rr:template "https://www.mapmadrid.org/recursos/Localizacion/Barrio/{BARRIO}";
+        rr:termType rr:IRI;
+        rr:class cult:Barrio
+    ];
+    
+    rr:predicateObjectMap [
+    rr:predicate owl:sameAs;
+    rr:objectMap [
+      rml:reference "same_as_barrio" ;
+      rr:datatype xsd:anyURI]
+    ].
+
+
+
+<#Distrito_Mapping> a rr:TriplesMap;
+    rml:logicalSource [
+        rml:source "./data/museos_linked.csv";
+        rml:referenceFormulation ql:CSV
+    ];
+    rr:subjectMap [
+        rr:template "https://www.mapmadrid.org/recursos/Localizacion/Distrito/{DISTRITO}";
+        rr:termType rr:IRI;
+        rr:class cult:Barrio
+    ];
+    
+    rr:predicateObjectMap [
+    rr:predicate owl:sameAs;
+    rr:objectMap [
+      rml:reference "same_as_distrito" ;
+      rr:datatype xsd:anyURI]
+    ].

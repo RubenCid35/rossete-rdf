@@ -11,6 +11,7 @@ use crate::ResultApp;
 use crate::errors::ApplicationErrors;
 use crate::{warning, info, error};
 
+use std::io::BufRead;
 use std::path;
 use std::fs;
 use std::io::prelude::{Read};
@@ -41,7 +42,7 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
     // Tokenize the file so we can be parsed.
     let tokens = tokenize(buffer);
-
+    
     // Get the tokens into diferent mappings and prefixes.
     match parse_tokens(tokens, prefix_transmiter, debug){
         Ok(mappings) => {
@@ -60,10 +61,33 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
 /// Divide the file into words or tokens so they can be processed quickier.
 fn tokenize(text: String) -> Vec<String>{
+    let comment: Regex = Regex::new(r#"#[ \na-zA-Z0-9]*$"#).unwrap();
     text
-    .split('\n')
-    .flat_map(|sentence| sentence.split(' ').map(|word| word.trim()))
-    .map(|token| token.replace(';', "").replace('"', ""))
+    .replace('\r', "\n")
+    .split("\n")
+    .filter(|&sentence| !sentence.is_empty())
+    .map(|sentence|{
+        if let Some(f) = comment.find(sentence){
+            if f.start() == 0{
+                String::new()
+            }else{
+                sentence.chars().into_iter().take(f.start()).collect::<String>()
+            }
+        }else{
+            sentence.to_string()
+        }
+    })
+    .flat_map(|sentence| sentence.split(' ').map(|word| word.trim().to_string()).collect::<Vec<String>>())
+    .flat_map(|sentence| sentence.split(';').map(|word| word.trim().to_string()).collect::<Vec<String>>())
+    .flat_map(|mut token| {
+        if token.ends_with(']') {
+            token.pop();
+            vec![token, "]".to_string()]
+        }else{
+            vec![token]
+        }
+    })
+    .map(|token| token.replace('"', ""))
     .filter(|word| !word.is_empty())
     .collect()
 }
@@ -80,16 +104,17 @@ fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{
             close += 1;
             continue
         }
+        if map_str[close].contains('['){
+            closing += 1;
+        }
         if map_str[close].contains(']'){
             if closing == 1{
                 return Some(close);
             }else{
                 closing -= 1;
             }
-        }else if map_str[close].contains('['){
-            closing += 1;
         }
-
+        
         close += 1;
     }
 }
@@ -108,7 +133,9 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             static ref BASE: Regex = Regex::new(r#"@(base|BASE)"#).unwrap();
             
             static ref MAPPING_INIT: Regex = Regex::new(r#"<#([a-zA-Z0-9_\-]*)>"#).unwrap();
-            
+            static ref MAPDECLARATION: Regex = Regex::new("(rdf:type|a)").unwrap();
+            static ref MAPTYPE: Regex = Regex::new("rr:TriplesMap").unwrap();
+
             static ref LOGICALSOURCE: Regex = Regex::new(r#"(rr)?:logicalSource"#).unwrap();
             static ref SUBJECTMAP: Regex = Regex::new(r#"(rr)?:subjectMap"#).unwrap();
             static ref PREDICATEOBJECTMAP: Regex = Regex::new(r#"(rr)?:predicateObjectMap"#).unwrap();
@@ -133,7 +160,8 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
 
             // prefixes.insert(pre, url);
             idx += 2;
-        }else if BASE.is_match(&tokens[idx]) && (idx + 1) < tokens.len(){
+        }
+        else if BASE.is_match(&tokens[idx]) && (idx + 1) < tokens.len(){
             let url = {
                 match PREFIX_URL.captures(&tokens[idx + 1]){
                     Some(cap) => {
@@ -147,7 +175,8 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             };
             base_uri = url;
             idx += 1;
-        }else if let Some(cap) = MAPPING_INIT.captures(&tokens[idx]){
+        }
+        else if let Some(cap) = MAPPING_INIT.captures(&tokens[idx]){
             let name = cap.get(1).unwrap().as_str().to_string();
             if debug{
                 info!("The following mapping was found {}. Parsing Has Started", &name);
@@ -155,7 +184,8 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             let map = Mapping::new(name);
 
             mappings.push(map);
-        }else if LOGICALSOURCE.is_match(&tokens[idx]){
+        }
+        else if LOGICALSOURCE.is_match(&tokens[idx]){
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("The Mapping {} requires at least a rml:source component", map_name);
@@ -172,7 +202,8 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                 return Err(ApplicationErrors::IncorrectMappingFormat);     
             }
 
-        }else if SUBJECTMAP.is_match(&tokens[idx]){
+        }
+        else if SUBJECTMAP.is_match(&tokens[idx]){
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("The Mapping {} requires at least a rr:template component", map_name);
@@ -189,11 +220,12 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                 return Err(ApplicationErrors::IncorrectMappingFormat);     
             }
 
-        }else if PREDICATEOBJECTMAP.is_match(&tokens[idx]){
+        }
+        else if PREDICATEOBJECTMAP.is_match(&tokens[idx]){
             ////info!("A predicateObjectMap was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
-                error!("In the Mapping {}, the rr:predicateObjectMap requires at least a rr:predicate and rr:objectMap component", map_name);
+                error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requires at least a rr:predicate and rr:objectMap component", map_name, idx);
                 return Err(ApplicationErrors::IncorrectMappingFormat)
             }
             else if let Some(finish) = find_closing_bracket(&tokens, idx + 1){
@@ -203,10 +235,14 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             }
             else{
                 let map_name = &mappings.last().unwrap().identificador;
-                error!("In the Mapping {}, the rr:predicateObjectMap requieres ] at some point to finish the statement", map_name);
+                error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requieres ] at some point to finish the statement", map_name, idx);
                 return Err(ApplicationErrors::IncorrectMappingFormat);     
             }   
-        }else{
+        }
+        else if MAPDECLARATION.is_match(&tokens[idx]) && MAPTYPE.is_match(&tokens[idx + 1]){
+            idx += 1; // Do Nothing            
+        }
+        else{
             // To get the last map identification
             let last_map = match mappings.last(){
                 Some(map) => {
@@ -280,7 +316,7 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp
     while idx < end {
         lazy_static!{
             static ref TEMPLATE: Regex = Regex::new("rr:template").unwrap();
-            static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
+            static ref CONSTANT: Regex = Regex::new("rml:constant").unwrap();
             static ref GRAPHMAP: Regex = Regex::new("rr:GraphMap").unwrap();
             static ref CLASSTYPE: Regex = Regex::new("rr:class").unwrap();
             static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
@@ -399,9 +435,9 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
         static ref PARENT: Regex = Regex::new("rr:parentTriplesMap").unwrap();
         static ref MAPPING: Regex = Regex::new(r#"<#([a-zA-Z0-9_\-]*)>"#).unwrap();
         static ref JOIN: Regex = Regex::new("rr:joinCondition").unwrap();
-        static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
+        static ref CONSTANT: Regex = Regex::new("rml:constant").unwrap();
         static ref REFERENCE: Regex = Regex::new("rml:reference").unwrap();
-        static ref TERMTYPE: Regex = Regex::new("rr:termtype").unwrap();
+        static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
         static ref DATATYPE: Regex = Regex::new("rr:datatype").unwrap();    
         static ref TEMPLATE: Regex = Regex::new("rr:template").unwrap();    
     };
