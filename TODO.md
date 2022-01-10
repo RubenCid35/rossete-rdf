@@ -3,7 +3,7 @@
 #### Major Errors
 
 ##### Minor Errors
-- [ ] FIXME: Fix the debug trait of the objectMap, the number of '[]' is incorrect and the tabs dont match with the rest.
+- [x] FIXME: Fix the debug trait of the objectMap, the number of '[]' is incorrect and the tabs dont match with the rest.
 
 ### PERFORMANCE IMPROVEMENTS
 
@@ -20,4 +20,4 @@
 
 
 ### FEATURES
-- [ ] Create an example and/or Json Schema of the Configuration to Show
+- [x] Create an example and/or Json Schema of the Configuration to Show

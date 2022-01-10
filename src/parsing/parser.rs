@@ -19,7 +19,7 @@ use std::collections::HashMap;
 use regex::Regex;
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
-pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<i32>) -> ResultApp<()>{
+pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<i32>, debug: bool) -> ResultApp<()>{
     info!("Parsing File ID: {:2.} PATH: {}",  id, file.display());
     // File Reading
     let mut map_file = match fs::File::open(file){
@@ -43,7 +43,7 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
     let tokens = tokenize(buffer);
 
     // Get the tokens into diferent mappings and prefixes.
-    match parse_tokens(tokens, prefix_transmiter){
+    match parse_tokens(tokens, prefix_transmiter, debug){
         Ok(mappings) => {
             transmitter.send(Ok(mappings))?;
             status_transmitter.send(id)?;
@@ -95,7 +95,7 @@ fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{
 }
 
 /// Parse the main 5 Mapping Parts and create all the mappings and prefixes.
-fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>) -> ResultApp<Vec<Mapping>>{
+fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, debug: bool) -> ResultApp<Vec<Mapping>>{
 
     let mut mappings: Vec<Mapping> = Vec::with_capacity(2);
     // let mut prefixes: std::collections::HashMap<String, String> = std::collections::HashMap::new();
@@ -126,9 +126,8 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                     }
                 }
             };
-            //info!("Line: {} Added Prefix: {}", idx, pre);
             // Se manda a una zona central.
-            let mut prefix_zone = prefix_transmiter.write()?;
+            let mut prefix_zone  = prefix_transmiter.write()?;
             prefix_zone.insert(pre, url);
             drop(prefix_zone);
 
@@ -146,17 +145,17 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                     }
                 }
             };
-            ////info!("BASE URI WAS FOUND: {}", &url);
             base_uri = url;
             idx += 1;
         }else if let Some(cap) = MAPPING_INIT.captures(&tokens[idx]){
             let name = cap.get(1).unwrap().as_str().to_string();
-            //info!("The following mapping was found {}. Starting Parsing", &name);
+            if debug{
+                info!("The following mapping was found {}. Parsing Has Started", &name);
+            }
             let map = Mapping::new(name);
 
             mappings.push(map);
         }else if LOGICALSOURCE.is_match(&tokens[idx]){
-            ////info!("A Logical Source was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("The Mapping {} requires at least a rml:source component", map_name);
@@ -174,7 +173,6 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
             }
 
         }else if SUBJECTMAP.is_match(&tokens[idx]){
-            ////info!("A SubjectMap was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 let map_name = &mappings.last().unwrap().identificador;
                 error!("The Mapping {} requires at least a rr:template component", map_name);
@@ -257,7 +255,7 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize) -> Result
             idx += 1;
         }else if IS_FILE_TYPE.is_match(&tokens[idx]){
             if let Some(cap) = FILE_TYPE.captures(&tokens[idx + 1]){
-                file_type = AcceptedType::from_str(cap.get(1).unwrap().as_str());
+                file_type = AcceptedType::from_str(&cap.get(1).unwrap().as_str().to_lowercase());
             }
             idx += 1;
         }else{

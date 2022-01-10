@@ -109,6 +109,12 @@ impl std::fmt::Debug for Parts{
 }
 
 impl Parts{
+    pub fn get_fields(&self) -> std::collections::HashSet<String>{
+        let fields = std::collections::HashSet::new();
+        // TODO Implement
+        fields
+    }
+
     // Para comprobar la valided de los mappings,
     pub fn is_subjectmap(&self) -> bool{
         match self{

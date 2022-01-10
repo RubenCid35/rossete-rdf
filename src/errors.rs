@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::any::Any;
 use std::error::Error;
 use std::io;

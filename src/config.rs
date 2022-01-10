@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 
 use std::collections;
 use std::env;
@@ -39,7 +40,9 @@ pub struct AppConfiguration{
     // Output Data
     output_encoding: &'static Encoding,
     output_path: PathBuf,
-    output_format: OutputFormat 
+    output_format: OutputFormat,
+    // Debug Display
+    debug: bool
 }
 
 impl std::fmt::Debug for AppConfiguration{
@@ -93,19 +96,38 @@ impl AppConfiguration{
             threads: [5;3],
             output_encoding: encoding_rs::UTF_8,
             output_path,
-            output_format
+            output_format,
+            debug: false
         }
     }
-    pub fn get_file_config(&self, path: &PathBuf) -> FileSpecs{
+    pub fn debug_mode(&self) -> bool{
+        self.debug
+    }
+    pub fn set_debug_mode(&mut self){
+        self.debug = true;
+    }
+
+    pub fn get_data_file(&self, path: &PathBuf) -> FileSpecs{
         if self.file_specs.contains_key(path){
             self.file_specs[path].clone()
         }else{
             FileSpecs::default()
         }
     }
-    pub fn add_file_config(&mut self, path: PathBuf, configuration: FileSpecs){
+    pub fn add_data_file(&mut self, path: PathBuf, file_type: AcceptedType){
         if !self.file_specs.contains_key(&path){
-            self.file_specs.insert(path, configuration);
+            let file_type2;
+            match file_type{
+                AcceptedType::Unspecify => {
+                    file_type2 = AcceptedType::from_str(&path.extension().expect("File with No extension").to_str().unwrap().to_lowercase())
+                }
+                _ => {
+                    file_type2 = file_type;
+                }
+            }
+            let mut settings = FileSpecs::default();
+            settings.set_file_type(file_type2);
+            self.file_specs.insert(path, settings);
         }
     }
     pub fn get_parsing_theads(&self) -> u8{
@@ -172,7 +194,7 @@ impl AppConfiguration{
                     path = PathBuf::from(file["path"].as_str().unwrap());
 
                     // Type
-                    if (file.has_key("type") && file["type"].is_string()){
+                    if file.has_key("type") && file["type"].is_string(){
                         current_data.set_file_type(AcceptedType::from_str(&file["type"].as_str().unwrap().to_lowercase()));
                     }else{
                         if let Some(ext) =  path.extension(){
@@ -252,20 +274,24 @@ impl FileSpecs{
         &self.file_type
     }
     
-    pub fn set_delimiter(&mut self, del: char){
+    pub fn set_delimiter(&mut self, del: char) -> &mut Self{
         self.delimiter = del;
+        self
     }
 
-    pub fn set_header_pos(&mut self, header: u32){
+    pub fn set_header_pos(&mut self, header: u32) -> &mut Self{
         self.header = header;
+        self
     }
 
-    pub fn set_encoding(&mut self, new_encoding: &'static Encoding){
+    pub fn set_encoding(&mut self, new_encoding: &'static Encoding) -> &mut Self{
         self.used_encoding = new_encoding;
+        self
     }
 
-    pub fn set_file_type(&mut self, file_type: AcceptedType){
+    pub fn set_file_type(&mut self, file_type: AcceptedType) -> &mut Self{
         self.file_type = file_type;
+        self
     }
 
     pub fn from_no_csv(&self, encoding: Option<&'static Encoding>, file_type: AcceptedType) -> Self{

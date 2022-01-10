@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum AcceptedType{
     CSV,
     TSV,
@@ -42,7 +42,7 @@ impl AcceptedType{
             AcceptedType::JSON
         }else if file.contains("tsv"){
             AcceptedType::TSV
-        }else if file.contains("xml"){
+        }else if file.contains("xml") || file.contains("xpath"){
             AcceptedType::XML
         }else{
             AcceptedType::Other
