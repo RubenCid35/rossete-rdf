@@ -27,15 +27,29 @@ fn main() -> ResultApp<()>{
 
     let output_file = path::PathBuf::from("output.ttl");
     let config_file = path::PathBuf::from("config_example.json");
-    let debug = true;
+    let debug = false;
 
     let mut json_tmp = String::with_capacity(1000);
     let mut f = std::fs::File::open(config_file)?;
     f.read_to_string(&mut json_tmp)?;
 
-
+    let now = Instant::now();
     let json_config = json::parse(&json_tmp)?;
-    let mut configuration = config::AppConfiguration::from_json(output_file, json_config)?;
+    let mut configuration = match config::AppConfiguration::from_json(output_file.clone(), json_config){
+        Ok(config) => {
+            info!("Given Configuration File was Succesfully Parsed");
+            time_info("Parsing Configuration File", now);
+            config
+        },
+        Err(error) => {
+            error!("ERROR CODE: {:?}", error);
+            warning!("Given the error, it will be used the default configuration to proceed with the parsing");
+            config::AppConfiguration::new(output_file.clone())
+        }
+    };
+
+
+
     if debug{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();
     }
@@ -60,19 +74,7 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
-    if config.debug_mode(){
-        println!("{:?}", config);
-        println!("FIELDS TO USE:");
-        for path in data_fields.keys(){
-            println!("File Path: {}", path.display());
-            for field in data_fields[path].iter(){
-                println!("\t+  {}", field);
-            }
-            println!("");
-        }
-
-    }
-
+    
     Ok(())
 }
 
@@ -163,10 +165,9 @@ fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fi
     for map in mappings.iter() {
         let data_file = map.source_file()?;
         let file_type = map.get_source_file_ext()?;
-        info!("FILE: {} Detected ReferenceFormulation: {}", data_file.display(), file_type);
         config.add_data_file(data_file.clone(), file_type);
-
-        fields.insert(data_file.clone(), map.get_all_desired_fields());
+        let field = fields.entry(data_file.clone()).or_insert(HashSet::new());
+        field.extend(map.get_all_desired_fields());
     }
     Ok(())
 }

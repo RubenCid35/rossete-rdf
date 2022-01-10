@@ -20,7 +20,7 @@ use regex::Regex;
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
 pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<i32>, debug: bool) -> ResultApp<()>{
-    info!("Parsing File ID: {:2.} PATH: {}",  id, file.display());
+    info!("Parsing File ID: {:2.} PATH: \"{}\"",  id, file.display());
     // File Reading
     let mut map_file = match fs::File::open(file){
         Ok(file) => file,

@@ -20,7 +20,7 @@ pub enum Parts{
     // rr:parentTriplesMap
     ParentTriplesMap{
         other_map: String,
-        join_condition: [String;2]
+        join_condition: [String;2] // Child-Parent
     },
     // rr:graphMaps
     GraphMap(Box<Self>),
@@ -110,8 +110,39 @@ impl std::fmt::Debug for Parts{
 
 impl Parts{
     pub fn get_fields(&self) -> std::collections::HashSet<String>{
-        let fields = std::collections::HashSet::new();
-        // TODO Implement
+        let mut fields = std::collections::HashSet::new();
+        match self{
+            Parts::LogicalSource {..} => {},
+            Parts::SubjectMap { components } => {
+                for comp in components{
+                    fields.extend(comp.get_fields());
+                }
+            },
+            Parts::PredicateObjectMap { predicate:_ , object_map } => {
+                for comp in object_map{
+                    fields.extend(comp.get_fields());
+                }
+            },
+            Parts::ParentTriplesMap { other_map: _, join_condition } => {
+                if !join_condition[0].is_empty(){
+                    fields.insert(join_condition[0].clone());
+                }
+            }
+            Parts::GraphMap(other) => {
+                fields.extend(other.get_fields());
+            },
+            Parts::Class(_) => {},
+            Parts::Reference(field) => {    
+                fields.insert(field.clone());
+            },
+            Parts::Constant(_) => {},
+            Parts::DataType(_) => {},
+            Parts::TermType(_) => {},
+            Parts::Template { template: _, input_fields } => {
+                fields.extend(input_fields.iter().map(|data| data.clone()));
+            },
+            Parts::Term(_) => {},
+        }
         fields
     }
 

@@ -18,5 +18,5 @@
     },
     "max-memory-usage": 1000,
     "output-encoding": "utf-8",
-    "output-format": "NT"
+    "output-format": "TTL"
 }
