@@ -15,7 +15,6 @@ use mappings::maps::Mapping;
 use parsing::parser;
 
 
-use std::io::Read;
 use std::path::{self, PathBuf};
 use std::sync::mpsc::channel;
 use std::sync::{Arc, RwLock};
@@ -23,36 +22,21 @@ use std::collections::{HashMap, HashSet};
 
 use std::time::Instant;
 
+// use clap::{App, Arg};
+// use clap::{crate_authors, crate_version, crate_description};
+
 fn main() -> ResultApp<()>{
 
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.ttl");
     let config_file = path::PathBuf::from("config_example.json");
-    let debug = false;
+    let debug = true;
 
-    let mut json_tmp = String::with_capacity(1000);
-    let mut f = std::fs::File::open(config_file)?;
-    f.read_to_string(&mut json_tmp)?;
-
-    let now = Instant::now();
-    let json_config = json::parse(&json_tmp)?;
-    let mut configuration = match config::AppConfiguration::from_json(output_file.clone(), json_config){
-        Ok(config) => {
-            info!("Given Configuration File was Succesfully Parsed");
-            time_info("Parsing Configuration File", now);
-            config
-        },
-        Err(error) => {
-            error!("ERROR CODE: {:?}", error);
-            warning!("Given the error, it will be used the default configuration to proceed with the parsing");
-            config::AppConfiguration::new(output_file.clone())
-        }
-    };
+    let mut configuration = config::get_configuration(&output_file, Some(config_file));
 
     if debug{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();
     }
-
     if configuration.debug_mode(){
         println!("{:?}", configuration);
     }
@@ -86,28 +70,25 @@ fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf, prefix
     let (map_tx, map_rx) = channel();
     let (rc_tx, rc_rx) = channel();
 
-    let max_threads = config.get_parsing_theads();     
+    let max_threads = config.get_parsing_theads() as usize;     
     let mut current_path = 0;
-    let mut current_amount = 0;
     let mut threads = Vec::with_capacity(max_threads as usize);
     let mut threads_id = Vec::with_capacity(max_threads as usize);
     loop{
 
         // Thread Initialization
-        if current_amount != max_threads && current_path < paths.len(){
+        if threads.len() != max_threads && current_path < paths.len(){
             let tx = map_tx.clone();
-            // This will be useless here 
             let rc_tx_2 = rc_tx.clone();
-            let cp = paths[current_path].clone();
-            let cpp = current_path;
+            let map_file_path = paths[current_path].clone();
+            let map_id = current_path;
             let debug = config.debug_mode();
             let pre_c = prefixes.clone();
             let hand = std::thread::spawn(move || -> ResultApp<()>{
-                parser::parse_text(cpp as i32 + 1,cp, tx, pre_c, rc_tx_2, debug)
+                parser::parse_text(map_id as i32 + 1,map_file_path, tx, pre_c, rc_tx_2, debug)
             });
             threads.push(hand);
             threads_id.push(current_path as i32 + 1);
-            current_amount += 1;
             current_path += 1;
         }
         else{ // Receiving Mappings and Errors.
@@ -131,10 +112,9 @@ fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf, prefix
             }
             threads_id.remove(idx);
             threads.remove(idx);
-            current_amount -= 1;
             // info!("THERE ARE {} PARSING PROCESS REMAINING", current_amount);
         }
-        if current_amount == 0 && current_path >= paths.len(){
+        if threads.len() == 0 && current_path >= paths.len(){
             break
         }
     }
@@ -170,3 +150,59 @@ fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fi
     }
     Ok(())
 }
+
+
+
+
+/*
+TODO: Last Item to be added.
+TODO: Better flag/option descriptions
+    let m = App::new("Rossete RDF Generator")
+                .about(crate_description!())
+                .version(crate_version!())
+                .author(crate_authors!())
+                .help_message("Displays this message")
+                .arg(
+                    Arg::with_name("output")
+                    .long("output")
+                    .value_name("OUTPUT")
+                    .required(true)
+                    .takes_value(true)
+                    .help("File name where the output file is written")
+                )
+                .arg(
+                    Arg::with_name("config")
+                    .long("config")
+                    .takes_value(true)
+                    .case_insensitive(true)
+                    .help("Sets a custom config file to create the main settings of the program")
+                    .value_name("FILE")
+                )
+                .arg(
+                    Arg::with_name("mappings")
+                    .long("mappings")
+                    .required(true)
+                    .value_name("MAPPINGS")
+                    .takes_value(true)
+                    .help("Used mapping in the process of generated rdf. Values: Folder or a file")
+                )
+                .arg(
+                    Arg::with_name("debug")
+                    .short("d")
+                    .long("debug")
+                    .help("Set the debug mode. It displays more information in the intermediarry parts")
+                    .case_insensitive(true)
+                )
+                .arg(
+                    Arg::with_name("clear")
+                    .short("w")
+                    .long("clear")
+                    .help("Delete the database if it was created while reading the databases")
+                )
+                .arg(
+                    Arg::with_name("close")
+                    .short("c")
+                    .long("close")
+                    .help("If active; the files used are closed.")
+                ).get_matches();
+ */

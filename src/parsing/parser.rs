@@ -11,7 +11,6 @@ use crate::ResultApp;
 use crate::errors::ApplicationErrors;
 use crate::{warning, info, error};
 
-use std::io::BufRead;
 use std::path;
 use std::fs;
 use std::io::prelude::{Read};

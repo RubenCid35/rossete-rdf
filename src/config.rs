@@ -7,7 +7,11 @@ use std::path::PathBuf;
 use crate::ResultApp;
 use crate::errors::ApplicationErrors;
 use crate::mappings::AcceptedType;
-use crate::error;
+use crate::{error, warning, info, time_info};
+
+use std::io::Read;
+use json::parse;
+use std::time::Instant;
 
 use encoding_rs::Encoding;
 
@@ -65,7 +69,7 @@ impl std::fmt::Debug for AppConfiguration{
             writeln!(f, "---------------------------------")?;
         }
         
-        writeln!(f, "\nProcess Control (Threads Limit):\n")?;
+        writeln!(f, "\nProcess Control (Threads Limit):")?;
         writeln!(f, "------------------------------------------")?;
         writeln!(f, "Parsing Maps Max Threads: {}", self.threads[0])?;
         writeln!(f, "Reading Data Max Threads: {}", self.threads[1])?;
@@ -93,7 +97,7 @@ impl AppConfiguration{
         Self{
             file_specs: collections::HashMap::with_capacity(2),
             memory_threshold: 500,
-            threads: [5;3],
+            threads: [3;3],
             output_encoding: encoding_rs::UTF_8,
             output_path,
             output_format,
@@ -327,6 +331,7 @@ fn get_encoding_from_str(value: &str) -> &'static encoding_rs::Encoding{
       "ISO-8859-14" => encoding_rs::ISO_8859_14,
       "ISO-8859-15" => encoding_rs::ISO_8859_15,
       "ISO-8859-16" => encoding_rs::ISO_8859_16,
+      "KOI8" => encoding_rs::KOI8_R,
       "KOI8-R" => encoding_rs::KOI8_R,
       "KOI8-U" => encoding_rs::KOI8_U,
       "MACINTOSH" => encoding_rs::MACINTOSH,
@@ -351,3 +356,74 @@ fn get_encoding_from_str(value: &str) -> &'static encoding_rs::Encoding{
       _ => encoding_rs::UTF_8
    }
 }
+
+pub fn get_configuration(output_file: &PathBuf, config_path: Option<PathBuf>) -> AppConfiguration{
+    let now = Instant::now();
+    match config_path{
+        Some(path) => {
+            let mut config_file =  match std::fs::File::open(path){
+                Ok(file) => file,
+                Err(error) => {
+                    error!("Error Trying Opening Configuration File: {:?}", ApplicationErrors::from(error));
+                    warning!("Given the error, it will be used the default configuration to proceed with the parsing");
+                    return AppConfiguration::new(output_file.clone())
+                }
+            };
+
+            let mut json_tmp = String::with_capacity(1000);
+            if let Err(error) = config_file.read_to_string(&mut json_tmp){
+                error!("Error Trying Reading Configuration File: {:?}", ApplicationErrors::from(error));
+                warning!("Given the error, it will be used the default configuration to proceed with the parsing");
+                return AppConfiguration::new(output_file.clone())
+            }
+            
+            let json_config = match json::parse(&json_tmp){
+                Ok(json) => json,
+                Err(error) => {
+                    error!("Error parsing text to json values: {:?}", error);
+                    warning!("Given the error, it will be used the default configuration to proceed with the parsing");
+                    return AppConfiguration::new(output_file.clone())
+                }
+            };
+
+            match AppConfiguration::from_json(output_file.clone(), json_config){
+                Ok(config) => {
+                    info!("Given Configuration File was Succesfully Parsed");
+                    time_info("Parsing Configuration File", now);
+                    config
+                },
+                Err(error) => {
+                    error!("Error parsing the Json Values to the configuration: {:?}", error);
+                    warning!("Given the error, it will be used the default configuration to proceed with the parsing");
+                    AppConfiguration::new(output_file.clone())
+                }
+            }
+        }
+        None => {
+            AppConfiguration::new(output_file.clone())
+        }
+    }
+}
+/*
+
+    let config_filematch 
+
+    let mut json_tmp = String::with_capacity(1000);
+    f.read_to_string(&mut json_tmp)?;
+
+    let now = Instant::now();
+    let json_config = json::parse(&json_tmp)?;
+    let mut configuration = match config::AppConfiguration::from_json(output_file.clone(), json_config){
+        Ok(config) => {
+            info!("Given Configuration File was Succesfully Parsed");
+            time_info("Parsing Configuration File", now);
+            config
+        },
+        Err(error) => {
+            error!("ERROR CODE: {:?}", error);
+            warning!("Given the error, it will be used the default configuration to proceed with the parsing");
+            AppConfiguration::new(output_file.clone())
+        }
+    };
+    configuration
+*/
