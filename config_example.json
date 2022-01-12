@@ -5,10 +5,6 @@
             "file-type": "csv",
             "delimiter": ";",
             "header": 0
-        },
-        {
-            "path": "./examples/data/file-2.json",
-            "encoding": "utf-32"
         }
     ],
     "threads": {

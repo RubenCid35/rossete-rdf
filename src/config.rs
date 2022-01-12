@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 
 use std::collections;
 use std::env;
@@ -10,7 +9,6 @@ use crate::mappings::AcceptedType;
 use crate::{error, warning, info, time_info};
 
 use std::io::Read;
-use json::parse;
 use std::time::Instant;
 
 use encoding_rs::Encoding;
@@ -38,9 +36,9 @@ pub struct AppConfiguration{
     // Reading and writing Custom Information.
     file_specs: collections::HashMap<PathBuf, FileSpecs>,
     // max database memory usage: as the total file sizes combine plus 10 Mb.
-    memory_threshold: u32, // In MB
+    memory_threshold: usize, // In MB
     // Max Thread Usage: [Parsing, Reading, Creating RDF]
-    threads: [u8;3],
+    threads: [usize;3],
     // Output Data
     output_encoding: &'static Encoding,
     output_path: PathBuf,
@@ -104,6 +102,10 @@ impl AppConfiguration{
             debug: false
         }
     }
+    pub fn get_data_files(&self) -> &collections::HashMap<PathBuf, FileSpecs>{
+        &self.file_specs
+    }
+
     pub fn debug_mode(&self) -> bool{
         self.debug
     }
@@ -111,13 +113,6 @@ impl AppConfiguration{
         self.debug = true;
     }
 
-    pub fn get_data_file(&self, path: &PathBuf) -> FileSpecs{
-        if self.file_specs.contains_key(path){
-            self.file_specs[path].clone()
-        }else{
-            FileSpecs::default()
-        }
-    }
     pub fn add_data_file(&mut self, path: PathBuf, file_type: AcceptedType){
         if !self.file_specs.contains_key(&path){
             let file_type2;
@@ -134,20 +129,20 @@ impl AppConfiguration{
             self.file_specs.insert(path, settings);
         }
     }
-    pub fn get_parsing_theads(&self) -> u8{
+    pub fn get_parsing_theads(&self) -> usize{
         self.threads[0]
     }
 
-    pub fn get_reading_theads(&self) -> u8{
+    pub fn get_reading_theads(&self) -> usize{
         self.threads[1]
     }
 
-    pub fn get_writing_theads(&self) -> u8{
+    pub fn get_writing_theads(&self) -> usize{
         self.threads[2]
     }
 
-    pub fn can_be_in_memory_db(&self, total_memory_usage: u32) -> bool{
-        self.memory_threshold <= total_memory_usage
+    pub fn can_be_in_memory_db(&self, total_memory_usage: usize) -> bool{
+        self.memory_threshold >= total_memory_usage
     }
 
     pub fn from_json(output_path: PathBuf, json_data: json::JsonValue) -> ResultApp<Self>{
@@ -156,7 +151,7 @@ impl AppConfiguration{
         tmp.file_specs = Self::parse_file_data(&json_data)?;
         
         if json_data.has_key("max-memory-usage") && json_data["max-memory-usage"].is_number(){
-            tmp.memory_threshold = json_data["max-memory-usage"].as_u32().unwrap_or(500);
+            tmp.memory_threshold = json_data["max-memory-usage"].as_usize().unwrap_or(500);
         }
         
         if json_data.has_key("output-encoding") && json_data["output-encoding"].is_string(){
@@ -170,13 +165,13 @@ impl AppConfiguration{
             let threads = &json_data["threads"];
             let mut used_threads = [1;3];
             if threads.has_key("reading") && threads["reading"].is_number(){
-                used_threads[1] = threads["reading"].as_u8().unwrap();
+                used_threads[1] = threads["reading"].as_usize().unwrap();
             }
             if threads.has_key("parsing") && threads["parsing"].is_number(){
-                used_threads[0] = threads["parsing"].as_u8().unwrap();
+                used_threads[0] = threads["parsing"].as_usize().unwrap();
             }
             if threads.has_key("writting") && threads["writting"].is_number(){
-                used_threads[2] = threads["writting"].as_u8().unwrap()
+                used_threads[2] = threads["writting"].as_usize().unwrap()
             }
             tmp.threads = used_threads;
         }   
@@ -264,6 +259,7 @@ impl std::default::Default for FileSpecs{
     }
 }
 impl FileSpecs{
+
     pub fn get_encoding(&self) -> &Encoding{
         &self.used_encoding
     }

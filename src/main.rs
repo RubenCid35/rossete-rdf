@@ -5,14 +5,14 @@ type ResultApp<T> = Result<T, errors::ApplicationErrors>;
 
 mod mappings;
 mod logging;
-mod parsing;
+mod parser;
 mod input;
 mod config;
+mod search;
 
 use config::AppConfiguration;
 use logging::*;
 use mappings::maps::Mapping;
-use parsing::parser;
 
 
 use std::path::{self, PathBuf};
@@ -30,7 +30,7 @@ fn main() -> ResultApp<()>{
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.ttl");
     let config_file = path::PathBuf::from("config_example.json");
-    let debug = true;
+    let debug = false;
 
     let mut configuration = config::get_configuration(&output_file, Some(config_file));
 
@@ -58,6 +58,8 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
     
+    let db = input::read_store_data_files(&config, data_fields)?; 
+
     Ok(())
 }
 
@@ -70,7 +72,7 @@ fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf, prefix
     let (map_tx, map_rx) = channel();
     let (rc_tx, rc_rx) = channel();
 
-    let max_threads = config.get_parsing_theads() as usize;     
+    let max_threads = config.get_parsing_theads();     
     let mut current_path = 0;
     let mut threads = Vec::with_capacity(max_threads as usize);
     let mut threads_id = Vec::with_capacity(max_threads as usize);

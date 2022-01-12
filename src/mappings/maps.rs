@@ -26,23 +26,21 @@ impl Mapping{
     pub fn is_valid(&self) -> crate::ResultApp<()>{
         let mut n_logical = 0;
         let mut n_subject = 0;
+        
+        
         for component in &self.components{
-            match component{
-                &parts::Parts::LogicalSource{..} => {
-                    n_logical += 1;
-                }
-                &parts::Parts::SubjectMap{..} => {
-                    n_subject += 1
-                }
-                &parts::Parts::PredicateObjectMap{..} => {
-                    continue
-                }
-                _ => {
-                    crate::error!("Invalid term appears at the wrong level in  the mapping: {}", self.identificador);
-                    return Err(ApplicationErrors::ComponentInIncorrectLocation)
-                }
+            if component.is_predicate(){ // Most common case
+                continue
+            }else if component.is_logicalsource(){
+                n_logical += 1;
+            }else if component.is_subjectmap(){
+                n_subject += 1
+            }else{
+                crate::error!("Invalid term appears at the wrong level in  the mapping: {}", self.identificador);
+                return Err(ApplicationErrors::ComponentInIncorrectLocation)
             }
         }
+
         if n_logical != 1{
             crate::error!("Mapping: {}. There is no logical sources in the mapping or there are too many. Current Ammount: {} Valid Ammount: 1", self.identificador, n_logical);
             Err(ApplicationErrors::MissingLogicalSource)

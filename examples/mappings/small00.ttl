@@ -8,7 +8,7 @@
 
 <#LocationMapping_CSV>
     rml:logicalSource [
-        rml:source "./data/file-1.csv" ;
+        rml:source "./examples/data/file-1.csv" ;
         rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [

@@ -61,6 +61,7 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 /// Divide the file into words or tokens so they can be processed quickier.
 fn tokenize(text: String) -> Vec<String>{
     let comment: Regex = Regex::new(r#"#[ \na-zA-Z0-9]*$"#).unwrap();
+    // COMMENT WITH MAP DEC: <#[0-9a-zA-Z-]*>[0-9a-zA-Z-:;\ ]*(#.*)
     text
     .replace('\r', "\n")
     .split("\n")

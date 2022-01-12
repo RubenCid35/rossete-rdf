@@ -5,6 +5,7 @@
 ##### Minor Errors
 - [x] FIXME: Fix the debug trait of the objectMap, the number of '[]' is incorrect and the tabs dont match with the rest.
 - [ ] FIXME: Better Comment Capture in the sentences with the mapping declaration and urls.
+- [ ] FIXME: Program needs to eliminate the data files that appear in the configuration JSON and they are not going to be used.
 
 ### PERFORMANCE IMPROVEMENTS
 
@@ -20,6 +21,7 @@
 - [ ] Add CLI Interface. Using CLAP.
 - [ ] Read and Load into the database all the data files and the used fields.
 - [ ] Iterate over the json and xml files to retrive the data.
+- [ ] Take into account JSON and XML Iterator 
 
 ### FEATURES
 - [x] Create an example and/or Json Schema of the Configuration to Show

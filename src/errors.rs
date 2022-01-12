@@ -19,6 +19,11 @@ pub enum ApplicationErrors{
     MissingFilePathInConfiguration,
     InvalidDataEntry,
     IncorrectJsonFile,
+    // Database Errors
+    CantOpenDatabase,
+    DataBaseDidntReceivedData,
+    FailTowriteInDataBase,
+    FailToReadInDataBase,
 
     // Reading Mapping Errors.
     PrefixActionsInterrumped,
@@ -77,5 +82,12 @@ impl From<json::Error> for ApplicationErrors{
 impl From<Box<dyn Any + Send>> for ApplicationErrors{
     fn from(_: Box<dyn Any + Send>) -> Self {
         Self::FailedToTransmitDataBetweenThreads
+    }
+}
+
+impl From<sqlite::Error> for ApplicationErrors{
+    fn from(error: sqlite::Error) -> Self {
+        error!("{:?}", error);
+        Self::CantOpenDatabase
     }
 }

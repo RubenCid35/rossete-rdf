@@ -49,3 +49,31 @@ impl AcceptedType{
         }
     }
 }
+
+impl AcceptedType{
+    pub fn is_csv(&self) -> bool{
+        match self {
+            Self::CSV => true,
+            _ => false,
+        }
+    }
+    pub fn is_tsv(&self) -> bool{
+        match self {
+            Self::TSV => true,
+            _ => false,
+        }
+    }
+    pub fn is_json(&self) -> bool{
+        match self {
+            Self::JSON => true,
+            _ => false,
+        }
+    }
+    pub fn is_xml(&self) -> bool{
+        match self {
+            Self::XML => true,
+            _ => false,
+        }
+
+    }
+}
