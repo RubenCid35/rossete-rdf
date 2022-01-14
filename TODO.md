@@ -21,6 +21,7 @@
 - [ ] Read and Load into the database all the data files and the used fields.
 - [ ] Iterate over the json and xml files to retrive the data.
 - [ ] Take into account JSON and XML Iterator 
+- [x] Remove duplicate rows in the tables of the database. 
 
 ### FEATURES
 - [x] Create an example and/or Json Schema of the Configuration to Show

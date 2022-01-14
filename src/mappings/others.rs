@@ -1,5 +1,6 @@
 use std::fmt;
 
+// This structures are only an identifier, they should be able to be copied
 #[derive(Clone, Copy)]
 pub enum AcceptedType{
     CSV,

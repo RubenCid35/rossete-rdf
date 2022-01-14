@@ -7,15 +7,9 @@ use crate::errors::ApplicationErrors;
 
 
 use std::fs;
-use std::io::{
-    BufRead,
-    BufReader,
-    Read
-};
 use std::path::PathBuf;
 use std::sync::mpsc;
 
-use encoding_rs_io::*;
 use sqlite;
 
 use std::collections::{HashMap, HashSet};
@@ -44,24 +38,25 @@ pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<
     reading_procedure(config, data_tx, &fields)?;    
 
     match handler.join() {
-        Ok(it) => it,
+        Ok(it) => {it},
         Err(err) => return Err(err.into()),
     }
 }
 
 fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> ResultApp<&'static str>{    
-    // Get the full Size of the datafiles combined.
+    // Get an extimated Size of the datafiles combined. This is more as a guide, given that could be some dupllicate rows that are going to be eliminated.
     let total_memory_usage: usize = fi.iter()
         .map(|file| {
             file.metadata().expect("No Metadata Was Found: Size of File is needed").len() as usize
         })
         .sum();
-    let total_memory_usage = total_memory_usage  / 1048576;
+    let total_memory_usage = total_memory_usage  / 1048576; // To Transform the number of bytes to megabytes (MB) 
 
-    info!("All the files requiered {} MB", total_memory_usage);
     if config.can_be_in_memory_db(total_memory_usage){
+        info!("All the files requiered {} MB, TMP Database will be created in memory", total_memory_usage);
         Ok(":memory:")
     }else{
+        info!("All the files requiered {} MB, TMP Database will be created in a sqlite DB File", total_memory_usage);
         // If it was already created
         if PathBuf::from("./rossete-tmp").exists(){
             crate::warning!("Previous TMP Storage DB was Found, Proceeding to replace it with new one");
@@ -76,7 +71,8 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
     let conn = sqlite::open(localization)?; // Database Connection
     let mut left_files = total_files;
     loop{
-        if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(100)){
+        if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
+            // println!("{}", query);
             if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
                 info!("File with ID: {} was successfully readed and stored in the data base", query);
                 left_files -= 1;
@@ -101,12 +97,16 @@ fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::Fil
         let file_type = files[file].get_file_type();
         let table_name = get_table_name(file, file_type);
         let mut query = String::with_capacity(1000);
-        query.extend(format!("CREATE TABLE \"{}\" (id INTEGER PRIMARY KEY", table_name).chars());
-        for field in input_fields[file].iter(){
-            query.extend(format!(",\n {} TEXT", field).chars())
+        query.extend(format!("CREATE TABLE \"{}\" (", table_name).chars());
+        for (i, field) in input_fields[file].iter().enumerate(){
+            query.extend(field.chars());
+            if i != input_fields[file].len() - 1{
+                query.push_str(" TEXT, ");
+            }else{
+                query.push_str(" TEXT);")
+            }
         }
-        query.push_str(");");
-        println!("{}", query);
+        // println!("{}", query);
         con.send(query)?;
     }
     Ok(())
@@ -133,14 +133,24 @@ fn reading_procedure(config: &config::AppConfiguration, con: mpsc::Sender<String
             let conn = con.clone();
             let path = paths[current_file].clone();
             let specs = files[&path].clone();
+            let fields = input_fields[&path].iter().map(|field| field.clone()).collect::<Vec<_>>();
 
             let hand = std::thread::spawn(move || -> ResultApp<()>{
                 let file_type = specs.get_file_type();
-                // TODO
                 if file_type.is_csv(){
-                    read_csv(new_id, path, specs, conn, rc)
-                }else{
-                    read_csv(new_id, path, specs, conn, rc)
+                    read_csv(new_id, path, specs, conn, rc, fields)
+                }else if file_type.is_tsv(){ // It is the same but it uses tabs
+                    read_csv(new_id, path, specs, conn, rc, fields)
+                }else if file_type.is_json(){ // TODO
+                    rc.send(new_id)?;
+                    Ok(())
+                }else if file_type.is_xml(){ // TODO
+                    rc.send(new_id)?;
+                    Ok(())
+                }
+                else{
+                    rc.send(new_id)?;
+                    Ok(())
                 }
             });
 
@@ -164,10 +174,81 @@ fn reading_procedure(config: &config::AppConfiguration, con: mpsc::Sender<String
     Ok(())
 }
 
-fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>) -> ResultApp<()>{
+fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>, fields: Vec<String>) -> ResultApp<()>{
     // TDOO Given the file type, it creates the reader.
+    let table_name = get_table_name(&path, specs.get_file_type());
 
+    let file = fs::File::open(&path)?;
+    let encoding = specs.get_encoding();
+    let file_reader = encoding_rs_io::DecodeReaderBytesBuilder::new()
+                                            .encoding(Some(encoding))
+                                            .build(file);
+
+    let mut csv_file = csv::ReaderBuilder::new()
+        .delimiter(specs.get_delimiter() as u8)
+        .has_headers(specs.get_has_header())
+        .from_reader(file_reader);
+
+    let mut initial_query = format!("INSERT INTO \"{}\" (", table_name);
+    for (i, field) in fields.iter().enumerate(){
+        initial_query.extend(field.chars());
+        if i != fields.len() - 1{
+            initial_query.push_str(", ")
+        }else{
+            initial_query.push_str(") VALUES (\"")
+        }
+    }
+
+    for row in csv_file.deserialize() {
+        let row_data: HashMap<String, String> = match row{
+            Ok(d) => d,
+            Err(error) => {
+                error!("CSV Reader could not extract row from file {}", path.display());
+                return Err(error.into());
+            }
+        };
+        let column_names = row_data.keys().collect::<Vec<_>>();
+        if !fields.iter().all(|k| column_names.contains(&k)){
+            con.send(format!("{:6}", id))?;
+            rc.send(id)?;
+            error!("There is a missing field in the data file corresponding to the following data table: {}", table_name);
+            return Err(ApplicationErrors::MissingFieldInData)        
+        }
+
+        let data = fields.iter().map(|column| row_data.get(column).expect("There is a missing value in a CSV row").clone()).collect::<Vec<_>>();
+        let mut query_buffer = String::with_capacity(fields.iter().map(|f| f.len()).sum::<usize>() + 100);
+        query_buffer.extend(initial_query.chars());
+        for (i,d) in data.iter().enumerate(){
+            query_buffer.extend(d.chars());
+            if i != data.len() - 1{
+                query_buffer.push_str("\", \"")
+            }else{
+                query_buffer.push_str("\");")
+            }
+        }
+        con.send(query_buffer)?;
+    }
+
+    // DELETE duplicates
+    let delete = query_remove_duplicates(&table_name, &fields);
+    con.send(delete)?;
+    
+    // End Transmision.
     con.send(format!("{:6}", id))?;
     rc.send(id)?;
     Ok(())
+}
+
+fn query_remove_duplicates(table: &String, fields: &Vec<String>) -> String{
+    let mut delete_query = format!("DELETE FROM \"{}\" WHERE rowid NOT IN ( SELECT min(rowid) FROM \"{}\" GROUP BY ", &table,&table) ;
+    for (i, field) in fields.iter().enumerate(){
+        delete_query.extend(field.chars());
+        if i != fields.len() - 1{
+            delete_query.push_str(", ");
+        }else{
+            delete_query.push_str(");");
+        }
+    }
+    delete_query
+
 }

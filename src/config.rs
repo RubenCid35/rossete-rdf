@@ -94,7 +94,7 @@ impl AppConfiguration{
 
         Self{
             file_specs: collections::HashMap::with_capacity(2),
-            memory_threshold: 500,
+            memory_threshold: 500, // 500
             threads: [3;3],
             output_encoding: encoding_rs::UTF_8,
             output_path,
@@ -210,8 +210,8 @@ impl AppConfiguration{
                         current_data.set_delimiter(del);
                     }
                     if file.has_key("header") && file["header"].is_number(){
-                        let header = file["header"].as_u32().unwrap_or(0);
-                        current_data.set_header_pos(header);
+                        let header = file["header"].as_bool().unwrap_or(true);
+                        current_data.set_header(header);
                     }
                     file_data.insert(path, current_data);
                 }
@@ -229,7 +229,7 @@ impl AppConfiguration{
 pub struct FileSpecs{
     // CSV Stuff
     delimiter: char,
-    header: u32,
+    has_header: bool,
     // Common Stuff
     used_encoding: &'static Encoding,
     file_type: AcceptedType
@@ -241,7 +241,7 @@ impl std::fmt::Debug for FileSpecs{
         writeln!(f, "    -  File Type      : {:?}", self.file_type)?;
         writeln!(f, "    +  CSV Related ----------------------------------")?;
         writeln!(f, "    -  Delimiter      : {}", self.delimiter)?;
-        writeln!(f, "    -  Header Position: {}", self.header)
+        writeln!(f, "    -  Has Header     : {}", self.has_header)
         
     }
 }
@@ -252,7 +252,7 @@ impl std::default::Default for FileSpecs{
     fn default() -> Self {
         Self{
             delimiter: ',',
-            header: 0,
+            has_header: true,
             used_encoding: encoding_rs::UTF_8,
             file_type: AcceptedType::CSV
         }
@@ -260,15 +260,15 @@ impl std::default::Default for FileSpecs{
 }
 impl FileSpecs{
 
-    pub fn get_encoding(&self) -> &Encoding{
+    pub fn get_encoding(&self) -> &&'static Encoding{
         &self.used_encoding
     }
     pub fn get_delimiter(&self) -> char{
         self.delimiter
     }
     
-    pub fn get_header_pos(&self) -> u32{
-        self.header
+    pub fn get_has_header(&self) -> bool{
+        self.has_header
     }
     pub fn get_file_type(&self) -> &AcceptedType{
         &self.file_type
@@ -279,8 +279,8 @@ impl FileSpecs{
         self
     }
 
-    pub fn set_header_pos(&mut self, header: u32) -> &mut Self{
-        self.header = header;
+    pub fn set_header(&mut self, header: bool) -> &mut Self{
+        self.has_header = header;
         self
     }
 
@@ -291,13 +291,26 @@ impl FileSpecs{
 
     pub fn set_file_type(&mut self, file_type: AcceptedType) -> &mut Self{
         self.file_type = file_type;
+        let delimiter = match self.file_type{
+            AcceptedType::CSV => ',',
+            AcceptedType::TSV => '\t',
+            _ => ' '
+        };
+        self.set_delimiter(delimiter);
+
         self
     }
 
-    pub fn from_no_csv(&self, encoding: Option<&'static Encoding>, file_type: AcceptedType) -> Self{
+    pub fn from_other(&self, encoding: Option<&'static Encoding>, file_type: AcceptedType) -> Self{
+        let delimiter = match file_type{
+            AcceptedType::CSV => ',',
+            AcceptedType::TSV => '\t',
+            _ => ' '
+        };
+
         Self{
-            delimiter: ' ',
-            header: 0,
+            delimiter,
+            has_header: false,
             used_encoding: encoding.unwrap_or(encoding_rs::UTF_8),
             file_type
         }

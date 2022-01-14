@@ -61,7 +61,8 @@ that are already in.
 | SQLite Database  |  &#x2613; |  &#x2613; |    
 | JSON format      |  &#x2611; |  &#x2613; |
 | XML Format       |  &#x2613; |  &#x2613; |
-| CSV Format       |  &#x2611; |  &#x2613; |
+| CSV Format       |  &#x2611; |  &#x2611; |
+| TSV Format       |  &#x2611; |  &#x2611; |
 | Others           |  &#x2613; |  &#x2613; |
 
 ## Supported Output Formats

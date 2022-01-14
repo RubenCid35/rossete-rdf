@@ -14,16 +14,19 @@ pub enum ApplicationErrors{
     FilePermissionDenied,
     FileCantWrite,
     ActionInterrumped,
-
+    FailToParseCSVData,
+    
     // Configuration Errors
     MissingFilePathInConfiguration,
     InvalidDataEntry,
     IncorrectJsonFile,
+
     // Database Errors
     CantOpenDatabase,
     DataBaseDidntReceivedData,
     FailTowriteInDataBase,
     FailToReadInDataBase,
+    MissingFieldInData,
 
     // Reading Mapping Errors.
     PrefixActionsInterrumped,
@@ -89,5 +92,11 @@ impl From<sqlite::Error> for ApplicationErrors{
     fn from(error: sqlite::Error) -> Self {
         error!("{:?}", error);
         Self::CantOpenDatabase
+    }
+}
+
+impl From<csv::Error> for ApplicationErrors{
+    fn from(_: csv::Error) -> Self {
+        Self::FailToParseCSVData
     }
 }

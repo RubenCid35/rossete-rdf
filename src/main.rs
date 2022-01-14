@@ -29,10 +29,10 @@ fn main() -> ResultApp<()>{
 
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.ttl");
-    let config_file = path::PathBuf::from("config_example.json");
+    let _config_file = path::PathBuf::from("config_example.json");
     let debug = false;
 
-    let mut configuration = config::get_configuration(&output_file, Some(config_file));
+    let mut configuration = config::get_configuration(&output_file, None);
 
     if debug{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();
@@ -40,6 +40,7 @@ fn main() -> ResultApp<()>{
     if configuration.debug_mode(){
         println!("{:?}", configuration);
     }
+
 
     // CLI Input
     let file_name = path::PathBuf::from("./examples/mappings");
@@ -57,8 +58,10 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
-    
+
+    let now = Instant::now();
     let db = input::read_store_data_files(&config, data_fields)?; 
+    time_info("Reading and Storing Data Files", now);
 
     Ok(())
 }

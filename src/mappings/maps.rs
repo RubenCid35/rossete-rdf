@@ -95,12 +95,40 @@ impl Mapping{
             let part_fields = element.get_fields();
             fields.extend(part_fields);
         }
-        fields
+        // Append the iterator if data file requieres a path (JSON, XML)
+        let iterator = match self.get_logical_source(){
+            parts::Parts::LogicalSource{iterator, ..} => iterator.clone(),
+            _ => String::new()
+        };
+
+        if iterator.is_empty(){ // CSV / TSV Case (most common)
+            return fields
+        }else{
+            let new_fields = fields.iter().map(|field| {
+                let mut new_iter = iterator.clone();
+                new_iter.push('|');
+                new_iter.push_str(&field);
+                new_iter
+            })
+            .collect::<std::collections::HashSet<_>>();
+            new_fields
+        }
+
     }
 
     pub fn add_component(&mut self, component: parts::Parts){
         self.components.push(component);
     }
+
+    fn get_logical_source(&self) -> &parts::Parts{
+        if let Some(l) = self.components.iter().find(|&p| p.is_logicalsource()){
+            l
+        }else{
+            crate::error!("The map {} has no logical source", self.identificador);
+            panic!("{:?}", ApplicationErrors::MissingLogicalSource)
+        }
+    }
+
 }
 
 impl fmt::Debug for Mapping{
