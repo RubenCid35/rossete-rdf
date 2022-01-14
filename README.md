@@ -22,8 +22,7 @@ USAGE:
 
 FLAGS:
     -w, --clear      Delete the database if it was created while reading the databases
-    -c, --close      If active; the files used are closed.
-    -d, --debug      Set the debug mode. It displays more information in the intermediarry parts
+    -d, --debug      Set the debug mode. It displays more information in the intermediary parts
     -h, --help       Displays this message
     -V, --version    Prints version information
 
@@ -32,6 +31,7 @@ OPTIONS:
         --mappings <MAPPINGS>    Used mapping in the process of generated rdf. Values: Folder or a file
         --output <OUTPUT>        File name where the output file is written
 ```
+
 ## Requirements
 To use this executable, you need to install rust and cargo in your computer, so you can compile this repository.
 To check if you have them, use this commands:
@@ -45,7 +45,7 @@ To compile it, you can use the following command in  your terminal and you have 
 ```
 cargo build --release // This will create an executable in the newly created target/release folder
 ```
-You can take the binary as a standalone binary and move whereever you want to.
+You can take the binary as a standalone binary and move it whereever you want to.
 
 <br>
 
@@ -56,22 +56,22 @@ that are already in.
 ## Supported Input Formats
 
 | Format           | Working in Progress  | Ready     |
-|------------------|-----------|-----------|
-| MySQL Database   |  &#x2613; |  &#x2613; |    
-| SQLite Database  |  &#x2613; |  &#x2613; |    
-| JSON format      |  &#x2611; |  &#x2613; |
-| XML Format       |  &#x2613; |  &#x2613; |
-| CSV Format       |  &#x2611; |  &#x2611; |
-| TSV Format       |  &#x2611; |  &#x2611; |
-| Others           |  &#x2613; |  &#x2613; |
+|------------------|----------------------|-----------|
+| MySQL Database   |  &#x2613;            |  &#x2613; |    
+| SQLite Database  |  &#x2613;            |  &#x2613; |    
+| JSON format      |  &#x2611;            |  &#x2613; |
+| XML Format       |  &#x2611;            |  &#x2613; |
+| CSV Format       |  &#x2611;            |  &#x2611; |
+| TSV Format       |  &#x2611;            |  &#x2611; |
+| Others           |  &#x2613;            |  &#x2613; |
 
 ## Supported Output Formats
 
-| Format           | Working in Progress   | Ready     |
-|------------------|-----------|-----------|
-| Turttle          |  &#x2613; |  &#x2613; |    
-| TriplesMap       |  &#x2611; |  &#x2613; |    
-| Yarm             |  &#x2613; |  &#x2613; |
+| Format           | Working in Progress  | Ready     |
+|------------------|----------------------|-----------|
+| Turttle          |  &#x2613;            |  &#x2613; |    
+| TriplesMap       |  &#x2611;            |  &#x2613; |    
+| Yarm             |  &#x2613;            |  &#x2613; |
 
 # Autors:
 

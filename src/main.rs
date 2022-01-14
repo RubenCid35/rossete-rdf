@@ -29,10 +29,10 @@ fn main() -> ResultApp<()>{
 
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.ttl");
-    let _config_file = path::PathBuf::from("config_example.json");
+    let config_file = path::PathBuf::from("config_example.json");
     let debug = false;
 
-    let mut configuration = config::get_configuration(&output_file, None);
+    let mut configuration = config::get_configuration(&output_file, Some(config_file));
 
     if debug{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();
@@ -195,7 +195,7 @@ TODO: Better flag/option descriptions
                     Arg::with_name("debug")
                     .short("d")
                     .long("debug")
-                    .help("Set the debug mode. It displays more information in the intermediarry parts")
+                    .help("Set the debug mode. It displays more information in the intermediary parts")
                     .case_insensitive(true)
                 )
                 .arg(
@@ -204,10 +204,5 @@ TODO: Better flag/option descriptions
                     .long("clear")
                     .help("Delete the database if it was created while reading the databases")
                 )
-                .arg(
-                    Arg::with_name("close")
-                    .short("c")
-                    .long("close")
-                    .help("If active; the files used are closed.")
-                ).get_matches();
+                .get_matches();
  */

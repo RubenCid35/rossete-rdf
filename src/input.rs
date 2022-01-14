@@ -14,6 +14,8 @@ use sqlite;
 
 use std::collections::{HashMap, HashSet};
 
+const IN_FILE: bool = true; // DEBUG: Data
+
 pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<sqlite::Connection>{
     let mut fi = Vec::new();
     let mut paths = Vec::new();
@@ -50,13 +52,14 @@ fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> 
             file.metadata().expect("No Metadata Was Found: Size of File is needed").len() as usize
         })
         .sum();
+
     let total_memory_usage = total_memory_usage  / 1048576; // To Transform the number of bytes to megabytes (MB) 
 
-    if config.can_be_in_memory_db(total_memory_usage){
-        info!("All the files requiered {} MB, TMP Database will be created in memory", total_memory_usage);
+    if !IN_FILE && config.can_be_in_memory_db(total_memory_usage){
+        info!("All the files is estimated to requiere {} MB, TMP Database will be created in memory", total_memory_usage);
         Ok(":memory:")
     }else{
-        info!("All the files requiered {} MB, TMP Database will be created in a sqlite DB File", total_memory_usage);
+        info!("All the files is estimated to requiere {} MB, TMP Database will be created in a sqlite DB File", total_memory_usage);
         // If it was already created
         if PathBuf::from("./rossete-tmp").exists(){
             crate::warning!("Previous TMP Storage DB was Found, Proceeding to replace it with new one");
@@ -72,7 +75,6 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
     let mut left_files = total_files;
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
-            // println!("{}", query);
             if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
                 info!("File with ID: {} was successfully readed and stored in the data base", query);
                 left_files -= 1;
@@ -97,13 +99,13 @@ fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::Fil
         let file_type = files[file].get_file_type();
         let table_name = get_table_name(file, file_type);
         let mut query = String::with_capacity(1000);
-        query.extend(format!("CREATE TABLE \"{}\" (", table_name).chars());
+        query.extend(format!("CREATE TABLE \"{}\" (\"", table_name).chars());
         for (i, field) in input_fields[file].iter().enumerate(){
             query.extend(field.chars());
             if i != input_fields[file].len() - 1{
-                query.push_str(" TEXT, ");
+                query.push_str("\" TEXT, \"");
             }else{
-                query.push_str(" TEXT);")
+                query.push_str("\" TEXT);")
             }
         }
         // println!("{}", query);
@@ -142,9 +144,11 @@ fn reading_procedure(config: &config::AppConfiguration, con: mpsc::Sender<String
                 }else if file_type.is_tsv(){ // It is the same but it uses tabs
                     read_csv(new_id, path, specs, conn, rc, fields)
                 }else if file_type.is_json(){ // TODO
+                    conn.send(format!("{:6}", new_id))?;
                     rc.send(new_id)?;
                     Ok(())
                 }else if file_type.is_xml(){ // TODO
+                    conn.send(format!("{:6}", new_id))?;
                     rc.send(new_id)?;
                     Ok(())
                 }
@@ -189,13 +193,13 @@ fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
         .has_headers(specs.get_has_header())
         .from_reader(file_reader);
 
-    let mut initial_query = format!("INSERT INTO \"{}\" (", table_name);
+    let mut initial_query = format!("INSERT INTO \"{}\" (\"", table_name);
     for (i, field) in fields.iter().enumerate(){
         initial_query.extend(field.chars());
         if i != fields.len() - 1{
-            initial_query.push_str(", ")
+            initial_query.push_str("\", \"")
         }else{
-            initial_query.push_str(") VALUES (\"")
+            initial_query.push_str("\") VALUES (\"")
         }
     }
 

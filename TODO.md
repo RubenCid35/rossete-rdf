@@ -2,6 +2,8 @@
 ### ERRORS
 #### Major Errors
 
+- [ ] FIXME: JSON and XML Field Paths need to be change to work as columns
+
 ##### Minor Errors
 - [x] FIXME: Fix the debug trait of the objectMap, the number of '[]' is incorrect and the tabs dont match with the rest.
 - [ ] FIXME: Better Comment Capture in the sentences with the mapping declaration and urls.

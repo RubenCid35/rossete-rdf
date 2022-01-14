@@ -9,7 +9,7 @@
 <#LocationMapping_CSV>
     rml:logicalSource [
         rml:source "./examples/data/file-1.csv" ;
-        rml:referenceFormulation ql:TSV
+        rml:referenceFormulation ql:CSV
     ];
     rr:subjectMap [
         rr:template "http://loc.example.com/latlong/{latitude},{longitude}";

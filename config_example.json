@@ -4,7 +4,7 @@
             "path": "./examples/data/file-1.csv",
             "file-type": "csv",
             "delimiter": ";",
-            "header": false
+            "header": true
         }
     ],
     "threads": {
@@ -12,7 +12,7 @@
         "parsing": 2,
         "writting": 2
     },
-    "max-memory-usage": 1000,
+    "max-memory-usage": 0,
     "output-encoding": "utf-8",
     "output-format": "TTL"
 }
