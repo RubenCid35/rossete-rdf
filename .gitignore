@@ -3,7 +3,7 @@
 Cargo.lock
 
 # No subir la base de datos temporal
-/rossete-tmp 
+/rossete-tmp/data_tmp.sqlite 
 
 # Notas: Mejor no subirlas a internet
 *.txt
