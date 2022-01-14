@@ -2,6 +2,8 @@
 /target
 Cargo.lock
 
+# No subir la base de datos temporal
+/rossete-tmp 
 
 # Notas: Mejor no subirlas a internet
 *.txt
