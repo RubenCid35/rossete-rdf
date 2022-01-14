@@ -9,7 +9,6 @@
 
 ### PERFORMANCE IMPROVEMENTS
 
-
 ### PARSER TODOS
 - [ ] TODO: Add the mapping name in the errors of the parser. Focus in the subelements.
 - [ ] TODO: Add less used keywords(See alse: https://rml.io/specs/rml/#vocabulary)

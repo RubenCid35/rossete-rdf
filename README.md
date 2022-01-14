@@ -1,6 +1,7 @@
 # ROSSETE RDF
 
 This application is intended to convert the data stored in a database/CSV/JSON/XML/etc to RDF using a RML mapping file or list of them.
+<br>
 
 # Usage
 
@@ -31,7 +32,6 @@ OPTIONS:
         --mappings <MAPPINGS>    Used mapping in the process of generated rdf. Values: Folder or a file
         --output <OUTPUT>        File name where the output file is written
 ```
-
 ## Requirements
 To use this executable, you need to install rust and cargo in your computer, so you can compile this repository.
 To check if you have them, use this commands:
@@ -47,7 +47,13 @@ cargo build --release // This will create an executable in the newly created tar
 ```
 You can take the binary as a standalone binary and move whereever you want to.
 
-# Supported Input Types
+<br>
+
+# Supported Formats at the current moment
+This are the input data files formats and the  output formats that are being addeded to the app and the ones
+that are already in.
+
+## Supported Input Formats
 
 | Format           | Working in Progress  | Ready     |
 |------------------|-----------|-----------|
@@ -58,7 +64,7 @@ You can take the binary as a standalone binary and move whereever you want to.
 | CSV Format       |  &#x2611; |  &#x2613; |
 | Others           |  &#x2613; |  &#x2613; |
 
-# Supported Output Types
+## Supported Output Formats
 
 | Format           | Working in Progress   | Ready     |
 |------------------|-----------|-----------|
