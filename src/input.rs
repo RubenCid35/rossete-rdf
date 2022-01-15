@@ -73,6 +73,7 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
     let mut left_files = total_files;
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
+            // println!("{}", &query);
             if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
                 info!("File with ID: {} was successfully readed and stored in the data base", query);
                 left_files -= 1;
@@ -141,16 +142,14 @@ fn reading_procedure(config: &config::AppConfiguration, con: mpsc::Sender<String
                     read_csv(new_id, path, specs, conn, rc, fields)
                 }else if file_type.is_tsv(){ // It is the same but it uses tabs
                     read_csv(new_id, path, specs, conn, rc, fields)
-                }else if file_type.is_json(){ // TODO
-                    conn.send(format!("{:6}", new_id))?;
-                    rc.send(new_id)?;
-                    Ok(())
-                }else if file_type.is_xml(){ // TODO
-                    conn.send(format!("{:6}", new_id))?;
-                    rc.send(new_id)?;
-                    Ok(())
+                }else if file_type.is_json(){
+                    read_json(new_id, path, specs, conn, rc, fields)
+                }else if file_type.is_xml(){
+                    read_xml(new_id, path, specs, conn, rc, fields)
                 }
                 else{
+                    // No idea Scenario
+                    conn.send(format!("{:6}", new_id))?;
                     rc.send(new_id)?;
                     Ok(())
                 }
@@ -241,14 +240,56 @@ fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
     Ok(())
 }
 
+fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>, fields: Vec<String>) -> ResultApp<()>{
+
+    let table_name = get_table_name(&path, specs.get_file_type());
+    // TODO
+    // Read File
+
+    
+    // Divide field by the iterator that uses
+
+    // Iterate by the iterators and get the need data
+
+    // Remove duplicates
+    let remove_duplicates = query_remove_duplicates(&table_name, &fields);
+    con.send(remove_duplicates)?;
+
+    // End Transmission
+    con.send(format!("{:6}", id))?;
+    rc.send(id)?;
+    Ok(())
+}
+
+fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>, fields: Vec<String>) -> ResultApp<()>{
+    let table_name = get_table_name(&path, specs.get_file_type());
+    // TODO
+    // Read File
+
+    
+    // Divide field by the iterator that uses
+
+    // Iterate by the iterators and get the need data
+
+    // Remove duplicates
+    let remove_duplicates = query_remove_duplicates(&table_name, &fields);
+    con.send(remove_duplicates)?;
+
+    // End Transmission
+    con.send(format!("{:6}", id))?;
+    rc.send(id)?;
+    Ok(())
+}
+
+
 fn query_remove_duplicates(table: &String, fields: &Vec<String>) -> String{
-    let mut delete_query = format!("DELETE FROM \"{}\" WHERE rowid NOT IN ( SELECT min(rowid) FROM \"{}\" GROUP BY ", &table,&table) ;
+    let mut delete_query = format!("DELETE FROM \"{}\" WHERE rowid NOT IN ( SELECT min(rowid) FROM \"{}\" GROUP BY \"", &table,&table) ;
     for (i, field) in fields.iter().enumerate(){
         delete_query.extend(field.chars());
         if i != fields.len() - 1{
-            delete_query.push_str(", ");
+            delete_query.push_str("\", \"");
         }else{
-            delete_query.push_str(");");
+            delete_query.push_str("\");");
         }
     }
     delete_query
