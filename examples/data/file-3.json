@@ -1,5 +1,6 @@
 {
-    "venue": [{
+    "venue": [
+        {
             "latitude": "50.901389",
             "longitude": "4.484444",
             "location": {

@@ -14,8 +14,6 @@ use sqlite;
 
 use std::collections::{HashMap, HashSet};
 
-const IN_FILE: bool = true; // DEBUG: Data
-
 pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<sqlite::Connection>{
     let mut fi = Vec::new();
     let mut paths = Vec::new();
@@ -55,7 +53,7 @@ fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> 
 
     let total_memory_usage = total_memory_usage  / 1048576; // To Transform the number of bytes to megabytes (MB) 
 
-    if !IN_FILE && config.can_be_in_memory_db(total_memory_usage){
+    if !config.debug_mode() && config.can_be_in_memory_db(total_memory_usage){
         info!("All the files is estimated to requiere {} MB, TMP Database will be created in memory", total_memory_usage);
         Ok(":memory:")
     }else{

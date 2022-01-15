@@ -1,5 +1,6 @@
 
 use std::collections;
+use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
 
@@ -11,7 +12,10 @@ use crate::{error, warning, info, time_info};
 use std::io::Read;
 use std::time::Instant;
 
-use encoding_rs::Encoding;
+use encoding_rs::{Encoding};
+
+use serde_json;
+use jsonpath::Selector;
 
 #[derive(Debug)]
 pub enum OutputFormat{
@@ -137,6 +141,7 @@ impl AppConfiguration{
         self.threads[1]
     }
 
+    #[allow(dead_code)]
     pub fn get_writing_theads(&self) -> usize{
         self.threads[2]
     }
@@ -145,82 +150,100 @@ impl AppConfiguration{
         self.memory_threshold >= total_memory_usage
     }
 
-    pub fn from_json(output_path: PathBuf, json_data: json::JsonValue) -> ResultApp<Self>{
+    pub fn from_json(output_path: PathBuf, json_data: serde_json::Value) -> ResultApp<Self>{
         let mut tmp = Self::new(output_path);
-        
-        tmp.file_specs = Self::parse_file_data(&json_data)?;
-        
-        if json_data.has_key("max-memory-usage") && json_data["max-memory-usage"].is_number(){
-            tmp.memory_threshold = json_data["max-memory-usage"].as_usize().unwrap_or(500);
-        }
-        
-        if json_data.has_key("output-encoding") && json_data["output-encoding"].is_string(){
-            let enc = json_data["output-encoding"].as_str().unwrap().to_uppercase();
-            tmp.output_encoding = get_encoding_from_str(&enc);
-        }
-        if json_data.has_key("output-format") && json_data["output-format"].is_string(){
-            tmp.output_format = OutputFormat::from_str(&json_data["output-format"].as_str().unwrap().to_lowercase());
-        }
-        if json_data.has_key("threads") && json_data["threads"].is_object(){
-            let threads = &json_data["threads"];
-            let mut used_threads = [1;3];
-            if threads.has_key("reading") && threads["reading"].is_number(){
-                used_threads[1] = threads["reading"].as_usize().unwrap();
-            }
-            if threads.has_key("parsing") && threads["parsing"].is_number(){
-                used_threads[0] = threads["parsing"].as_usize().unwrap();
-            }
-            if threads.has_key("writting") && threads["writting"].is_number(){
-                used_threads[2] = threads["writting"].as_usize().unwrap()
-            }
-            tmp.threads = used_threads;
-        }   
+        tmp.file_specs = Self::parse_file_specs(&json_data)?;
+        tmp.threads = Self::parse_threads(&json_data)?;
 
+        let sel_memory = Selector::new("$.max-memory-usage").unwrap();
+        tmp.memory_threshold = sel_memory.find(&json_data)
+            .map(|t| t.as_i64().unwrap_or(500) as usize)
+            .nth(0).unwrap_or(500);
+
+        // OUTPUT FORMAT
+        let sel_output_format = Selector::new("$.output-format").unwrap();
+        let output = sel_output_format.find(&json_data)
+            .map(|t| OutputFormat::from_str(&t.as_str().unwrap().to_lowercase()))
+            .nth(0);
+        if let Some(format) = output{
+            tmp.output_format = format;
+        }
+
+        // OUTPUT ENCODING
+        let sel_output_encoding = Selector::new("$.output-encoding").unwrap();
+        let output = sel_output_encoding.find(&json_data)
+            .map(|t| get_encoding_from_str(&t.as_str().unwrap().to_lowercase()))
+            .nth(0);
+        if let Some(format) = output{
+            tmp.output_encoding = format;
+        }
+                
         Ok(tmp)
     }
-    fn parse_file_data(json_data: &json::JsonValue) -> ResultApp<collections::HashMap<PathBuf, FileSpecs>>{
-        let mut file_data: collections::HashMap<PathBuf, FileSpecs> = collections::HashMap::new();
-        if json_data.has_key("files-data") && json_data["files-data"].is_array(){
-            if let json::JsonValue::Array(files) = &json_data["files-data"] {
-                for (i, file) in files.iter().enumerate(){
-                    // Obtain path (Obligatory)
-                    let path;
-                    let mut current_data = FileSpecs::default();
-                    if !file.has_key("path") || !file["path"].is_string(){
-                        error!("The File {} In the File Data Configuration Requieres a \"path\" key-value that is a string type", i);
-                        return Err(ApplicationErrors::MissingFilePathInConfiguration);
-                    }
-                    path = PathBuf::from(file["path"].as_str().unwrap());
 
-                    // Type
-                    if file.has_key("type") && file["type"].is_string(){
-                        current_data.set_file_type(AcceptedType::from_str(&file["type"].as_str().unwrap().to_lowercase()));
-                    }else{
-                        if let Some(ext) =  path.extension(){
-                            current_data.set_file_type(AcceptedType::from_str(&ext.to_str().unwrap().to_lowercase()));
-                        }
-                    }
+    pub fn parse_file_specs(json_data: &serde_json::Value) -> ResultApp<HashMap<PathBuf, FileSpecs>>{
+        let mut specs = HashMap::new();
+        
+        if let Some(files) = json_data.get("files-data"){
+            if !files.is_array(){
+                error!("The files-data field must be an array of objects. ");
+                return Err(ApplicationErrors::IncorrectFieldType)
+            }
+            for f in files.as_array().unwrap(){
+                let path = if let Some(p) = f.get("path"){
+                    PathBuf::from(p.as_str().unwrap())
+                }else{
+                    warning!("The field \"path\" is requiered in the configuration file to access the file");
+                    return Err(ApplicationErrors::MissingFilePathInConfiguration)
+                };
 
-                    if file.has_key("encoding") && file["encoding"].is_string(){
-                        let enc = &file["encoding"].as_str().unwrap().to_uppercase();
-                        current_data.set_encoding(get_encoding_from_str(enc));
-                    }
-                    if file.has_key("delimiter") && file["delimiter"].is_string(){
-                        let del = file["delimiter"].as_str().unwrap().chars().next().unwrap_or(',');
-                        current_data.set_delimiter(del);
-                    }
-                    if file.has_key("header") && file["header"].is_number(){
-                        let header = file["header"].as_bool().unwrap_or(true);
-                        current_data.set_header(header);
-                    }
-                    file_data.insert(path, current_data);
+                let mut current_spec = FileSpecs::default(); 
+                // ENCODING
+                if let Some(d) = f.get("encoding"){
+                    current_spec.set_encoding(get_encoding_from_str(&d.as_str().unwrap().to_lowercase()));
                 }
-            }else{
-                error!("The Files Data in the Configuration must be an Array");
-                return Err(ApplicationErrors::InvalidDataEntry);
+                // TYPE
+                if let Some(d) = f.get("file-type"){
+                    current_spec.set_file_type(AcceptedType::from_str(&d.as_str().unwrap().to_lowercase()));
+                }
+                // Delimiter
+                if let Some(d) = f.get("delimiter"){
+                    current_spec.set_delimiter(d.as_str().unwrap().chars().nth(0).unwrap());
+                }
+                // header
+                if let Some(d) = f.get("header"){
+                    current_spec.set_header(d.as_bool().unwrap());
+                }
+                specs.insert(path, current_spec);
             }
         }
-        Ok(file_data)
+
+        Ok(specs)
+    }
+
+    pub fn parse_threads(json_data: &serde_json::Value) -> ResultApp<[usize;3]>{
+        let mut threads: [usize;3] = [5;3];
+        if let Some(data) = json_data.get("threads"){
+            if !data.is_object(){
+                error!("The Threads Option is requiered to be an object.");
+                return Err(ApplicationErrors::IncorrectFieldType)
+            }
+            if let Some(read) = data.get("reading"){
+                let num = read.as_i64().unwrap() as usize;
+                threads[1] = num;
+            }
+            if let Some(parse) = data.get("parsing"){
+                let num = parse.as_i64().unwrap() as usize;
+                threads[0] = num;
+            }
+            if let Some(writing) = data.get("writing"){
+                let num = writing.as_i64().unwrap() as usize;
+                threads[2] = num;
+            }
+        
+        }
+
+        Ok(threads)
     }
 }
 
@@ -240,7 +263,7 @@ impl std::fmt::Debug for FileSpecs{
         writeln!(f, "    -  File Encoding  : {}", self.used_encoding.name())?;
         writeln!(f, "    -  File Type      : {:?}", self.file_type)?;
         writeln!(f, "    +  CSV Related ----------------------------------")?;
-        writeln!(f, "    -  Delimiter      : {}", self.delimiter)?;
+        writeln!(f, "    -  Delimiter      : '{}'", self.delimiter)?;
         writeln!(f, "    -  Has Header     : {}", self.has_header)
         
     }
@@ -301,6 +324,7 @@ impl FileSpecs{
         self
     }
 
+    #[allow(dead_code)]
     pub fn from_other(&self, encoding: Option<&'static Encoding>, file_type: AcceptedType) -> Self{
         let delimiter = match file_type{
             AcceptedType::CSV => ',',
@@ -386,7 +410,7 @@ pub fn get_configuration(output_file: &PathBuf, config_path: Option<PathBuf>) ->
                 return AppConfiguration::new(output_file.clone())
             }
             
-            let json_config = match json::parse(&json_tmp){
+            let json_config = match serde_json::from_str(&json_tmp){
                 Ok(json) => json,
                 Err(error) => {
                     error!("Error parsing text to json values: {:?}", error);

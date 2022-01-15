@@ -60,9 +60,10 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
 
     let now = Instant::now();
-    let db = input::read_store_data_files(&config, data_fields)?; 
+    let _db = input::read_store_data_files(&config, data_fields)?; 
     time_info("Reading and Storing Data Files", now);
 
+    
     Ok(())
 }
 

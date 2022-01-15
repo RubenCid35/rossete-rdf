@@ -6,6 +6,7 @@ use std::io;
 use std::sync::mpsc;
 
 use crate::error;
+use roxmltree as xml;
 
 #[derive(Debug, Clone)]
 pub enum ApplicationErrors{
@@ -18,8 +19,10 @@ pub enum ApplicationErrors{
     
     // Configuration Errors
     MissingFilePathInConfiguration,
+    IncorrectFieldType,
     InvalidDataEntry,
     IncorrectJsonFile,
+    IncorrectXMLFile,
 
     // Database Errors
     CantOpenDatabase,
@@ -75,12 +78,6 @@ impl<T> From<std::sync::PoisonError<T>> for ApplicationErrors{
         Self::PrefixActionsInterrumped
     }
 }
-impl From<json::Error> for ApplicationErrors{
-    fn from(_: json::Error) -> Self {
-        error!("The Configuration File Is Incorrect. It couldn't be parsed to JSON Values");
-        Self::IncorrectJsonFile
-    }
-}
 
 impl From<Box<dyn Any + Send>> for ApplicationErrors{
     fn from(_: Box<dyn Any + Send>) -> Self {
@@ -98,5 +95,11 @@ impl From<sqlite::Error> for ApplicationErrors{
 impl From<csv::Error> for ApplicationErrors{
     fn from(_: csv::Error) -> Self {
         Self::FailToParseCSVData
+    }
+}
+
+impl From<xml::Error> for ApplicationErrors{
+    fn from(_: xml::Error) -> Self{
+        Self::IncorrectXMLFile
     }
 }

@@ -5,14 +5,23 @@
             "file-type": "csv",
             "delimiter": ";",
             "header": true
+        },
+        {
+            "path": "./examples/data/file-2.xml",
+            "file-type": "xml"
+        },
+        
+        {
+            "path": "./examples/data/file-3.json",
+            "file-type": "json"
         }
     ],
     "threads": {
         "reading": 5,
         "parsing": 2,
-        "writting": 2
+        "writing": 2
     },
-    "max-memory-usage": 0,
+    "max-memory-usage": 100,
     "output-encoding": "utf-8",
     "output-format": "TTL"
 }
