@@ -80,12 +80,11 @@ impl Mapping{
                 _ => None
             }
         });
-        if let Some(&file) = source{
-            return Ok(file)
-        }else{
-            return Err(ApplicationErrors::MissingLogicalSource);
+        match source {
+            Some(&file) => Ok(file),
+            None => Err(ApplicationErrors::MissingLogicalSource),
         }
-        
+
     }
 
     // Request all the fields of the data file that are going to be acessed
@@ -106,7 +105,7 @@ impl Mapping{
         }else{
             let new_fields = fields.iter().map(|field| {
                 let mut new_iter = iterator.clone();
-                new_iter.push('|');
+                new_iter.push_str("||");
                 new_iter.push_str(&field);
                 new_iter
             })

@@ -1,21 +1,5 @@
 {
-    "files-data": [
-        {
-            "path": "./examples/data/file-1.csv",
-            "file-type": "csv",
-            "delimiter": ";",
-            "header": true
-        },
-        {
-            "path": "./examples/data/file-2.xml",
-            "file-type": "xml"
-        },
-        
-        {
-            "path": "./examples/data/file-3.json",
-            "file-type": "json"
-        }
-    ],
+    "files-data": [],
     "threads": {
         "reading": 5,
         "parsing": 2,

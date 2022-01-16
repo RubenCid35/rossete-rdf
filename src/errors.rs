@@ -22,7 +22,9 @@ pub enum ApplicationErrors{
     IncorrectFieldType,
     InvalidDataEntry,
     IncorrectJsonFile,
+    IncorrectJsonPath,
     IncorrectXMLFile,
+    IncorrectXPath,
 
     // Database Errors
     CantOpenDatabase,
@@ -103,3 +105,15 @@ impl From<xml::Error> for ApplicationErrors{
         Self::IncorrectXMLFile
     }
 }
+
+impl From<serde_json::Error> for ApplicationErrors{
+    fn from(_ : serde_json::Error) -> Self{
+        Self::IncorrectJsonFile
+    }
+}
+impl From<jsonpath_lib::JsonPathError> for ApplicationErrors{
+    fn from(_ : jsonpath_lib::JsonPathError) -> Self{
+        Self::IncorrectJsonPath
+    }
+}
+

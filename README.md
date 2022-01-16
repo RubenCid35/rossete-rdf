@@ -59,8 +59,8 @@ that are already in.
 |------------------|----------------------|-----------|
 | MySQL Database   |  &#x2613;            |  &#x2613; |    
 | SQLite Database  |  &#x2613;            |  &#x2613; |    
-| JSON format      |  &#x2611;            |  &#x2613; |
 | XML Format       |  &#x2611;            |  &#x2613; |
+| JSON format      |  &#x2611;            |  &#x2611; |
 | CSV Format       |  &#x2611;            |  &#x2611; |
 | TSV Format       |  &#x2611;            |  &#x2611; |
 | Others           |  &#x2613;            |  &#x2613; |

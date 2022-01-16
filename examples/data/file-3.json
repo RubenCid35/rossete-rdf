@@ -13,7 +13,7 @@
             "latitude": "51.51334",
             "longitude": "-0.08901",
             "location": {
-                "continent": "EU",
+                "continent": {},
                 "country": "GB",
                 "city": "London"
             }

@@ -13,6 +13,7 @@ use std::sync::mpsc;
 use sqlite;
 
 use std::collections::{HashMap, HashSet};
+use jsonpath_lib::selector;
 
 pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<sqlite::Connection>{
     let mut fi = Vec::new();
@@ -30,8 +31,9 @@ pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<
     let (data_tx, data_rx) = mpsc::channel();
 
     let num_files = files.len();
+    let debug = config.debug_mode();
     let handler = std::thread::spawn(move || -> ResultApp<sqlite::Connection>{
-        store_data(loc, data_rx, num_files)
+        store_data(loc, data_rx, num_files, debug)
     });
 
     create_tables(data_tx.clone(), &files, &fields)?;
@@ -68,19 +70,24 @@ fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> 
     }
 }
 
-fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: usize) -> ResultApp<sqlite::Connection>{
+fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: usize, debug: bool) -> ResultApp<sqlite::Connection>{
     let conn = sqlite::open(localization)?; // Database Connection
     let mut left_files = total_files;
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
-            // println!("{}", &query);
-            if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
+            if query.len() == 0{ // Interrumpt
+                break
+            }
+            else if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
                 info!("File with ID: {} was successfully readed and stored in the data base", query);
                 left_files -= 1;
                 if left_files == 0{
                     break
                 }
             }else{
+                if debug{ // FIXME: Debug in the Reading. This will be remove later
+                    println!("{}", &query);
+                }
                 conn.execute(query)?;
             }
             
@@ -97,8 +104,9 @@ fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::Fil
     for file in files.keys(){
         let file_type = files[file].get_file_type();
         let table_name = get_table_name(file, file_type);
+        info!("The following table was created in the database: {}", &table_name);
         let mut query = String::with_capacity(1000);
-        query.extend(format!("CREATE TABLE \"{}\" (\"", table_name).chars());
+        query.extend(format!("CREATE TABLE {} (\"", table_name).chars());
         for (i, field) in input_fields[file].iter().enumerate(){
             query.extend(field.chars());
             if i != input_fields[file].len() - 1{
@@ -114,7 +122,7 @@ fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::Fil
 }
 
 fn get_table_name(path: &PathBuf, file_type: &AcceptedType) -> String{
-    format!("db-{}-{:?}", path.file_stem().unwrap().to_str().unwrap(), file_type)
+    format!("\"db-{}-{:?}\"", path.file_stem().unwrap().to_str().unwrap(), file_type)
 }
 
 
@@ -164,7 +172,13 @@ fn reading_procedure(config: &config::AppConfiguration, con: mpsc::Sender<String
             let rc = rc_rx.recv()?;
             let thread_id = threads_id.iter().position(|x| x == &rc).expect("Thread ID was not found");
 
-            let _ = threads.remove(thread_id).join()??;
+            match threads.remove(thread_id).join()?{
+                Ok(_) => {},
+                Err(error) => {
+                    con.send(String::new())?;
+                    return Err(error)
+                } 
+            }
             threads_id.remove(thread_id);
         }
         if threads.len() == 0 && current_file >= paths.len(){
@@ -190,7 +204,7 @@ fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
         .has_headers(specs.get_has_header())
         .from_reader(file_reader);
 
-    let mut initial_query = format!("INSERT INTO \"{}\" (\"", table_name);
+    let mut initial_query = format!("INSERT INTO {} (\"", table_name);
     for (i, field) in fields.iter().enumerate(){
         initial_query.extend(field.chars());
         if i != fields.len() - 1{
@@ -244,13 +258,71 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
 
     let table_name = get_table_name(&path, specs.get_file_type());
     // TODO
-    // Read File
+    // Read File and get the parsed json.
+    let file = fs::File::open(&path)?;
+    let encoding = specs.get_encoding();
+    let file_reader = encoding_rs_io::DecodeReaderBytesBuilder::new()
+                                            .encoding(Some(encoding))
+                                            .build(file);
 
-    
+
+    let json_data: serde_json::Value = serde_json::from_reader(file_reader)?;
+
     // Divide field by the iterator that uses
-
+    let iter_field = extract_iterator(&fields);
     // Iterate by the iterators and get the need data
+    
+    let mut data_iterator = selector(&json_data);
 
+    for (ref iterator, ref associated_fields) in iter_field{
+        let iterable_data = data_iterator(iterator)?;
+        for data in iterable_data.iter(){
+            let mut field_sel = selector(data);
+            let mut init_query = format!("INSERT INTO {} (\"", &table_name); // until the insert of the data
+            let mut data_query = String::with_capacity(255);    
+            for (i, (field, col)) in associated_fields.iter().enumerate(){
+                let retrieven = field_sel(field)?;
+                if retrieven.is_empty(){
+                    if i == associated_fields.len() - 1{
+                        init_query.push_str("\") VALUES (\"");
+                        data_query.push_str(");");
+                    }
+                    continue
+                } 
+                let data_retrieven = match to_string_json(retrieven[0]){
+                    Some(data) => data,
+                    None => {
+                        if i == associated_fields.len() - 1{
+                            // remove last added chars
+                            init_query.pop();
+                            init_query.pop();
+                            init_query.pop();
+
+                            data_query.pop();
+                            data_query.pop();
+
+                            init_query.push_str(") VALUES (");
+                            data_query.push_str(");");
+                        }
+                        continue    
+                    }
+                };
+                init_query.extend(col.chars());
+                data_query.extend(data_retrieven.chars());
+
+                if i != associated_fields.len() - 1{
+                    init_query.push_str("\", \"");
+                    data_query.push_str(", ");
+
+                }else{
+                    init_query.push_str("\") VALUES (");
+                    data_query.push_str(");");
+                }
+            }
+            init_query.extend(data_query.chars());
+            con.send(init_query)?;
+        }
+    }
     // Remove duplicates
     let remove_duplicates = query_remove_duplicates(&table_name, &fields);
     con.send(remove_duplicates)?;
@@ -268,7 +340,6 @@ fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
 
     
     // Divide field by the iterator that uses
-
     // Iterate by the iterators and get the need data
 
     // Remove duplicates
@@ -281,9 +352,26 @@ fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
     Ok(())
 }
 
+fn extract_iterator(fields: &Vec<String>)  -> HashMap<String, Vec<(String, String)>>{
+    let mut iter_field = HashMap::new();
+
+    for f in fields{
+        let mut split = f.split("||");
+        let iterator = split.next().unwrap().to_string();
+        let field = split.next().unwrap().to_string();
+        let field = format!("$.{}", field);
+        let iter_cap = iter_field.entry(iterator).or_insert(Vec::new());
+        iter_cap.push((field, f.clone())); // Field, Column Name
+    }
+    
+    iter_field
+    
+}
+
+
 
 fn query_remove_duplicates(table: &String, fields: &Vec<String>) -> String{
-    let mut delete_query = format!("DELETE FROM \"{}\" WHERE rowid NOT IN ( SELECT min(rowid) FROM \"{}\" GROUP BY \"", &table,&table) ;
+    let mut delete_query = format!("DELETE FROM {} WHERE rowid NOT IN ( SELECT min(rowid) FROM {} GROUP BY \"", &table,&table) ;
     for (i, field) in fields.iter().enumerate(){
         delete_query.extend(field.chars());
         if i != fields.len() - 1{
@@ -293,5 +381,27 @@ fn query_remove_duplicates(table: &String, fields: &Vec<String>) -> String{
         }
     }
     delete_query
+
+}
+
+
+fn to_string_json(value: &serde_json::Value) -> Option<String>{
+    if value.is_array() || value.is_object() || value.is_null(){
+        return None
+    }else if value.is_string(){
+        return Some(format!("\"{}\"", value.as_str().unwrap()))
+    }else if value.is_i64(){
+        return Some(format!("\"{}\"", value.as_i64().unwrap()))
+    }else if value.is_f64(){
+        return Some(format!("\"{}\"", value.as_f64().unwrap()))
+    }else if value.is_boolean(){
+        return Some(format!("\"{}\"", value.as_bool().unwrap()))
+    }else if value.is_u64(){
+        return Some(format!("\"{}\"", value.as_u64().unwrap()))
+    }else if value.is_number(){
+        return Some(format!("\"{}\"", value.as_f64().unwrap()))
+    }else{
+        return None
+    }
 
 }

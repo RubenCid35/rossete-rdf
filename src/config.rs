@@ -15,7 +15,6 @@ use std::time::Instant;
 use encoding_rs::{Encoding};
 
 use serde_json;
-use jsonpath::Selector;
 
 #[derive(Debug)]
 pub enum OutputFormat{
@@ -155,27 +154,33 @@ impl AppConfiguration{
         tmp.file_specs = Self::parse_file_specs(&json_data)?;
         tmp.threads = Self::parse_threads(&json_data)?;
 
-        let sel_memory = Selector::new("$.max-memory-usage").unwrap();
-        tmp.memory_threshold = sel_memory.find(&json_data)
-            .map(|t| t.as_i64().unwrap_or(500) as usize)
-            .nth(0).unwrap_or(500);
-
-        // OUTPUT FORMAT
-        let sel_output_format = Selector::new("$.output-format").unwrap();
-        let output = sel_output_format.find(&json_data)
-            .map(|t| OutputFormat::from_str(&t.as_str().unwrap().to_lowercase()))
-            .nth(0);
-        if let Some(format) = output{
-            tmp.output_format = format;
+        if let Some(memory_given) = json_data.get("max-memory-usage"){
+            tmp.memory_threshold = match memory_given.as_i64(){
+                Some(m) => m as usize,
+                None => {
+                    error!("The option of \"max memory usage\" must contain a positive integer");
+                    return Err(ApplicationErrors::IncorrectJsonFile)
+                }
+            };
         }
+        if let Some(output_format) = json_data.get("output-format"){
+            tmp.output_format = match output_format.as_str(){
+                Some(format) => OutputFormat::from_str(format),
+                None => {
+                    error!("The option of \"output format\" must contain a string");
+                    return Err(ApplicationErrors::IncorrectJsonFile)
 
-        // OUTPUT ENCODING
-        let sel_output_encoding = Selector::new("$.output-encoding").unwrap();
-        let output = sel_output_encoding.find(&json_data)
-            .map(|t| get_encoding_from_str(&t.as_str().unwrap().to_lowercase()))
-            .nth(0);
-        if let Some(format) = output{
-            tmp.output_encoding = format;
+                }
+            }
+        }
+        if let Some(output_format) = json_data.get("output-encoding"){
+            tmp.output_encoding = match output_format.as_str(){
+                Some(encoding) => get_encoding_from_str(encoding),
+                None => {
+                    error!("The option of \"output encoding\" must contain a string");
+                    return Err(ApplicationErrors::IncorrectJsonFile)
+                }
+            }
         }
                 
         Ok(tmp)

@@ -156,10 +156,6 @@ fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fi
     }
     Ok(())
 }
-
-
-
-
 /*
 TODO: Last Item to be added.
 TODO: Better flag/option descriptions
