@@ -16,7 +16,7 @@ use encoding_rs::{Encoding};
 
 use serde_json;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum OutputFormat{
     NTriplesMap,
     Turtle,
@@ -32,7 +32,21 @@ impl OutputFormat{
             Self::Other
         }
     }
+    pub fn is_nt(&self) -> bool{
+        match self{
+            Self::NTriplesMap => true,
+            _ => false
+        }
+    }
+
+    pub fn is_ttl(&self) -> bool{
+        match self{
+            Self::Turtle => true,
+            _ => false
+        }
+    }
 }
+
 
 
 pub struct AppConfiguration{
@@ -43,7 +57,6 @@ pub struct AppConfiguration{
     // Max Thread Usage: [Parsing, Reading, Creating RDF]
     threads: [usize;3],
     // Output Data
-    output_encoding: &'static Encoding,
     output_path: PathBuf,
     output_format: OutputFormat,
     // Debug Display
@@ -64,10 +77,10 @@ impl std::fmt::Debug for AppConfiguration{
         writeln!(f, "------------------------------------------")?;
         writeln!(f, "Note: Some Information is useless as its delimiter and header in no CSV Files")?;
         for (idx, path) in self.file_specs.keys().enumerate(){
+            writeln!(f, "---------------------------------")?;
             writeln!(f, "File: {}", idx + 1)?;
             writeln!(f, "File Path: {}", path.display())?;
             writeln!(f, "Information: \n{:?}", &self.file_specs[path])?;
-            writeln!(f, "---------------------------------")?;
         }
         
         writeln!(f, "\nProcess Control (Threads Limit):")?;
@@ -84,7 +97,6 @@ impl std::fmt::Debug for AppConfiguration{
         writeln!(f, "------------------------------------------")?;
         writeln!(f, "Output Path: {}", self.output_path.display())?;
         writeln!(f, "Output Format: {:?}", self.output_format)?;
-        writeln!(f, "Output Encoding: {}", self.output_encoding.name())?;
         Ok(())
 
     }
@@ -92,6 +104,7 @@ impl std::fmt::Debug for AppConfiguration{
 
 
 impl AppConfiguration{
+
     pub fn new(output_path: PathBuf) -> Self{
         let output_format = OutputFormat::from_str(output_path.extension().unwrap().to_str().unwrap_or("nt"));
 
@@ -99,7 +112,6 @@ impl AppConfiguration{
             file_specs: collections::HashMap::with_capacity(2),
             memory_threshold: 500, // 500
             threads: [3;3],
-            output_encoding: encoding_rs::UTF_8,
             output_path,
             output_format,
             debug: false
@@ -132,6 +144,14 @@ impl AppConfiguration{
             self.file_specs.insert(path, settings);
         }
     }
+    pub fn get_output_path(&self) -> &PathBuf{
+        &self.output_path
+    }
+
+    pub fn get_output_format(&self) -> &OutputFormat{
+        &self.output_format
+    }
+
     pub fn get_parsing_theads(&self) -> usize{
         self.threads[0]
     }
@@ -140,7 +160,6 @@ impl AppConfiguration{
         self.threads[1]
     }
 
-    #[allow(dead_code)]
     pub fn get_writing_theads(&self) -> usize{
         self.threads[2]
     }
@@ -173,6 +192,7 @@ impl AppConfiguration{
                 }
             }
         }
+        /*
         if let Some(output_format) = json_data.get("output-encoding"){
             tmp.output_encoding = match output_format.as_str(){
                 Some(encoding) => get_encoding_from_str(encoding),
@@ -182,7 +202,7 @@ impl AppConfiguration{
                 }
             }
         }
-                
+        */      
         Ok(tmp)
     }
 
@@ -329,6 +349,7 @@ impl FileSpecs{
         self
     }
 
+    /*
     #[allow(dead_code)]
     pub fn from_other(&self, encoding: Option<&'static Encoding>, file_type: AcceptedType) -> Self{
         let delimiter = match file_type{
@@ -344,6 +365,7 @@ impl FileSpecs{
             file_type
         }
     }
+    */
 }
 
 // Relates the input text with the same encoding as desired.

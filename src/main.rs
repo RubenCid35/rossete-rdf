@@ -9,6 +9,7 @@ mod parser;
 mod input;
 mod config;
 mod search;
+mod materialiser;
 
 use config::AppConfiguration;
 use logging::*;
@@ -17,7 +18,6 @@ use mappings::maps::Mapping;
 
 use std::path::{self, PathBuf};
 use std::sync::mpsc::channel;
-use std::sync::{Arc, RwLock};
 use std::collections::{HashMap, HashSet};
 
 use std::time::Instant;
@@ -30,17 +30,13 @@ fn main() -> ResultApp<()>{
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.ttl");
     let config_file = path::PathBuf::from("config_example.json");
-    let debug = false;
+    let debug = true;
 
     let mut configuration = config::get_configuration(&output_file, Some(config_file));
 
     if debug{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();
     }
-    if configuration.debug_mode(){
-        println!("{:?}", configuration);
-    }
-
 
     // CLI Input
     let file_name = path::PathBuf::from("./examples/mappings");
@@ -52,23 +48,29 @@ fn main() -> ResultApp<()>{
 // Regulates all the processes
 fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     let now = Instant::now();
-    let prefixes = Arc::new(RwLock::new(HashMap::new()));
-    let mappings = parse_all_mappings(&config, map_path, prefixes.clone())?;
+    let mappings = parse_all_mappings(&config, map_path)?;
     time_info("Parsing Mapping Files", now);
     
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
 
+    if config.debug_mode(){ // Display the configuration to see if it is correct
+        println!("{:?}", config);
+    }
+
     let now = Instant::now();
-    let _db = input::read_store_data_files(&config, data_fields)?; 
+    let db = input::read_store_data_files(&config, data_fields)?; 
     time_info("Reading and Storing Data Files", now);
 
-    
+    let now = Instant::now();
+    materialiser::rdf_procedure(db, mappings, config)?;
+    time_info("Create RDF File with all Data and Mappings", now);
+
     Ok(())
 }
 
 
-fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf, prefixes: Arc<RwLock<HashMap<String, String>>>) -> ResultApp<Vec<Mapping>>{
+fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf) -> ResultApp<Vec<Mapping>>{
     // it assumes that all mapping files are encoded in UTF-8;
     let paths = get_all_files(mapping_folder)?;
 
@@ -89,9 +91,8 @@ fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf, prefix
             let map_file_path = paths[current_path].clone();
             let map_id = current_path;
             let debug = config.debug_mode();
-            let pre_c = prefixes.clone();
             let hand = std::thread::spawn(move || -> ResultApp<()>{
-                parser::parse_text(map_id as i32 + 1,map_file_path, tx, pre_c, rc_tx_2, debug)
+                parser::parse_text(map_id as i32 + 1,map_file_path, tx, rc_tx_2, debug)
             });
             threads.push(hand);
             threads_id.push(current_path as i32 + 1);
@@ -147,18 +148,19 @@ fn get_all_files(mapping_paths: PathBuf) -> ResultApp<Vec<PathBuf>>{
 
 // Add all the data files to the configuration and retrieves all the data fields that need to be accessed
 fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fields: &mut HashMap<PathBuf, HashSet<String>>) -> ResultApp<()>{
+    // TODO Remove all the data files that specified in the config file are not used in the mappings
     for map in mappings.iter() {
         let data_file = map.source_file()?;
         let file_type = map.get_source_file_ext()?;
         config.add_data_file(data_file.clone(), file_type);
         let field = fields.entry(data_file.clone()).or_insert(HashSet::new());
-        field.extend(map.get_all_desired_fields());
+        field.extend(map.get_all_desired_fields()?);
     }
     Ok(())
 }
+
+// TODO: Better flag/option descriptions
 /*
-TODO: Last Item to be added.
-TODO: Better flag/option descriptions
     let m = App::new("Rossete RDF Generator")
                 .about(crate_description!())
                 .version(crate_version!())

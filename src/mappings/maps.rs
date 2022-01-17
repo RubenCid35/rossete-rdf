@@ -5,11 +5,14 @@ use crate::ResultApp;
 
 use std::fmt;
 use std::path;
+use std::sync::Arc;
+use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct Mapping{
     pub components: Vec<parts::Parts>,
     pub identificador: String,
-    pub base_uri: String
+    pub prefixes: Arc<HashMap<String, String>> 
 }
 
 impl Mapping{
@@ -17,7 +20,7 @@ impl Mapping{
         Self{
             components: Vec::with_capacity(3),
             identificador,
-            base_uri: String::new()
+            prefixes: Arc::new(HashMap::new())
         }
     }
 
@@ -88,20 +91,20 @@ impl Mapping{
     }
 
     // Request all the fields of the data file that are going to be acessed
-    pub fn get_all_desired_fields(&self) -> std::collections::HashSet<String>{
+    pub fn get_all_desired_fields(&self) -> ResultApp<std::collections::HashSet<String>>{
         let mut fields = std::collections::HashSet::new();
         for element in self.components.iter(){
             let part_fields = element.get_fields();
             fields.extend(part_fields);
         }
         // Append the iterator if data file requieres a path (JSON, XML)
-        let iterator = match self.get_logical_source(){
+        let iterator = match self.get_logical_source()?{
             parts::Parts::LogicalSource{iterator, ..} => iterator.clone(),
             _ => String::new()
         };
 
         if iterator.is_empty(){ // CSV / TSV Case (most common)
-            return fields
+            return Ok(fields)
         }else{
             let new_fields = fields.iter().map(|field| {
                 let mut new_iter = iterator.clone();
@@ -110,7 +113,7 @@ impl Mapping{
                 new_iter
             })
             .collect::<std::collections::HashSet<_>>();
-            new_fields
+            Ok(new_fields)
         }
 
     }
@@ -119,20 +122,48 @@ impl Mapping{
         self.components.push(component);
     }
 
-    fn get_logical_source(&self) -> &parts::Parts{
+    pub fn change_prefixes(&mut self, prefixes: Arc<HashMap<String, String>>){
+        self.prefixes = prefixes
+    } 
+    
+    pub fn get_prefixes(&self) -> Arc<HashMap<String, String>>{
+        Arc::clone(&self.prefixes)
+    }
+
+    fn get_logical_source(&self) -> ResultApp<&parts::Parts>{
         if let Some(l) = self.components.iter().find(|&p| p.is_logicalsource()){
-            l
+            Ok(l)
         }else{
             crate::error!("The map {} has no logical source", self.identificador);
-            panic!("{:?}", ApplicationErrors::MissingLogicalSource)
+            Err(ApplicationErrors::MissingLogicalSource)
         }
     }
+
+    // Returns the name of the table that is asociated to the database
+    pub fn get_table_name(&self) -> ResultApp<String>{
+        if let Some(parts::Parts::LogicalSource{source, reference_formulation, iterator }) = self.components.iter().find(|&p| p.is_logicalsource()){
+            if !iterator.is_empty(){
+                Ok(format!("\"db-{}-{:?}-{}\"", source.file_stem().unwrap().to_str().unwrap(), reference_formulation, iterator))
+            }else{
+                Ok(format!("\"db-{}-{:?}\"", source.file_stem().unwrap().to_str().unwrap(), reference_formulation))
+            }
+        }else{
+            crate::error!("The map {} has no logical source", self.identificador);
+            Err(ApplicationErrors::MissingLogicalSource)
+        }
+    }
+
 
 }
 
 impl fmt::Debug for Mapping{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(f, "<#{}> a rr:TriplesMap", self.identificador)?;
+        writeln!(f, "-----------------------------------\nPREFIXES: ")?;
+        for (pre, url) in self.prefixes.iter(){
+            writeln!(f, "PREFIX: {:<6}\tURL: {:<255}", pre, url)?;
+        }
+
+        writeln!(f, "\n<#{}> a rr:TriplesMap", self.identificador)?;
         for comp in &self.components{
             writeln!(f, "\t{:?}", comp)?;
         }

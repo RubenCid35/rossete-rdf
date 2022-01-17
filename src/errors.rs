@@ -1,11 +1,9 @@
 #![allow(dead_code)]
 
 use std::any::Any;
-use std::error::Error;
 use std::io;
 use std::sync::mpsc;
 
-use crate::error;
 use roxmltree as xml;
 
 #[derive(Debug, Clone)]
@@ -29,12 +27,10 @@ pub enum ApplicationErrors{
     // Database Errors
     CantOpenDatabase,
     DataBaseDidntReceivedData,
-    FailTowriteInDataBase,
-    FailToReadInDataBase,
+    FailedToInteractWithDB,
     MissingFieldInData,
 
     // Reading Mapping Errors.
-    PrefixActionsInterrumped,
     MissingLogicalSource,
     MissingSubjectMap,
     InvalidSourceDataFormat, // Maybe it will be eliminated
@@ -42,9 +38,14 @@ pub enum ApplicationErrors{
     ComponentInIncorrectLocation,
     IncorrectMappingFormat,
     MissingRMlNamespace, // Future use
+    
+    // RDF Creations
+    FAiledToCreateRDF,
+
     // Other errors
     FailedToTransmitDataBetweenThreads,
     NotEnoughMemory,
+    SyncActionUnable,
     Miscelaneous
 }
 
@@ -73,11 +74,8 @@ impl From<mpsc::RecvError> for ApplicationErrors{
 }
 
 impl<T> From<std::sync::PoisonError<T>> for ApplicationErrors{
-    fn from(error: std::sync::PoisonError<T>) -> Self {
-        if let Some(src) = error.source(){
-            error!("Something enabled the prefix writting or reading, SOURCE: {:?}", src);
-        }
-        Self::PrefixActionsInterrumped
+    fn from(_: std::sync::PoisonError<T>) -> Self {
+        Self::SyncActionUnable
     }
 }
 
@@ -87,10 +85,14 @@ impl From<Box<dyn Any + Send>> for ApplicationErrors{
     }
 }
 
-impl From<sqlite::Error> for ApplicationErrors{
-    fn from(error: sqlite::Error) -> Self {
-        error!("{:?}", error);
-        Self::CantOpenDatabase
+impl From<rusqlite::Error> for ApplicationErrors{
+    fn from(error: rusqlite::Error) -> Self{
+        match error{
+            rusqlite::Error::SqliteFailure(..) => Self::CantOpenDatabase,
+            rusqlite::Error::InvalidColumnIndex(..) => Self::MissingFieldInData,
+            rusqlite::Error::InvalidQuery => Self::InvalidDataEntry,
+            _ => Self::DataBaseDidntReceivedData
+        }
     }
 }
 

@@ -25,12 +25,11 @@ rr:parentTriplesMap <#LocationMapping_JSON>
 rr:predicateObjectMap [
 rr:predicate ex:countryCode;
 rr:objectMap [
-rml:reference "location.country"
-]
+rml:reference "location.country"]
 ];
-rr:predicateObjectMap [
+rr:predicateObjectMap[
 rr:predicate ex:onContinent;
-rr:objectMap [
+rr:objectMap[
 rml:reference "location.continent"
 ]
 ].

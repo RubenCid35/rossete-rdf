@@ -8,14 +8,14 @@ use crate::errors::ApplicationErrors;
 
 use std::fs;
 use std::path::PathBuf;
-use std::sync::mpsc;
+use std::sync::{mpsc};
 
-use sqlite;
+use rusqlite::params;
 
 use std::collections::{HashMap, HashSet};
 use jsonpath_lib::selector;
 
-pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<sqlite::Connection>{
+pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<rusqlite::Connection>{
     let mut fi = Vec::new();
     let mut paths = Vec::new();
     
@@ -31,18 +31,12 @@ pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<
     let (data_tx, data_rx) = mpsc::channel();
 
     let num_files = files.len();
-    let debug = config.debug_mode();
-    let handler = std::thread::spawn(move || -> ResultApp<sqlite::Connection>{
-        store_data(loc, data_rx, num_files, debug)
+    let handler = std::thread::spawn(move || -> ResultApp<rusqlite::Connection>{
+        store_data(loc, data_rx, num_files)
     });
-
-    create_tables(data_tx.clone(), &files, &fields)?;
+    create_tables(data_tx.clone(), &files, &fields)?; // This will not fail for sure.
     reading_procedure(config, data_tx, &fields)?;    
-
-    match handler.join() {
-        Ok(it) => {it},
-        Err(err) => return Err(err.into()),
-    }
+    handler.join()?
 }
 
 fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> ResultApp<&'static str>{    
@@ -70,8 +64,13 @@ fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> 
     }
 }
 
-fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: usize, debug: bool) -> ResultApp<sqlite::Connection>{
-    let conn = sqlite::open(localization)?; // Database Connection
+fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: usize) -> ResultApp<rusqlite::Connection>{
+    let conn = rusqlite::Connection::open_with_flags(localization,
+        rusqlite::OpenFlags::SQLITE_OPEN_SHARED_CACHE |
+        rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX |
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE |
+        rusqlite::OpenFlags::SQLITE_OPEN_CREATE)?; // Database Connection
+    
     let mut left_files = total_files;
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
@@ -85,10 +84,7 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
                     break
                 }
             }else{
-                if debug{ // FIXME: Debug in the Reading. This will be remove later
-                    println!("{}", &query);
-                }
-                conn.execute(query)?;
+                conn.execute(&query, params![])?;
             }
             
         }else{
@@ -103,26 +99,55 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
 fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::FileSpecs>, input_fields: &HashMap<PathBuf, HashSet<String>>) -> ResultApp<()>{
     for file in files.keys(){
         let file_type = files[file].get_file_type();
-        let table_name = get_table_name(file, file_type);
-        info!("The following table was created in the database: {}", &table_name);
-        let mut query = String::with_capacity(1000);
-        query.extend(format!("CREATE TABLE {} (\"", table_name).chars());
-        for (i, field) in input_fields[file].iter().enumerate(){
-            query.extend(field.chars());
-            if i != input_fields[file].len() - 1{
-                query.push_str("\" TEXT, \"");
-            }else{
-                query.push_str("\" TEXT);")
+        if file_type.is_json() || file_type.is_xml(){
+   
+            let campos = input_fields[file].iter().map(|camp| camp.clone()).collect::<Vec<_>>();
+            let iteradores = extract_iterator_and_fields(&campos);
+   
+            for iter in iteradores.keys(){
+                let table_name = get_table_name_with_iterator(file, file_type, iter);
+                info!("The following table was created in the database: {}", &table_name);
+   
+                let mut query = String::with_capacity(1000);
+                query.extend(format!("CREATE TABLE {} (\"", table_name).chars());
+   
+                for (i, field) in iteradores[iter].iter().enumerate(){
+                    query.extend(field.1.chars());
+                    if i != iteradores[iter].len() - 1{
+                        query.push_str("\" TEXT, \"");
+                    }else{
+                        query.push_str("\" TEXT);")
+                    }
+                }
+   
+                con.send(query)?;        
             }
+
+        }else{
+            let table_name = get_table_name(file, file_type);
+            info!("The following table was created in the database: {}", &table_name);
+            let mut query = String::with_capacity(1000);
+            query.extend(format!("CREATE TABLE {} (\"", table_name).chars());
+            for (i, field) in input_fields[file].iter().enumerate(){
+                query.extend(field.chars());
+                if i != input_fields[file].len() - 1{
+                    query.push_str("\" TEXT, \"");
+                }else{
+                    query.push_str("\" TEXT);")
+                }
+            }
+            con.send(query)?;    
         }
-        // println!("{}", query);
-        con.send(query)?;
     }
     Ok(())
 }
 
 fn get_table_name(path: &PathBuf, file_type: &AcceptedType) -> String{
     format!("\"db-{}-{:?}\"", path.file_stem().unwrap().to_str().unwrap(), file_type)
+}
+
+fn get_table_name_with_iterator(path: &PathBuf, file_type: &AcceptedType, iterator: &String) -> String{
+    format!("\"db-{}-{:?}-{}\"", path.file_stem().unwrap().to_str().unwrap(), file_type, iterator)
 }
 
 
@@ -134,7 +159,9 @@ fn reading_procedure(config: &config::AppConfiguration, con: mpsc::Sender<String
     let mut threads = Vec::with_capacity(config.get_reading_theads());
     let mut threads_id = Vec::with_capacity(config.get_reading_theads());
     let (rc_tx, rc_rx) = mpsc::channel::<usize>();
+
     loop{
+
         if threads.len() < config.get_reading_theads() && current_file < files.len(){
 
             let new_id = current_file;
@@ -256,8 +283,6 @@ fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
 
 fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>, fields: Vec<String>) -> ResultApp<()>{
 
-    let table_name = get_table_name(&path, specs.get_file_type());
-    // TODO
     // Read File and get the parsed json.
     let file = fs::File::open(&path)?;
     let encoding = specs.get_encoding();
@@ -269,13 +294,14 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
     let json_data: serde_json::Value = serde_json::from_reader(file_reader)?;
 
     // Divide field by the iterator that uses
-    let iter_field = extract_iterator(&fields);
+    let iter_field = extract_iterator_and_fields(&fields);
     // Iterate by the iterators and get the need data
     
     let mut data_iterator = selector(&json_data);
 
     for (ref iterator, ref associated_fields) in iter_field{
         let iterable_data = data_iterator(iterator)?;
+        let table_name = get_table_name_with_iterator(&path, specs.get_file_type(), iterator);
         for data in iterable_data.iter(){
             let mut field_sel = selector(data);
             let mut init_query = format!("INSERT INTO {} (\"", &table_name); // until the insert of the data
@@ -322,10 +348,10 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
             init_query.extend(data_query.chars());
             con.send(init_query)?;
         }
+        // Remove duplicates
+        let remove_duplicates = query_remove_duplicates(&table_name, &fields);
+        con.send(remove_duplicates)?;
     }
-    // Remove duplicates
-    let remove_duplicates = query_remove_duplicates(&table_name, &fields);
-    con.send(remove_duplicates)?;
 
     // End Transmission
     con.send(format!("{:6}", id))?;
@@ -335,7 +361,7 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
 
 fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>, fields: Vec<String>) -> ResultApp<()>{
     let table_name = get_table_name(&path, specs.get_file_type());
-    // TODO
+    // TODO Read XML files
     // Read File
 
     
@@ -352,7 +378,7 @@ fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
     Ok(())
 }
 
-fn extract_iterator(fields: &Vec<String>)  -> HashMap<String, Vec<(String, String)>>{
+fn extract_iterator_and_fields(fields: &Vec<String>)  -> HashMap<String, Vec<(String, String)>>{
     let mut iter_field = HashMap::new();
 
     for f in fields{
@@ -367,7 +393,6 @@ fn extract_iterator(fields: &Vec<String>)  -> HashMap<String, Vec<(String, Strin
     iter_field
     
 }
-
 
 
 fn query_remove_duplicates(table: &String, fields: &Vec<String>) -> String{

@@ -1,6 +1,7 @@
 
 use super::AcceptedType;
 
+#[derive(Clone)]
 pub enum Parts{
     // rr:logicalSource
     LogicalSource{

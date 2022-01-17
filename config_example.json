@@ -1,11 +1,10 @@
 {
     "files-data": [],
     "threads": {
+        "parsing": 5,
         "reading": 5,
-        "parsing": 2,
-        "writing": 2
+        "writing": 5
     },
     "max-memory-usage": 100,
-    "output-encoding": "utf-8",
     "output-format": "TTL"
 }

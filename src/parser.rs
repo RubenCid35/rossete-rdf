@@ -14,12 +14,12 @@ use crate::{warning, info, error};
 use std::path;
 use std::fs;
 use std::io::prelude::{Read};
-use std::sync::{RwLock, Arc, mpsc};
+use std::sync::{Arc, mpsc};
 use std::collections::HashMap;
 use regex::Regex;
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
-pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, status_transmitter: mpsc::Sender<i32>, debug: bool) -> ResultApp<()>{
+pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, status_transmitter: mpsc::Sender<i32>, debug: bool) -> ResultApp<()>{
     info!("Parsing File ID: {:2.} PATH: \"{}\"",  id, file.display());
     // File Reading
     let mut map_file = match fs::File::open(file){
@@ -43,7 +43,7 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
     let tokens = tokenize(buffer);
     
     // Get the tokens into diferent mappings and prefixes.
-    match parse_tokens(tokens, prefix_transmiter, debug){
+    match parse_tokens(tokens, debug){
         Ok(mappings) => {
             transmitter.send(Ok(mappings))?;
             status_transmitter.send(id)?;
@@ -80,7 +80,15 @@ fn tokenize(text: String) -> Vec<String>{
     .flat_map(|sentence| sentence.split(' ').map(|word| word.trim().to_string()).collect::<Vec<String>>())
     .flat_map(|sentence| sentence.split(';').map(|word| word.trim().to_string()).collect::<Vec<String>>())
     .flat_map(|mut token| {
-        if token.ends_with(']') {
+        if token.ends_with('[') {
+            token.pop();
+            vec![token, "[".to_string()]
+        }else{
+            vec![token]
+        }
+    })
+    .flat_map(|mut token| {
+        if token.ends_with(']') && !token.contains('['){
             token.pop();
             vec![token, "]".to_string()]
         }else{
@@ -120,11 +128,11 @@ fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{
 }
 
 /// Parse the main 5 Mapping Parts and create all the mappings and prefixes.
-fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<String, String>>>, debug: bool) -> ResultApp<Vec<Mapping>>{
+fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
 
     let mut mappings: Vec<Mapping> = Vec::with_capacity(2);
+    let mut prefixes = HashMap::new();
     // let mut prefixes: std::collections::HashMap<String, String> = std::collections::HashMap::new();
-    let mut base_uri = String::new();
     let mut idx = 0;
     while idx < tokens.len(){
         lazy_static!{
@@ -153,10 +161,8 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                     }
                 }
             };
+            prefixes.insert(pre, url);
             // Se manda a una zona central.
-            let mut prefix_zone  = prefix_transmiter.write()?;
-            prefix_zone.insert(pre, url);
-            drop(prefix_zone);
 
             // prefixes.insert(pre, url);
             idx += 2;
@@ -173,7 +179,7 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
                     }
                 }
             };
-            base_uri = url;
+            prefixes.insert(String::new(), url);
             idx += 1;
         }
         else if let Some(cap) = MAPPING_INIT.captures(&tokens[idx]){
@@ -256,13 +262,14 @@ fn parse_tokens(tokens: Vec<String>, prefix_transmiter: Arc<RwLock<HashMap<Strin
         idx += 1;
     }
     
+    let prefix_arc = std::sync::Arc::new(prefixes);
     // Check if all the map have the requiered components: logicalSource and SubjectMap.
     for map in mappings.iter_mut(){
         if let Err(error) = map.is_valid(){
             return Err(error)
         }
-        // To add the base uri.
-        map.base_uri = base_uri.clone();
+        // Add the reference to the prefixes
+        map.change_prefixes(Arc::clone(&prefix_arc));
     }
     Ok(mappings)
 
