@@ -40,7 +40,7 @@ pub fn create_rdf(file_con: mpsc::Sender<&[u8]>, db: rusqlite::Connection, mappi
     let mut threads_id: Vec<usize> = Vec::with_capacity(max_threads); // It allow us to find the handler of the finished thread
 
     let (rc_tx, rc_rx) = mpsc::channel::<usize>(); // Indicates which thread has finished to remove it and check if it failed.
-    let mut failed_maps: Vec<&String> = Vec::new();
+    let mut failed_maps: Vec<&str> = Vec::new();
     
     let mut current_map = 0;
     loop{
@@ -75,7 +75,7 @@ pub fn create_rdf(file_con: mpsc::Sender<&[u8]>, db: rusqlite::Connection, mappi
             match threads.remove(thread_id).join()?{
                 Ok(_) => {},
                 Err(error) => {
-                    let map_name = &mappings[thread_id].identificador;
+                    let map_name = &mappings[thread_id].get_identifier();
                     error!("Failed to create RDF using the following mappings: {:<20} Error Code: {:?}", map_name, error);
                     failed_maps.push(map_name);
                 },

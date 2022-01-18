@@ -134,6 +134,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
     let mut prefixes = HashMap::new();
     // let mut prefixes: std::collections::HashMap<String, String> = std::collections::HashMap::new();
     let mut idx = 0;
+    let mut last_map_name: String = String::new();
     while idx < tokens.len(){
         lazy_static!{
             static ref PREFIX: Regex = Regex::new(r#"@(prefix|PREFIX)"#).unwrap();
@@ -188,41 +189,37 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
                 info!("The following mapping was found {}. Parsing Has Started", &name);
             }
             let map = Mapping::new(name);
-
             mappings.push(map);
+            last_map_name = mappings[mappings.len() - 1].get_identifier().clone();
         }
         else if LOGICALSOURCE.is_match(&tokens[idx]){
             if !&tokens[idx + 1].contains('['){
-                let map_name = &mappings.last().unwrap().identificador;
-                error!("The Mapping {} requires at least a rml:source component", map_name);
+                error!("The Mapping {} requires at least a rml:source component", &last_map_name);
                 return Err(ApplicationErrors::IncorrectMappingFormat)
             }
             else if let Some(finish) = find_closing_bracket(&tokens, idx + 1){
-                let logicalsource = parse_logical_source(&tokens, idx + 2, finish)?;
+                let logicalsource = parse_logical_source(&tokens, idx + 2, finish, &last_map_name)?;
                 mappings.last_mut().unwrap().add_component(logicalsource);
                 idx = finish;
             }
             else{
-                let map_name = &mappings.last().unwrap().identificador;
-                error!("In the Mapping {}, the logicalSource requieres ] at some point to finish the statement", map_name);
+                error!("In the Mapping {}, the logicalSource requieres ] at some point to finish the statement", &last_map_name);
                 return Err(ApplicationErrors::IncorrectMappingFormat);     
             }
 
         }
         else if SUBJECTMAP.is_match(&tokens[idx]){
             if !&tokens[idx + 1].contains('['){
-                let map_name = &mappings.last().unwrap().identificador;
-                error!("The Mapping {} requires at least a rr:template component", map_name);
+                error!("The Mapping {} requires at least a rr:template component", &last_map_name);
                 return Err(ApplicationErrors::IncorrectMappingFormat)
             }
             else if let Some(finish) = find_closing_bracket(&tokens, idx + 1){
-                let subject_map = parse_subject_map(&tokens, idx + 2, finish)?;
+                let subject_map = parse_subject_map(&tokens, idx + 2, finish, &last_map_name)?;
                 mappings.last_mut().unwrap().add_component(subject_map);
                 idx = finish;
             }
             else{
-                let map_name = &mappings.last().unwrap().identificador;
-                error!("In the Mapping {}, the subjectMap requieres ] at some point to finish the statement", map_name);
+                error!("In the Mapping {}, the subjectMap requieres ] at some point to finish the statement", &last_map_name);
                 return Err(ApplicationErrors::IncorrectMappingFormat);     
             }
 
@@ -230,18 +227,16 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
         else if PREDICATEOBJECTMAP.is_match(&tokens[idx]){
             ////info!("A predicateObjectMap was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
-                let map_name = &mappings.last().unwrap().identificador;
-                error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requires at least a rr:predicate and rr:objectMap component", map_name, idx);
+                error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requires at least a rr:predicate and rr:objectMap component", &last_map_name, idx);
                 return Err(ApplicationErrors::IncorrectMappingFormat)
             }
             else if let Some(finish) = find_closing_bracket(&tokens, idx + 1){
-                let predicate_map = parse_predicate_map(&tokens, idx + 2, finish)?;
+                let predicate_map = parse_predicate_map(&tokens, idx + 2, finish, &last_map_name)?;
                 mappings.last_mut().unwrap().add_component(predicate_map);
                 idx = finish;
             }
             else{
-                let map_name = &mappings.last().unwrap().identificador;
-                error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requieres ] at some point to finish the statement", map_name, idx);
+                error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requieres ] at some point to finish the statement", &last_map_name, idx);
                 return Err(ApplicationErrors::IncorrectMappingFormat);     
             }   
         }
@@ -252,7 +247,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
             // To get the last map identification
             let last_map = match mappings.last(){
                 Some(map) => {
-                    &map.identificador
+                    map.get_identifier()
                 }
                 None => "No Map Was Created"
             };
@@ -277,7 +272,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
 
 
 // --------- Component Parsing ---------------
-fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<Parts>{
+fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize, last_map: &str) -> ResultApp<Parts>{
     let mut idx = init;
     let mut file_path = String::with_capacity(255);
     let mut iterator = String::new();
@@ -302,7 +297,7 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize) -> Result
             }
             idx += 1;
         }else{
-            warning!("Some unknown tokens has appeared in the logicalSource, TOKEN: {}", &tokens[idx])
+            warning!("Some unknown tokens has appeared in the logicalSource, TOKEN: {} LAST MAP: {}", &tokens[idx], last_map)
         }
 
         idx += 1;
@@ -317,7 +312,7 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize) -> Result
     })
 }
 
-fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<Parts>{
+fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &str) -> ResultApp<Parts>{
     let mut comps: Vec<Parts> = Vec::with_capacity(2);
     let mut idx = init;
     while idx < end {
@@ -329,7 +324,7 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp
             static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
         }
         if TEMPLATE.is_match(&tokens[idx]){
-            let (template, input_fields) = parse_input_field(&tokens[idx + 1])?;
+            let (template, input_fields) = parse_input_field(&tokens[idx + 1], last_map)?;
             comps.push(Parts::Template{
                 template,
                 input_fields,
@@ -362,7 +357,7 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp
     })
 }
 
-fn parse_input_field(elem_uri: &str) -> ResultApp<(String, Vec<String>)>{
+fn parse_input_field(elem_uri: &str, last_map: &str) -> ResultApp<(String, Vec<String>)>{
     let mut fields = Vec::new();
     let mut current_field = String::new();
     let mut add = false;
@@ -390,14 +385,14 @@ fn parse_input_field(elem_uri: &str) -> ResultApp<(String, Vec<String>)>{
         
     }
     if fields.is_empty(){
-        error!("There are no input fields in the following URI: {}. It must have one at least.",elem_uri);
+        error!("There are no input fields in the following URI: {}. It must have one at least. LAST MAP: {}",elem_uri, last_map);
         return Err(ApplicationErrors::NoInputFieldURISubject)
     }
     Ok((modified_template, fields))
 
 }
 
-fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<Parts>{
+fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &str) -> ResultApp<Parts>{
     let mut i = init;
     let mut predicate = String::new();
     let mut object_map = Vec::with_capacity(1);
@@ -409,12 +404,12 @@ fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultA
         }else if (&tokens[i]).contains("objectMap"){
             if tokens[i + 1].contains('['){
                 if let Some(end) = find_closing_bracket(&tokens, i + 1) {
-                    let obj = parse_object_map(&tokens, i + 2, end)?;
+                    let obj = parse_object_map(&tokens, i + 2, end, &last_map)?;
                     object_map.extend(obj);
                     i = end;
                 }
                 else{
-                    error!("Missing Closing Bracket in a predicate map");
+                    error!("Missing Closing Bracket in a predicate map in this map: {}", last_map);
                     return Err(ApplicationErrors::IncorrectMappingFormat)
                 }        
             }
@@ -423,7 +418,7 @@ fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultA
                 i += 1;
             }
         }else{
-            error!("Unknown Token has Appeared in a PredicateMap: {}", &tokens[i]);
+            error!("Unknown Token has Appeared in a PredicateMap: {} LAST MAP: {}", &tokens[i], last_map);
             return Err(ApplicationErrors::IncorrectMappingFormat);
         }
         i += 1;
@@ -436,7 +431,7 @@ fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultA
     })
 }
 
-fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<Vec<Parts>>{
+fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &str) -> ResultApp<Vec<Parts>>{
     let mut i = init;
     lazy_static!{
         static ref PARENT: Regex = Regex::new("rr:parentTriplesMap").unwrap();
@@ -456,13 +451,13 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
                 if let Some(cap) = MAPPING.captures(&tokens[i + 1]){
                     other_map = cap.get(1).unwrap().as_str().to_string();
                 }else{
-                    error!("The mapping reference in a parentTriplesMap has an incorrect format. TOKEN: {}", &tokens[i + 1]);
+                    error!("The mapping reference in a parentTriplesMap has an incorrect format. TOKEN: {} LAST MAP: {}", &tokens[i + 1], last_map);
                     return Err(ApplicationErrors::IncorrectMappingFormat)
                 }
             }
             else if JOIN.is_match(&tokens[i]){
                 let end = find_closing_bracket(&tokens, i + 1).unwrap();
-                parse_join_condition(&tokens, i + 2, end, &mut join_condition)?;
+                parse_join_condition(&tokens, i + 2, end, &mut join_condition, last_map)?;
             }
             i += 1;
         }  
@@ -482,7 +477,7 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
             }else if TERMTYPE.is_match(&tokens[i]){
                 objs.push(Parts::TermType(tokens[i+1].clone()));
             }else if TEMPLATE.is_match(&tokens[i]){
-                let (template, input_fields) = parse_input_field(&tokens[i + 1])?;
+                let (template, input_fields) = parse_input_field(&tokens[i + 1], last_map)?;
                 objs.push(Parts::Template{
                     template,
                     input_fields,
@@ -490,7 +485,7 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
                 i += 1;
             }
             else{
-                warning!("An unknown tokens has appeared in the objectMap parser, TOKEN: {}, NEXT TOKEN: {}", &tokens[i], &tokens[i + 1]);
+                warning!("An unknown tokens has appeared in the objectMap parser, TOKEN: {}, NEXT TOKEN: {}, LAST MAP: {}", &tokens[i], &tokens[i + 1], last_map);
             }
             i += 2;
         }
@@ -500,7 +495,7 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize) -> ResultApp<
 }
 
 
-fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, join: &mut [String;2]) -> ResultApp<()>{
+fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, join: &mut [String;2], last_map: &str) -> ResultApp<()>{
     lazy_static!{
         static ref CHILD: Regex = Regex::new("rr:child").unwrap();
         static ref PARENT_CON: Regex = Regex::new("rr:parent").unwrap();
@@ -514,7 +509,7 @@ fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, join: &mu
             join[1] = tokens[i + 1].clone();
             i += 1;
         }else{
-            error!("JOIN CONDITION ERROR: An unknown token appeared in the join condiction: {}", &tokens[i]);
+            error!("JOIN CONDITION ERROR: An unknown token appeared in the join condiction: {} LAST MAP: {}", &tokens[i], last_map);
             return Err(ApplicationErrors::IncorrectMappingFormat)
         }
         i += 1;

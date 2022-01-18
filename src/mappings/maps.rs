@@ -10,9 +10,9 @@ use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Mapping{
-    pub components: Vec<parts::Parts>,
-    pub identificador: String,
-    pub prefixes: Arc<HashMap<String, String>> 
+    components: Vec<parts::Parts>,
+    identificador: String,
+    prefixes: Arc<HashMap<String, String>> 
 }
 
 impl Mapping{
@@ -116,6 +116,10 @@ impl Mapping{
             Ok(new_fields)
         }
 
+    }
+
+    pub fn get_identifier(&self) -> &String{
+        &self.identificador
     }
 
     pub fn add_component(&mut self, component: parts::Parts){
