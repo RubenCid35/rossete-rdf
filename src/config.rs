@@ -1,6 +1,6 @@
 
 use std::collections;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::path::PathBuf;
 
@@ -126,6 +126,29 @@ impl AppConfiguration{
     }
     pub fn set_debug_mode(&mut self){
         self.debug = true;
+    }
+
+    pub fn remove_unused_files(&mut self, files: Vec<(PathBuf, AcceptedType)>){
+
+        let tmp = self.file_specs.drain().collect::<HashMap<_, _>>();
+        let mut paths= files.iter().map(|(f, _)| f.clone()).collect::<HashSet<_>>();
+        let mut final_files = HashMap::with_capacity(files.len());
+        for (k, v) in tmp{
+            if paths.contains(&k){
+                paths.remove(&k);
+                final_files.insert(k, v);
+            }else {
+                continue
+            }
+        }
+        self.file_specs = final_files;
+
+        files.iter()
+        .filter(|(f, _)| paths.contains(f))
+        .for_each(|(f, t)|{
+            self.add_data_file(f.clone(), t.clone())    
+        })
+
     }
 
     pub fn add_data_file(&mut self, path: PathBuf, file_type: AcceptedType){

@@ -8,14 +8,14 @@ use crate::config;
 use crate::errors::ApplicationErrors;
 use crate::{warning, error, info}; // Debug and Message Print
 
-use core::num;
 use std::io::Write;
-use std::sync::{Arc, RwLock, mpsc};
-use std::collections::HashMap;
+use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 use std::fs;
 
 pub fn rdf_procedure(db: rusqlite::Connection, mappings: Vec<Mapping>, config: config::AppConfiguration) -> ResultApp<()>{
+
+    let db = Arc::new(Mutex::new(db)); // This will make safe to use it between threads.
 
     let (file_tx, file_rx) = mpsc::channel();
     let config_arc = Arc::new(config);
@@ -29,9 +29,7 @@ pub fn rdf_procedure(db: rusqlite::Connection, mappings: Vec<Mapping>, config: c
     file_thread.join()?
 }
 
-pub fn create_rdf(file_con: mpsc::Sender<&[u8]>, db: rusqlite::Connection, mappings: Vec<Mapping>, config: Arc<config::AppConfiguration>) -> ResultApp<()>{
-
-    let db = Arc::new(RwLock::new(db)); // This is used to request the data
+pub fn create_rdf(file_con: mpsc::Sender<&[u8]>, db: Arc<Mutex<rusqlite::Connection>>, mappings: Vec<Mapping>, config: Arc<config::AppConfiguration>) -> ResultApp<()>{
 
     let (rdf_con, rdf_rec) = mpsc::channel::<String>();
 
@@ -99,8 +97,6 @@ pub fn create_rdf(file_con: mpsc::Sender<&[u8]>, db: rusqlite::Connection, mappi
 
 }
 
-
-
 fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<&[u8]>, mut num_maps: usize) -> ResultApp<()>{
     // create a file or if it exist, we remove it first and then we create it again
     let output_path = config.get_output_path();
@@ -123,7 +119,7 @@ fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<&[u8
     Ok(())
 }
 
-fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<RwLock<rusqlite::Connection>>, write: mpsc::Sender<&[u8]>) -> ResultApp<()>{
+fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<&[u8]>) -> ResultApp<()>{
     let table_name = map.get_table_name()?;
     let buffer = String::new();
     

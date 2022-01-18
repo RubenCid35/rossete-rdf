@@ -149,13 +149,17 @@ fn get_all_files(mapping_paths: PathBuf) -> ResultApp<Vec<PathBuf>>{
 // Add all the data files to the configuration and retrieves all the data fields that need to be accessed
 fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fields: &mut HashMap<PathBuf, HashSet<String>>) -> ResultApp<()>{
     // TODO Remove all the data files that specified in the config file are not used in the mappings
+    
+    let mut tmp_files = Vec::with_capacity(mappings.len());
     for map in mappings.iter() {
         let data_file = map.source_file()?;
         let file_type = map.get_source_file_ext()?;
-        config.add_data_file(data_file.clone(), file_type);
+        tmp_files.push((data_file.clone(), file_type));
         let field = fields.entry(data_file.clone()).or_insert(HashSet::new());
         field.extend(map.get_all_desired_fields()?);
     }
+
+    config.remove_unused_files(tmp_files);
     Ok(())
 }
 

@@ -1,5 +1,16 @@
 {
-    "files-data": [],
+    "files-data": [
+        {
+            "path": "./data/no-sirve.xml",
+            "type": "xml"
+        },
+        {
+            "path": "./examples/data/file-3.json",
+            "file-type": "json",
+            "delimiter": ";"
+        }
+    
+    ],
     "threads": {
         "parsing": 5,
         "reading": 5,
