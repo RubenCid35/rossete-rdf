@@ -110,6 +110,18 @@ impl std::fmt::Debug for Parts{
 }
 
 impl Parts{
+    pub fn get_template(&self) -> Option<&Parts>{
+        match self{
+            Self::SubjectMap{components} => {
+                components.iter()
+                .filter(|f| if let Parts::Template{template: _, input_fields: _} = f {true} else {false})
+                .nth(0)
+            },
+            temp @ Self::Template{..} => Some(temp),
+            _ => None
+        }
+    }
+
     pub fn get_fields(&self) -> std::collections::HashSet<String>{
         let mut fields = std::collections::HashSet::new();
         match self{

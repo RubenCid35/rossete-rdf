@@ -8,7 +8,6 @@ mod logging;
 mod parser;
 mod input;
 mod config;
-mod search;
 mod materialiser;
 
 use config::AppConfiguration;
@@ -28,7 +27,7 @@ use std::time::Instant;
 fn main() -> ResultApp<()>{
 
     // This will be given by the user.
-    let output_file = path::PathBuf::from("output.ttl");
+    let output_file = path::PathBuf::from("output.nt");
     let config_file = path::PathBuf::from("config_example.json");
     let debug = true;
 
@@ -148,8 +147,6 @@ fn get_all_files(mapping_paths: PathBuf) -> ResultApp<Vec<PathBuf>>{
 
 // Add all the data files to the configuration and retrieves all the data fields that need to be accessed
 fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fields: &mut HashMap<PathBuf, HashSet<String>>) -> ResultApp<()>{
-    // TODO Remove all the data files that specified in the config file are not used in the mappings
-    
     let mut tmp_files = Vec::with_capacity(mappings.len());
     for map in mappings.iter() {
         let data_file = map.source_file()?;
@@ -163,7 +160,6 @@ fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fi
     Ok(())
 }
 
-// TODO: Better flag/option descriptions
 /*
     let m = App::new("Rossete RDF Generator")
                 .about(crate_description!())
@@ -198,8 +194,9 @@ fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fi
                     Arg::with_name("debug")
                     .short("d")
                     .long("debug")
-                    .help("Set the debug mode. It displays more information in the intermediary parts")
                     .case_insensitive(true)
+                    .hidden(true)
+                    .help("Set the debug mode. It displays more information in the intermediary parts")
                 )
                 .arg(
                     Arg::with_name("clear")

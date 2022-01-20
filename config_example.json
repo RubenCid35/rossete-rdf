@@ -14,8 +14,7 @@
     "threads": {
         "parsing": 5,
         "reading": 5,
-        "writing": 5
+        "writing": 1
     },
-    "max-memory-usage": 100,
-    "output-format": "TTL"
+    "max-memory-usage": 100
 }

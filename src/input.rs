@@ -10,10 +10,10 @@ use std::fs;
 use std::path::PathBuf;
 use std::sync::{mpsc};
 
-use rusqlite::params;
-
 use std::collections::{HashMap, HashSet};
 use jsonpath_lib::selector;
+
+const MAX_BATCH: usize = 25; // Number of Insert Queries that are executed by batch
 
 pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<rusqlite::Connection>{
     let mut fi = Vec::new();
@@ -72,19 +72,39 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
         rusqlite::OpenFlags::SQLITE_OPEN_CREATE)?; // Database Connection
     
     let mut left_files = total_files;
+    let mut batch_size = 0;
+    let mut buffer = String::with_capacity(10000);
+    buffer.push_str("BEGIN; ");
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
             if query.len() == 0{ // Interrumpt
+                buffer.push_str(" COMMIT;");
+
+                conn.execute_batch(&buffer)?;
+                buffer.clear();
                 break
             }
             else if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
                 info!("File with ID: {} was successfully readed and stored in the data base", query);
                 left_files -= 1;
                 if left_files == 0{
+                    conn.execute_batch(&buffer)?;
+                    buffer.clear();
                     break
                 }
-            }else{
-                conn.execute(&query, params![])?;
+            }else if batch_size < MAX_BATCH{
+                batch_size += 1;
+                buffer.extend(query.chars());
+            }
+            
+            if batch_size == MAX_BATCH{
+                buffer.push_str(" COMMIT;");
+
+                conn.execute_batch(&buffer)?;
+
+                buffer.clear();
+                buffer.push_str("BEGIN; ");
+                batch_size = 0;
             }
             
         }else{

@@ -22,7 +22,6 @@ USAGE:
 
 FLAGS:
     -w, --clear      Delete the database if it was created while reading the databases
-    -d, --debug      Set the debug mode. It displays more information in the intermediary parts
     -h, --help       Displays this message
     -V, --version    Prints version information
 

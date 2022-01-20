@@ -134,6 +134,16 @@ impl Mapping{
         Arc::clone(&self.prefixes)
     }
 
+    // Returns a vector with all the 
+    pub fn get_predicates(&self) -> Vec<&parts::Parts>{
+        self.components.iter().filter(|comp| comp.is_predicate()).collect()
+    }
+    // Returns a reference to subject-map 
+    pub fn get_subject(&self) -> &parts::Parts{
+        self.components.iter().filter(|comp| comp.is_subjectmap()).nth(0).unwrap()
+    }
+
+
     fn get_logical_source(&self) -> ResultApp<&parts::Parts>{
         if let Some(l) = self.components.iter().find(|&p| p.is_logicalsource()){
             Ok(l)

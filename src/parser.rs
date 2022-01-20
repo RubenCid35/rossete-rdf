@@ -274,7 +274,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
 // --------- Component Parsing ---------------
 fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize, last_map: &str) -> ResultApp<Parts>{
     let mut idx = init;
-    let mut file_path = String::with_capacity(255);
+    let mut file_path = path::PathBuf::new();
     let mut iterator = String::new();
     let mut file_type = AcceptedType::Unspecify;
 
@@ -286,14 +286,20 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize, last_map:
             static ref FILE_TYPE: Regex = Regex::new(r#"ql:(\w+)"#).unwrap();
         }
         if SOURCE.is_match(&tokens[idx]){
-            file_path = tokens[idx + 1].clone();
+            file_path = path::PathBuf::from(&tokens[idx + 1]);
+            if let Some(ext) = file_path.extension(){
+                file_type = AcceptedType::from_str(ext.to_str().unwrap());
+            }
             idx += 1;
         }else if ITERATOR.is_match(&tokens[idx]){
             iterator = tokens[idx + 1].clone();
             idx += 1;
         }else if IS_FILE_TYPE.is_match(&tokens[idx]){
             if let Some(cap) = FILE_TYPE.captures(&tokens[idx + 1]){
-                file_type = AcceptedType::from_str(&cap.get(1).unwrap().as_str().to_lowercase());
+                let new_type = AcceptedType::from_str(&cap.get(1).unwrap().as_str().to_lowercase());
+                if !(new_type.is_csv() && file_type.is_tsv()){
+                    file_type = new_type;
+                }
             }
             idx += 1;
         }else{
@@ -306,7 +312,7 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize, last_map:
 
 
     Ok(Parts::LogicalSource{
-        source: path::PathBuf::from(file_path),
+        source: file_path,
         reference_formulation: file_type,
         iterator
     })

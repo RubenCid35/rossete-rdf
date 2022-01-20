@@ -29,10 +29,8 @@ csv="*"
 serde_json = "1.0.74"
 jsonpath_lib = "0.3.0"
 roxmltree = "0.14.1" # XML parser
-# Database Interface
-# rusqlite = "0.26.3"
-# sqlite = "0.26.0"
 
 [dependencies.rusqlite]
+# Database Interface
 version = "0.26.3"
 features = ["bundled"]

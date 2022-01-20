@@ -44,6 +44,7 @@ pub enum ApplicationErrors{
 
     // Other errors
     FailedToTransmitDataBetweenThreads,
+    FailedToReceiveDataBetweenThreads,
     NotEnoughMemory,
     SyncActionUnable,
     Miscelaneous
@@ -69,7 +70,7 @@ impl<T> From<mpsc::SendError<T>> for ApplicationErrors{
 }
 impl From<mpsc::RecvError> for ApplicationErrors{
     fn from(_: mpsc::RecvError) -> Self {
-        Self::FailedToTransmitDataBetweenThreads
+        Self::FailedToReceiveDataBetweenThreads
     }
 }
 
@@ -81,7 +82,7 @@ impl<T> From<std::sync::PoisonError<T>> for ApplicationErrors{
 
 impl From<Box<dyn Any + Send>> for ApplicationErrors{
     fn from(_: Box<dyn Any + Send>) -> Self {
-        Self::FailedToTransmitDataBetweenThreads
+        Self::Miscelaneous
     }
 }
 

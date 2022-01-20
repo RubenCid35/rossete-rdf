@@ -10,7 +10,7 @@
 - [ ] TODO: Add less used keywords(See alse: https://rml.io/specs/rml/#vocabulary)
 
 ### GENERAL IMPROVEMENTS
-- [x] Using the changed sqlite crate, maybe it is possible to make that reading thread process its own queries instead of common one. (Maybe it is slower when writing)
+- [x] Using the changed sqlite crate, maybe it is possible to make that writing thread process its own queries instead of common one. (While reading data it is slower)
 - [x] FIXME: Better Comment Capture in the sentences with the mapping declaration and urls.
 
 ### USAGE

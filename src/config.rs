@@ -311,9 +311,8 @@ impl std::fmt::Debug for FileSpecs{
         writeln!(f, "    -  File Encoding  : {}", self.used_encoding.name())?;
         writeln!(f, "    -  File Type      : {:?}", self.file_type)?;
         writeln!(f, "    +  CSV Related ----------------------------------")?;
-        writeln!(f, "    -  Delimiter      : '{}'", self.delimiter)?;
+        writeln!(f, "    -  Delimiter      : {:?}", self.delimiter)?;
         writeln!(f, "    -  Has Header     : {}", self.has_header)
-        
     }
 }
 
