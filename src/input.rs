@@ -85,7 +85,7 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
                 break
             }
             else if query.len() <= 6{ // THIS CORRESPOND TO THE ID OF THE FILE IN NUMERIC FORM
-                info!("File with ID: {} was successfully readed and stored in the data base", query);
+                info!("File with ID: {} was readed and closed.", query);
                 left_files -= 1;
                 if left_files == 0{
                     conn.execute_batch(&buffer)?;
@@ -273,7 +273,10 @@ fn read_csv(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
         if !fields.iter().all(|k| column_names.contains(&k)){
             con.send(format!("{:6}", id))?;
             rc.send(id)?;
-            error!("There is a missing field in the data file corresponding to the following data table: {}", table_name);
+            error!("There is a missing field in the data file corresponding to the following data table: {}.", table_name);
+            eprintln!("This are the columns in the CSV and the requested columns in all the files. Consider changing delimiter in the configuration file to remedy this.");
+            column_names.iter().for_each(|c| eprintln!("COLUMN: {}", c));
+            fields.iter().for_each(|c| eprintln!("FIELD: {}", c));
             return Err(ApplicationErrors::MissingFieldInData)        
         }
 

@@ -5,8 +5,7 @@
             "type": "xml"
         },
         {
-            "path": "./examples/data/file-3.json",
-            "file-type": "json",
+            "path": "./examples/data/file-1.csv",
             "delimiter": ";"
         }
     

@@ -30,9 +30,8 @@ macro_rules! warning {
 #[macro_export]
 macro_rules! info {
     ($($arg:tt)*) => {
-        use $crate::colored::*;
         let msg = format!($($arg)*);
-        let error = format!("{} [INFO] {}", $crate::Local::now().format("[%Y-%m-%d][%H:%M:%S]"), msg).white();
+        let error = format!("{} [INFO] {}", $crate::Local::now().format("[%Y-%m-%d][%H:%M:%S]"), msg);
         eprintln!("{}", error);
     }
 }

@@ -1,4 +1,7 @@
 
+#![allow(dead_code)]
+#![allow(unused_assignments, unused_variables)]
+
 use crate::ResultApp;
 use crate::errors::ApplicationErrors;
 use crate::mappings::{
@@ -33,7 +36,7 @@ pub fn rdf_procedure(db: rusqlite::Connection, mappings: Vec<Mapping>, config: c
 }
 
 fn estabish_conection_between_maps(mappings: &Vec<Mapping>) -> HashMap<String, HashMap<String, (String, String, String)>>{ // parent, child, other_table  
-    let mut join_conections = HashMap::with_capacity(mappings.len());
+    let join_conections = HashMap::with_capacity(mappings.len());
     // TODO Create an easy access table with the conections between maps.
     join_conections
 }
@@ -137,7 +140,7 @@ fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<Vec<
 fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, String>>) -> ResultApp<()>{
 
     let table_name = map.get_table_name()?;
-    println!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
+    info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
     let main_columns = map.get_all_desired_fields()?;
     let mut colum_idx = Vec::with_capacity(main_columns.len());
     
@@ -155,7 +158,7 @@ fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex
 
     
         let select = format!("SELECT {} FROM {}", columns, &table_name);
-        println!("{}", select);
+        // println!("{}", select);
         let mut smt = match fk.prepare(&select){
             Ok(s) => s,
             Err(error) => {
