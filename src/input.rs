@@ -13,7 +13,8 @@ use std::sync::{mpsc};
 use std::collections::{HashMap, HashSet};
 use jsonpath_lib::selector;
 
-const MAX_BATCH: usize = 25; // Number of Insert Queries that are executed by batch
+// Trial and error
+const MAX_BATCH: usize = 23; // Number of Insert Queries that are executed by batch
 
 pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<rusqlite::Connection>{
     let mut fi = Vec::new();

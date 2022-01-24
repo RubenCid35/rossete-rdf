@@ -24,16 +24,17 @@ use std::time::Instant;
 // use clap::{App, Arg};
 // use clap::{crate_authors, crate_version, crate_description};
 
+const DEBUG: bool = cfg!(debug_assertions);
+
 fn main() -> ResultApp<()>{
 
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.nt");
     let config_file = path::PathBuf::from("config_example.json");
-    let debug = false;
 
-    let mut configuration = config::get_configuration(&output_file, None); // Some(config_file)
+    let mut configuration = config::get_configuration(&output_file, Some(config_file)); 
 
-    if debug{ // This will be activatedd using a cli flag
+    if DEBUG{ // This will be activatedd using a cli flag
         configuration.set_debug_mode();
     }
 
