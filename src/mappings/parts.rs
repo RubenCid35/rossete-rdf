@@ -30,7 +30,8 @@ pub enum Parts{
     // rml:reference
     Reference(String),
     // rr:constant
-    Constant(String),
+    ConstantTerm(String), // rr:constant class:element
+    ConstantString(String), // rr:constant "España"
     // rr:dataType
     DataType(String),
     // rr:termType
@@ -90,8 +91,11 @@ impl std::fmt::Debug for Parts{
             Self::Term(data) => {
                 write!(f, "{}", data)
             }
-            Self::Constant(data) => {
+            Self::ConstantTerm(data) => {
                 write!(f, "[rr:constant {}]", data)
+            }
+            Self::ConstantString(data) => {
+                write!(f, "[rr:constant \"{}\"]", data)
             }
             Self::Class(data) => {
                 write!(f, "rr:class {}", data)
@@ -148,7 +152,8 @@ impl Parts{
             Parts::Reference(field) => {    
                 fields.insert(field.clone());
             },
-            Parts::Constant(_) => {},
+            Parts::ConstantTerm(_) => {},
+            Parts::ConstantString(_) => {},
             Parts::DataType(_) => {},
             Parts::TermType(_) => {},
             Parts::Template { template: _, input_fields } => {
@@ -178,6 +183,17 @@ impl Parts{
             _ => false
         }
     }
+
+    pub fn is_join(&self) -> bool{
+        match self{
+            Self::ParentTriplesMap{..} => true,
+            Self::PredicateObjectMap{predicate:_, object_map} => {
+                object_map.iter().any(|comp| comp.is_join())
+            }
+            _ => false
+        }
+    }
+
 }
 
 

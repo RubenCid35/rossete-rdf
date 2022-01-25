@@ -173,7 +173,7 @@
     rr:predicateObjectMap [
       rr:predicate schema:addressCountry;
       rr:objectMap [
-        rml:constant "España";
+        rr:constant "España";
         rr:termType rr:Literal
       ]
     ]; 

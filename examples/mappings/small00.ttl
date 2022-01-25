@@ -28,13 +28,13 @@
         ]
     ].
     rr:predicateObjectMap [
-        rr:predicate ex:long;
+        rr:predicate ex:id;
         rr:objectMap [
             rml:reference "id"
         ]
     ].
     rr:predicateObjectMap [
-        rr:predicate ex:long;
+        rr:predicate ex:city;
         rr:objectMap [
             rml:reference "city"
         ]

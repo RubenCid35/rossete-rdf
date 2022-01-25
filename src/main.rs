@@ -32,9 +32,10 @@ fn main() -> ResultApp<()>{
     let output_file = path::PathBuf::from("output.nt");
     let config_file = path::PathBuf::from("config_example.json");
 
+    // ;
     let mut configuration = config::get_configuration(&output_file, Some(config_file)); 
 
-    if DEBUG{ // This will be activatedd using a cli flag
+    if DEBUG { // This will be activatedd using a cli flag
         configuration.set_debug_mode();
     }
 

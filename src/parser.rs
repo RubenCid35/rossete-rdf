@@ -138,7 +138,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
     while idx < tokens.len(){
         lazy_static!{
             static ref PREFIX: Regex = Regex::new(r#"@(prefix|PREFIX)"#).unwrap();
-            static ref PREFIX_URL: Regex = Regex::new(r#"<(https?://[a-zA-Z0-9:\.\#/]{0,256})>\."#).unwrap();
+            static ref PREFIX_URL: Regex = Regex::new(r#"<(https?://[a-zA-Z0-9:\.\#/_\-]{0,256})>\."#).unwrap();
             static ref BASE: Regex = Regex::new(r#"@(base|BASE)"#).unwrap();
             
             static ref MAPPING_INIT: Regex = Regex::new(r#"<#([a-zA-Z0-9_\-]*)>"#).unwrap();
@@ -157,7 +157,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
                         cap.get(1).unwrap().as_str().to_string()
                     }
                     None => {
-                        error!("Error While Formatting the URL in the PREFIXES");
+                        error!("Error While Formatting the URL in the PREFIXES: URL: {}", &tokens[idx + 2]);
                         return Err(ApplicationErrors::IncorrectMappingFormat);    
                     }
                 }
@@ -324,7 +324,7 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &s
     while idx < end {
         lazy_static!{
             static ref TEMPLATE: Regex = Regex::new("rr:template").unwrap();
-            static ref CONSTANT: Regex = Regex::new("rml:constant").unwrap();
+            static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
             static ref GRAPHMAP: Regex = Regex::new("rr:GraphMap").unwrap();
             static ref CLASSTYPE: Regex = Regex::new("rr:class").unwrap();
             static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
@@ -340,7 +340,11 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &s
         else if GRAPHMAP.is_match(&tokens[idx]){
             let comp: Parts;
             if CONSTANT.is_match(&tokens[idx + 1]){
-               comp = Parts::Constant(tokens[idx + 2].clone());
+                if tokens[idx + 2].contains('"'){
+                    comp = Parts::ConstantString(tokens[idx + 2].clone());
+                }else{
+                    comp = Parts::ConstantTerm(tokens[idx + 2].clone());
+                }
                idx += 2; 
             }else{
                 comp = Parts::Term(tokens[idx + 1].clone());
@@ -443,7 +447,7 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &st
         static ref PARENT: Regex = Regex::new("rr:parentTriplesMap").unwrap();
         static ref MAPPING: Regex = Regex::new(r#"<#([a-zA-Z0-9_\-]*)>"#).unwrap();
         static ref JOIN: Regex = Regex::new("rr:joinCondition").unwrap();
-        static ref CONSTANT: Regex = Regex::new("rml:constant").unwrap();
+        static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
         static ref REFERENCE: Regex = Regex::new("rml:reference").unwrap();
         static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
         static ref DATATYPE: Regex = Regex::new("rr:datatype").unwrap();    
@@ -476,7 +480,11 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &st
                 objs.push(Parts::Reference(tokens[i+1].clone()));
             }
             else if CONSTANT.is_match(&tokens[i]){
-                objs.push(Parts::Constant(tokens[i+1].clone()));
+                if tokens[i+1].contains('"'){
+                    objs.push(Parts::ConstantString(tokens[i+1].clone()));
+                }else{
+                    objs.push(Parts::ConstantTerm(tokens[i+1].clone()));
+                }
             }
             else if DATATYPE.is_match(&tokens[i]){
                 objs.push(Parts::DataType(tokens[i+1].clone()));
