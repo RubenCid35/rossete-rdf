@@ -18,7 +18,6 @@
     rr:termType rr:IRI; rr:class cult:Monumento;
   ];
 
-  # Data culterties
   rr:predicateObjectMap [
     rr:predicate cult:tienePK;
     rr:objectMap [

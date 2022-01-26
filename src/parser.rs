@@ -41,6 +41,10 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
     // Tokenize the file so we can be parsed.
     let tokens = tokenize(buffer);
+    for (i, t) in tokens.iter().enumerate(){
+        println!("ID: {:>4}\tTOKEN: {}", i, t);
+    }
+
     
     // Get the tokens into diferent mappings and prefixes.
     match parse_tokens(tokens, debug){
@@ -60,7 +64,7 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
 /// Divide the file into words or tokens so they can be processed quickier.
 fn tokenize(text: String) -> Vec<String>{
-    let comment: Regex = Regex::new(r#"#[ \na-zA-Z0-9]*$"#).unwrap();
+    let comment: Regex = Regex::new(r#"^[\s\n]?[^(https?:)><|]?#[^>][ \na-zA-Z0-9<>:._/@]+$"#).unwrap();
     // COMMENT WITH MAP DEC: <#[0-9a-zA-Z-]*>[0-9a-zA-Z-:;\ ]*(#.*)
     text
     .replace('\r', "\n")
@@ -68,6 +72,7 @@ fn tokenize(text: String) -> Vec<String>{
     .filter(|&sentence| !sentence.is_empty())
     .map(|sentence|{
         if let Some(f) = comment.find(sentence){
+            println!("COMMENT: {}", sentence);
             if f.start() == 0{
                 String::new()
             }else{
@@ -251,7 +256,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
                 }
                 None => "No Map Was Created"
             };
-            warning!("An Identified Element has appeared in the Term Index: {}. Term: {}. Last Mapping: {} Last Token: {}", idx, &tokens[idx], last_map, &tokens[idx - 1]);
+            warning!("An Unidentified Element has appeared in the Term Index: {}. Term: {}. Last Mapping: {} Last Token: {}", idx, &tokens[idx], last_map, &tokens[idx - 1]);
         }
         
         idx += 1;

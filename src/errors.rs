@@ -38,7 +38,8 @@ pub enum ApplicationErrors{
     ComponentInIncorrectLocation,
     IncorrectMappingFormat,
     MissingRMlNamespace, // Future use
-    
+    MissingPrefixInMap,
+
     // RDF Creations
     FAiledToCreateRDF,
 

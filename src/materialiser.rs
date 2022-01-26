@@ -35,11 +35,6 @@ pub fn rdf_procedure(db: rusqlite::Connection, mappings: Vec<Mapping>, config: c
     file_thread.join()?
 }
 
-fn estabish_conection_between_maps(mappings: &Vec<Mapping>) -> HashMap<String, HashMap<String, (String, String, String)>>{ // parent, child, other_table  
-    let join_conections = HashMap::with_capacity(mappings.len());
-    // TODO Create an easy access table with the conections between maps.
-    join_conections
-}
 fn create_rdf(file_con: mpsc::Sender<Vec<u8>>, db: Arc<Mutex<rusqlite::Connection>>, mappings: Vec<Mapping>, config: Arc<config::AppConfiguration>) -> ResultApp<()>{
 
     let (rdf_con, rdf_rec) = mpsc::channel::<String>();
@@ -69,9 +64,7 @@ fn create_rdf(file_con: mpsc::Sender<Vec<u8>>, db: Arc<Mutex<rusqlite::Connectio
                 if output_format.is_nt(){
                     create_rdf_nt(id, rdf_map, rc, db_c, write, table_co)
                 }else if output_format.is_ttl(){
-                    rc.send(current_map)?;
-                    write.send(Vec::new())?;
-                    Ok(())
+                    create_rdf_ttl(id, rdf_map, rc, db_c, write, table_co)
                 }else{
                     rc.send(current_map)?;
                     write.send(Vec::new())?;
@@ -119,7 +112,7 @@ fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<Vec<
     // create a file or if it exist, we remove it first and then we create it again
     let output_path = config.get_output_path();
     if output_path.exists(){
-        warning!("It was found a file with the same name as the output file {}, it will be overwrite", output_path.display());
+        warning!("It was found a file with the same name as the output file \"{}\", it will be overwritten", output_path.display());
     }
     let mut output_file = fs::OpenOptions::new().write(true).truncate(true).create(true).open(output_path)?;
     loop{
@@ -140,10 +133,13 @@ fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<Vec<
 fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, String>>) -> ResultApp<()>{
 
     let table_name = map.get_table_name()?;
+    
     info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
     let main_columns = map.get_all_desired_fields()?;
     let mut colum_idx = Vec::with_capacity(main_columns.len());
-    
+    let mut warn = true;
+
+
     let rows = {
         let fk = db.lock()?;
 
@@ -206,7 +202,7 @@ fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex
     };
 
     // Add the class definition as new predicate
-    let class_term = add_definition_predicate(subject_map, &map);
+    let class_term = add_definition_predicate(subject_map, &map, &mut warn);
 
     let predicates = map.get_predicates();
     let mut buffer = String::with_capacity(1000);
@@ -229,11 +225,131 @@ fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex
         for (i, &pre) in predicates.iter().enumerate(){
             if !pre.is_join(){
                 buffer.extend(url.chars());
-                let term = rdf_term(&map, pre, val, &id_col);
+                let term = rdf_term(&map, pre, val, &id_col, &mut warn);
                 buffer.extend(term.chars());
                 buffer.push_str(".\n");
             }else{
                 // TODO
+            }
+
+        }
+        buffer.push_str("\n\n");            
+
+        write.send(buffer.bytes().collect())?;
+        buffer.clear();
+    }
+
+    // Close and Finish Signal
+    write.send(Vec::new())?;
+    rc.send(id)?; 
+    Ok(())
+}
+
+
+fn create_rdf_ttl(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, String>>) -> ResultApp<()>{
+
+    let table_name = map.get_table_name()?;
+    info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
+    let main_columns = map.get_all_desired_fields()?;
+    let mut colum_idx = Vec::with_capacity(main_columns.len());
+    let mut warn = true;
+    let rows = {
+        let fk = db.lock()?;
+
+        // Main columns in the main query.
+        let mut columns = String::with_capacity(main_columns.len() * 50);
+        for col in main_columns.iter(){
+            columns.push('"');
+            columns.push_str(&col);
+            columns.push_str("\" ,");
+        }
+        columns.pop();
+
+    
+        let select = format!("SELECT {} FROM {}", columns, &table_name);
+        let mut smt = match fk.prepare(&select){
+            Ok(s) => s,
+            Err(error) => {
+                write.send(Vec::new())?;
+                rc.send(id)?; 
+                return Err(error.into())
+            } 
+        };
+
+        for col in main_columns.iter(){
+            colum_idx.push(smt.column_index(&col).unwrap())
+        }
+        let raw_rows= smt.query_map([], |row|{
+            let mut values: Vec<String> = Vec::with_capacity(main_columns.len());
+            for col in colum_idx.iter(){
+                values.push(row.get(*col).unwrap_or(String::new()))
+            }
+            Ok(values)
+        })?
+        .filter(|row| row.is_ok())
+        .map(|row| row.unwrap())
+        .collect::<Vec<Vec<String>>>();
+        
+        raw_rows
+    };
+    let id_col = main_columns
+    .into_iter()
+    .map(|key| {
+        if key.contains("||"){
+            key.split("||").nth(1).unwrap().to_string()
+        }else{
+            key
+        }
+    })
+    .zip(colum_idx)
+    .collect::<HashMap<_, _>>();
+
+    let subject_map = map.get_subject();
+    let (temp, input) = if let Parts::Template{template, input_fields} = subject_map.get_template().unwrap(){
+        (template, input_fields)
+    }else{
+        write.send(Vec::new())?;
+        rc.send(id)?; 
+        return Err(ApplicationErrors::IncorrectMappingFormat)
+    };
+
+    // Add the class definition as new predicate
+    let class_term = add_definition_predicate(subject_map, &map, &mut warn);
+
+    let predicates = map.get_predicates();
+    let mut buffer = String::with_capacity(1000);
+    for val in rows.iter(){
+        // Getting the subject
+        let input_data = 
+        input.iter()
+        .map(|p|{
+            let idx = id_col[p];
+            &val[idx]
+        }).collect::<Vec<_>>();
+
+        let url = format_uri(temp.clone(), input_data);
+        if let Some(class) = &class_term{
+            buffer.extend(url.chars());
+            buffer.extend(class.chars());
+            if predicates.is_empty(){
+                buffer.push_str(".\n");
+            }else{
+                buffer.push_str(";\n\t\t");
+            }
+        }
+
+        for (i, &pre) in predicates.iter().enumerate(){
+            if !pre.is_join(){
+                let term = rdf_term(&map, pre, val, &id_col, &mut warn);
+                buffer.extend(term.chars());
+            }else{
+                // TODO Implement JOIN CONDITION
+                buffer.extend("<TODO-Implement> <JOIN_CONDITION>".chars());
+            }
+            if i != predicates.len() - 1{
+                buffer.push_str(";\n\t\t");
+            }else{
+                buffer.push_str(".\n");
             }
 
         }
@@ -269,7 +385,7 @@ fn format_uri(mut url: String, input: Vec<&String>) -> String{
     url 
 }
 
-fn add_definition_predicate(subject: &Parts, map: &Mapping) -> Option<String>{
+fn add_definition_predicate(subject: &Parts, map: &Mapping, warn: &mut bool) -> Option<String>{
     if let Parts::SubjectMap{components } = subject{
         let class = components.iter()
         .filter(|comp|{
@@ -281,7 +397,7 @@ fn add_definition_predicate(subject: &Parts, map: &Mapping) -> Option<String>{
         }).nth(0);
         if let Some(Parts::Class(data)) = class{
             let mut definition = "a ".to_string();
-            let class_uri = get_predicate(data, map, true); 
+            let class_uri = get_predicate(data, map, true, warn); 
             definition.extend(class_uri.chars());
             return Some(definition)
 
@@ -295,15 +411,15 @@ fn add_definition_predicate(subject: &Parts, map: &Mapping) -> Option<String>{
 
 
 
-fn rdf_term(map: &Mapping, predicate: &Parts, from_table: &Vec<String>, columns: &HashMap<String, usize>) -> String{
+fn rdf_term(map: &Mapping, predicate: &Parts, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> String{
     if let Parts::PredicateObjectMap{predicate, object_map} = predicate{
         let mut rdf_term = String::with_capacity(100); 
-        let pred = get_predicate(predicate, map, true);
+        let pred = get_predicate(predicate, map, true, warn);
         if pred.is_empty(){
             return rdf_term;
         }
         rdf_term.extend(pred.chars());
-        let object = term_from_object(map, &object_map, from_table, columns);
+        let object = term_from_object(map, &object_map, from_table, columns, warn);
         rdf_term.extend(object.chars());
         rdf_term
     }else{
@@ -311,7 +427,7 @@ fn rdf_term(map: &Mapping, predicate: &Parts, from_table: &Vec<String>, columns:
     }
 }
 
-fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String>, columns: &HashMap<String, usize>) -> String{
+fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> String{
     let mut term_kind: bool = true; // true: datatype false: uri
     let mut term_type = String::from("xsd:string");
     let mut object = String::new();
@@ -334,7 +450,7 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
                 break
             }
             Parts::ConstantTerm(obj) => {
-                object = get_predicate(&obj, map, false);
+                object = get_predicate(&obj, map, false, warn);
                 term_kind = false;
                 break
             }
@@ -343,7 +459,7 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
     }
 
     if term_kind{
-        let kind = get_predicate(&term_type, map, true);
+        let kind = get_predicate(&term_type, map, true, warn);
         return format!("\"{}\"^^{}", object, kind)
     }
     else{
@@ -356,14 +472,22 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
 
 
 
-fn get_predicate(predicate: &String, map: &Mapping, tags: bool) -> String{
+fn get_predicate(predicate: &String, map: &Mapping, tags: bool, warn: &mut bool) -> String{
     let mut pre = String::with_capacity(predicate.len() + 30);
     let mut parts = predicate.split(':');
     let mut prefix = parts.next().unwrap().to_string();
     if let Some(url) = parts.next(){
         let prefixes = map.get_prefixes();
         prefix.push(':');
-        pre.extend(prefixes.get(&prefix).unwrap().clone().chars());
+        if let Some(pre_url) = prefixes.get(&prefix){
+            pre.extend(pre_url.chars());
+        }else{
+            if *warn{
+                warning!("There is a missing prefix definition \"{}\" for the following map: {}", prefix, map.get_identifier());
+                *warn = false;
+            }
+            return predicate.clone()
+        }
         pre.extend(url.chars());
         if tags{
             pre.insert(0,'<');
