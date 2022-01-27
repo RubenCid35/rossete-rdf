@@ -28,7 +28,6 @@ pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<
     }
     
     let loc = select_storage_loc(&fi, &config)?;
-    
     let (data_tx, data_rx) = mpsc::channel();
 
     let num_files = files.len();

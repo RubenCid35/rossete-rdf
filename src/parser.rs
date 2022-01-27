@@ -41,11 +41,6 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
     // Tokenize the file so we can be parsed.
     let tokens = tokenize(buffer);
-    for (i, t) in tokens.iter().enumerate(){
-        println!("ID: {:>4}\tTOKEN: {}", i, t);
-    }
-
-    
     // Get the tokens into diferent mappings and prefixes.
     match parse_tokens(tokens, debug){
         Ok(mappings) => {
@@ -233,7 +228,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
             ////info!("A predicateObjectMap was parsed in the line {}", idx);
             if !&tokens[idx + 1].contains('['){
                 error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requires at least a rr:predicate and rr:objectMap component", &last_map_name, idx);
-                return Err(ApplicationErrors::IncorrectMappingFormat)
+                return Err(ApplicationErrors::MissingClosingBracket)
             }
             else if let Some(finish) = find_closing_bracket(&tokens, idx + 1){
                 let predicate_map = parse_predicate_map(&tokens, idx + 2, finish, &last_map_name)?;
@@ -242,7 +237,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
             }
             else{
                 error!("In the Mapping {} (last token id: {:.3}), the rr:predicateObjectMap requieres ] at some point to finish the statement", &last_map_name, idx);
-                return Err(ApplicationErrors::IncorrectMappingFormat);     
+                return Err(ApplicationErrors::MissingClosingBracket);     
             }   
         }
         else if MAPDECLARATION.is_match(&tokens[idx]) && MAPTYPE.is_match(&tokens[idx + 1]){
@@ -425,7 +420,7 @@ fn parse_predicate_map(tokens: &Vec<String>, init: usize, end: usize, last_map: 
                 }
                 else{
                     error!("Missing Closing Bracket in a predicate map in this map: {}", last_map);
-                    return Err(ApplicationErrors::IncorrectMappingFormat)
+                    return Err(ApplicationErrors::MissingClosingBracket)
                 }        
             }
             else{
@@ -458,74 +453,80 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &st
         static ref DATATYPE: Regex = Regex::new("rr:datatype").unwrap();    
         static ref TEMPLATE: Regex = Regex::new("rr:template").unwrap();    
     };
-    if PARENT.is_match(&tokens[i]) || JOIN.is_match(&tokens[i]){
-        let mut other_map = String::new();
-        let mut join_condition = [String::new(),String::new()];
-        while i < end{
-            if PARENT.is_match(&tokens[i]){
-                if let Some(cap) = MAPPING.captures(&tokens[i + 1]){
-                    other_map = cap.get(1).unwrap().as_str().to_string();
-                }else{
-                    error!("The mapping reference in a parentTriplesMap has an incorrect format. TOKEN: {} LAST MAP: {}", &tokens[i + 1], last_map);
-                    return Err(ApplicationErrors::IncorrectMappingFormat)
-                }
-            }
-            else if JOIN.is_match(&tokens[i]){
-                let end = find_closing_bracket(&tokens, i + 1).unwrap();
-                parse_join_condition(&tokens, i + 2, end, &mut join_condition, last_map)?;
+
+    let mut objs = Vec::with_capacity(2);
+    while i < end{
+        if REFERENCE.is_match(&tokens[i]){
+            objs.push(Parts::Reference(tokens[i+1].clone()));
+            i += 1;
+        }
+        else if CONSTANT.is_match(&tokens[i]){
+            if tokens[i+1].contains('"'){
+                objs.push(Parts::ConstantString(tokens[i+1].clone()));
+            }else{
+                objs.push(Parts::ConstantTerm(tokens[i+1].clone()));
             }
             i += 1;
-        }  
-        return Ok(vec![Parts::ParentTriplesMap{ other_map, join_condition}]);
-    }
-    else{
-        let mut objs = Vec::with_capacity(2);
-        while i < end{
-            if REFERENCE.is_match(&tokens[i]){
-                objs.push(Parts::Reference(tokens[i+1].clone()));
-            }
-            else if CONSTANT.is_match(&tokens[i]){
-                if tokens[i+1].contains('"'){
-                    objs.push(Parts::ConstantString(tokens[i+1].clone()));
-                }else{
-                    objs.push(Parts::ConstantTerm(tokens[i+1].clone()));
-                }
-            }
-            else if DATATYPE.is_match(&tokens[i]){
-                objs.push(Parts::DataType(tokens[i+1].clone()));
-            }else if TERMTYPE.is_match(&tokens[i]){
-                objs.push(Parts::TermType(tokens[i+1].clone()));
-            }else if TEMPLATE.is_match(&tokens[i]){
-                let (template, input_fields) = parse_input_field(&tokens[i + 1], last_map)?;
-                objs.push(Parts::Template{
-                    template,
-                    input_fields,
-                });
-                i += 1;
-            }
-            else{
-                warning!("An unknown tokens has appeared in the objectMap parser, TOKEN: {}, NEXT TOKEN: {}, LAST MAP: {}", &tokens[i], &tokens[i + 1], last_map);
-            }
-            i += 2;
         }
-
-        return Ok(objs)
+        else if DATATYPE.is_match(&tokens[i]){
+            objs.push(Parts::DataType(tokens[i+1].clone()));
+            i += 1;
+        }else if TERMTYPE.is_match(&tokens[i]){
+            objs.push(Parts::TermType(tokens[i+1].clone()));
+            i += 1;
+        }else if TEMPLATE.is_match(&tokens[i]){
+            let (template, input_fields) = parse_input_field(&tokens[i + 1], last_map)?;
+            objs.push(Parts::Template{
+                template,
+                input_fields,
+            });
+            i += 1;
+        }else if PARENT.is_match(&tokens[i]){
+            if let Some(cap) = MAPPING.captures(&tokens[i + 1]){
+                let other_map = cap.get(1).unwrap().as_str().to_string();
+                objs.push(Parts::ParentMap(other_map));
+                i += 1;
+            }else{
+                error!("The mapping reference in a parentTriplesMap has an incorrect format. TOKEN: {} LAST MAP: {}", &tokens[i + 1], last_map);
+                return Err(ApplicationErrors::IncorrectMappingFormat)        
+            }
+        }else if JOIN.is_match(&tokens[i]) {
+            if tokens[i + 1].contains('['){
+                if let Some(end) = find_closing_bracket(&tokens, i + 1){
+                    let join = parse_join_condition(&tokens, i + 2, end, last_map)?;
+                    objs.push(join);  
+                    i = end;
+                }else{
+                    error!("The mapping reference in a joinCondition has a missing closing bracket. TOKEN: {} LAST MAP: {}", &tokens[i + 1], last_map);
+                    return Err(ApplicationErrors::MissingClosingBracket)        
+                }
+            }else{
+                error!("The joinCondition clause in the map {1} has an invalid structure. TOKEN: {0} LAST MAP: {1}", &tokens[i + 1], last_map);
+                return Err(ApplicationErrors::IncorrectMappingFormat)        
+            }
+        }
+        else{
+            warning!("An unknown tokens has appeared in the objectMap parser, TOKEN: {}, NEXT TOKEN: {}, LAST MAP: {}", &tokens[i], &tokens[i + 1], last_map);
+        }
+        i += 1;
     }
+    return Ok(objs)
 }
 
-
-fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, join: &mut [String;2], last_map: &str) -> ResultApp<()>{
+fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, last_map: &str) -> ResultApp<Parts>{
     lazy_static!{
         static ref CHILD: Regex = Regex::new("rr:child").unwrap();
         static ref PARENT_CON: Regex = Regex::new("rr:parent").unwrap();
     };
     let mut i = init;
+    let mut child = String::new();
+    let mut parent = String::new();
     while i < end{
         if CHILD.is_match(&tokens[i]){
-            join[0] = tokens[i + 1].clone();
+            child = tokens[i + 1].clone();
             i += 1;
         }else if PARENT_CON.is_match(&tokens[i]){
-            join[1] = tokens[i + 1].clone();
+            parent = tokens[i + 1].clone();
             i += 1;
         }else{
             error!("JOIN CONDITION ERROR: An unknown token appeared in the join condiction: {} LAST MAP: {}", &tokens[i], last_map);
@@ -534,5 +535,5 @@ fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, join: &mu
         i += 1;
     }
 
-    Ok(())
+    Ok(Parts::JoinCondition(child, parent))
 }

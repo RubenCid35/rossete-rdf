@@ -46,7 +46,11 @@ fn create_rdf(file_con: mpsc::Sender<Vec<u8>>, db: Arc<Mutex<rusqlite::Connectio
     let (rc_tx, rc_rx) = mpsc::channel::<usize>(); // Indicates which thread has finished to remove it and check if it failed.
     let mut failed_maps: Vec<&str> = Vec::new();
     
-    let tables = mappings.iter().map(|map| (map.get_identifier().clone(), map.get_table_name().unwrap())).collect::<HashMap<_, _>>();
+    let tables = mappings.iter().map(|map| {
+        let table = map.get_table_name().unwrap();
+        let template = map.get_subject().get_template().unwrap().clone(); 
+        (map.get_identifier().clone(), (table, template))
+    }).collect::<HashMap<_, _>>();
     let tables = Arc::new(tables);
 
     let mut current_map = 0;
@@ -130,12 +134,13 @@ fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<Vec<
     Ok(())
 }
 
-fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, String>>) -> ResultApp<()>{
+fn create_rdf_nt<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, (String, Parts)>>) -> ResultApp<()>{
 
     let table_name = map.get_table_name()?;
     
     info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
-    let main_columns = map.get_all_desired_fields()?;
+    let mut main_columns = map.get_all_desired_fields()?;
+    main_columns.insert("rowid".to_string());
     let mut colum_idx = Vec::with_capacity(main_columns.len());
     let mut warn = true;
 
@@ -151,7 +156,6 @@ fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex
             columns.push_str("\" ,");
         }
         columns.pop();
-
     
         let select = format!("SELECT {} FROM {}", columns, &table_name);
         let mut smt = match fk.prepare(&select){
@@ -225,7 +229,7 @@ fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex
         for (i, &pre) in predicates.iter().enumerate(){
             if !pre.is_join(){
                 buffer.extend(url.chars());
-                let term = rdf_term(&map, pre, val, &id_col, &mut warn);
+                let term = rdf_term(&map, pre, val,Arc::clone(&db), &id_col, Arc::clone(&tables), &mut warn)?;
                 buffer.extend(term.chars());
                 buffer.push_str(".\n");
             }else{
@@ -246,7 +250,7 @@ fn create_rdf_nt(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex
 }
 
 
-fn create_rdf_ttl(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, String>>) -> ResultApp<()>{
+fn create_rdf_ttl<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, (String, Parts)>>) -> ResultApp<()>{
 
     let table_name = map.get_table_name()?;
     info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
@@ -339,13 +343,8 @@ fn create_rdf_ttl(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mute
         }
 
         for (i, &pre) in predicates.iter().enumerate(){
-            if !pre.is_join(){
-                let term = rdf_term(&map, pre, val, &id_col, &mut warn);
-                buffer.extend(term.chars());
-            }else{
-                // TODO Implement JOIN CONDITION
-                buffer.extend("<TODO-Implement> <JOIN_CONDITION>".chars());
-            }
+            let term = rdf_term(&map, pre, val,Arc::clone(&db), &id_col, Arc::clone(&tables), &mut warn)?;
+            buffer.extend(term.chars());
             if i != predicates.len() - 1{
                 buffer.push_str(";\n\t\t");
             }else{
@@ -411,21 +410,27 @@ fn add_definition_predicate(subject: &Parts, map: &Mapping, warn: &mut bool) -> 
 
 
 
-fn rdf_term(map: &Mapping, predicate: &Parts, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> String{
-    if let Parts::PredicateObjectMap{predicate, object_map} = predicate{
+fn rdf_term(map: &Mapping, predicate_part: &Parts, from_table: &Vec<String>, db: Arc<Mutex<rusqlite::Connection>>, columns: &HashMap<String, usize>, tables: Arc<HashMap<String, (String, Parts)>>, warn: &mut bool) -> ResultApp<String>{
+    if let Parts::PredicateObjectMap{predicate, object_map} = predicate_part{
         let mut rdf_term = String::with_capacity(100); 
         let pred = get_predicate(predicate, map, true, warn);
         if pred.is_empty(){
-            return rdf_term;
+            return Ok(rdf_term);
         }
         rdf_term.extend(pred.chars());
-        let object = term_from_object(map, &object_map, from_table, columns, warn);
+        let object;
+        if predicate_part.is_join(){
+            object = term_from_join_object(map.get_table_name().unwrap(),&object_map,  db, from_table, columns, warn)?;
+        }else{
+            object = term_from_object(map, &object_map, from_table, columns, warn);
+        }
         rdf_term.extend(object.chars());
-        rdf_term
+        Ok(rdf_term)
     }else{
-        String::new()
+        Ok(String::new())
     }
 }
+
 
 fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> String{
     let mut term_kind: bool = true; // true: datatype false: uri
@@ -470,7 +475,13 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
 
 }
 
+fn term_from_join_object(table_name: String, objects: &Vec<Parts>, db: Arc<Mutex<rusqlite::Connection>>, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> ResultApp<String>{
+    let rowid = columns["rowid"];
+    let id = &from_table[rowid];
 
+
+    Ok("<TODO>".to_string())
+}
 
 fn get_predicate(predicate: &String, map: &Mapping, tags: bool, warn: &mut bool) -> String{
     let mut pre = String::with_capacity(predicate.len() + 30);

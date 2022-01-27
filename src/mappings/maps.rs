@@ -98,10 +98,7 @@ impl Mapping{
             fields.extend(part_fields);
         }
         // Append the iterator if data file requieres a path (JSON, XML)
-        let iterator = match self.get_logical_source()?{
-            parts::Parts::LogicalSource{iterator, ..} => iterator.clone(),
-            _ => String::new()
-        };
+        let iterator = self.get_iterator()?;
 
         if iterator.is_empty(){ // CSV / TSV Case (most common)
             return Ok(fields)
@@ -116,6 +113,51 @@ impl Mapping{
             Ok(new_fields)
         }
 
+    }
+
+    pub fn get_iterator(&self) -> ResultApp<String>{
+        match self.get_logical_source()?{
+            parts::Parts::LogicalSource{iterator, reference_formulation, ..} => {
+                if reference_formulation.is_csv() || reference_formulation.is_tsv(){
+                    Ok(String::new())
+                }
+                else{
+                    Ok(iterator.clone())
+                }
+            }
+            _ => Err(ApplicationErrors::MissingSubjectMap)
+        }
+    }
+
+    pub fn get_join_fields(&self) -> ResultApp<Vec<(String, std::collections::HashSet<String>)>>{
+        let mut cons = Vec::with_capacity(3);
+
+        for pre in self.get_predicates().iter(){
+            let mut other_map = String::new();
+            let mut fields = std::collections::HashSet::with_capacity(2);
+            if pre.is_join(){
+                if let parts::Parts::PredicateObjectMap{predicate: _, object_map} = pre{
+                    for obj in object_map.iter(){
+                        if let parts::Parts::ParentMap(map) = obj{
+                            if other_map.is_empty(){
+                                other_map = map.clone();
+                            }else{
+                                crate::error!("There are multiple maps in the same objectMap, it shoul be only one: MAP: {}", self.get_identifier());
+                                return Err(ApplicationErrors::IncorrectMappingFormat)
+                            }
+                        }
+                        else if let parts::Parts::JoinCondition(_, parent) = obj{
+                            fields.insert(parent.clone());
+                        }
+                    }
+                    cons.push((other_map.clone(), fields.clone()));
+                    other_map.clear();
+                    fields.clear();
+                }
+            }
+        }
+
+        Ok(cons)
     }
 
     pub fn get_identifier(&self) -> &String{

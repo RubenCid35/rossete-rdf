@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 
 use std::any::Any;
 use std::io;
@@ -22,6 +21,7 @@ pub enum ApplicationErrors{
     IncorrectJsonFile,
     IncorrectJsonPath,
     IncorrectXMLFile,
+    #[allow(dead_code)] // USe in the XML Reading: TODO
     IncorrectXPath,
 
     // Database Errors
@@ -33,13 +33,18 @@ pub enum ApplicationErrors{
     // Reading Mapping Errors.
     MissingLogicalSource,
     MissingSubjectMap,
+    #[allow(dead_code)] // Use it in reading precedure TODO
     InvalidSourceDataFormat, // Maybe it will be eliminated
     NoInputFieldURISubject,
     ComponentInIncorrectLocation,
     IncorrectMappingFormat,
-    MissingRMlNamespace, // Future use
+    #[allow(dead_code)]
     MissingPrefixInMap,
-
+    #[allow(dead_code)]
+    MissingMappingPart,
+    MissingClosingBracket,
+    MappingNotFound,
+     
     // RDF Creations
     FAiledToCreateRDF,
 
@@ -93,7 +98,7 @@ impl From<rusqlite::Error> for ApplicationErrors{
             rusqlite::Error::SqliteFailure(..) => Self::CantOpenDatabase,
             rusqlite::Error::InvalidColumnIndex(..) => Self::MissingFieldInData,
             rusqlite::Error::InvalidQuery => Self::InvalidDataEntry,
-            _ => Self::DataBaseDidntReceivedData
+            _ => Self::FailedToInteractWithDB
         }
     }
 }

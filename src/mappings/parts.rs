@@ -18,11 +18,11 @@ pub enum Parts{
         predicate: String,
         object_map: Vec<Parts>
     },
+
     // rr:parentTriplesMap
-    ParentTriplesMap{
-        other_map: String,
-        join_condition: [String;2] // Child-Parent
-    },
+    ParentMap(String),
+    JoinCondition(String, String),
+
     // rr:graphMaps
     GraphMap(Box<Self>),
     // rr:class
@@ -71,20 +71,20 @@ impl std::fmt::Debug for Parts{
                 writeln!(f, "\t\t]")?;
                 writeln!(f, "\t]")
             }
-            Self::ParentTriplesMap{other_map, join_condition} => {
-                writeln!(f, "rr:parentTriplesMap <#{}>;", other_map)?;
-                if !join_condition.iter().all(|x| x.is_empty()){
-                    writeln!(f, "\t\t\trr:joinCondition [")?;
-                    writeln!(f, "\t\t\t\trr:child \"{}\";", join_condition[0])?;
-                    writeln!(f, "\t\t\t\trr:child \"{}\";", join_condition[1])?;
-                    writeln!(f, "\t\t\t]")
-                }else{
-                    Ok(())
-                }
-            }
             Self::GraphMap(inside) => {
                 writeln!(f, "rr:graphMap {:?}", inside)
             }
+            Self::ParentMap(other_map) => {
+                writeln!(f, "rr:parentTriplesMap <#{}>;", other_map)
+            }
+            Self::JoinCondition(child, parent) => {
+                writeln!(f, "\t\t\trr:joinCondition [")?;
+                writeln!(f, "\t\t\t\trr:child \"{}\";", child)?;
+                writeln!(f, "\t\t\t\trr:parent \"{}\";", parent)?;
+                writeln!(f, "\t\t\t]")
+            }
+
+
             Self::Reference(data) => {
                 write!(f, "rml:reference \"{}\"", data)
             }
@@ -140,11 +140,10 @@ impl Parts{
                     fields.extend(comp.get_fields());
                 }
             },
-            Parts::ParentTriplesMap { other_map: _, join_condition } => {
-                if !join_condition[0].is_empty(){
-                    fields.insert(join_condition[0].clone());
-                }
-            }
+            Parts::ParentMap(_) => {},
+            Parts::JoinCondition(child, _) => {
+                fields.insert(child.clone());
+            },
             Parts::GraphMap(other) => {
                 fields.extend(other.get_fields());
             },
@@ -183,10 +182,23 @@ impl Parts{
             _ => false
         }
     }
+    #[allow(dead_code)]
+    pub fn is_parent(&self) -> bool{
+        match self{
+            Self::ParentMap(..) => true,
+            Self::JoinCondition(..) => false,
+            Self::PredicateObjectMap{predicate:_, object_map} => {
+                object_map.iter().any(|comp| comp.is_join())
+            }
+            _ => false
+        }
+
+    }
 
     pub fn is_join(&self) -> bool{
         match self{
-            Self::ParentTriplesMap{..} => true,
+            Self::ParentMap(..) => false,
+            Self::JoinCondition(..) => true,
             Self::PredicateObjectMap{predicate:_, object_map} => {
                 object_map.iter().any(|comp| comp.is_join())
             }

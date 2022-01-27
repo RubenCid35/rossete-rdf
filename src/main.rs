@@ -26,7 +26,7 @@ use std::time::Instant;
 
 const DEBUG: bool = cfg!(debug_assertions);
 
-fn main() -> ResultApp<()>{
+fn main(){
 
     // This will be given by the user.
     let output_file = path::PathBuf::from("output.nt");
@@ -43,7 +43,14 @@ fn main() -> ResultApp<()>{
     let file_name = path::PathBuf::from("./examples/mappings");
     
     // Application Process Controller
-    run(configuration, file_name)
+    match run(configuration, file_name){
+        Ok(_) => {
+            info!("Process Finished :) :) :)");
+        },
+        Err(error) => {
+            error!("Process Finished Due to an error. ERROR CODE: {:?}", error);
+        }
+    }
 }
 
 // Regulates all the processes
@@ -55,14 +62,15 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     let now = Instant::now();
     let mappings = parse_all_mappings(&config, map_path)?;
     time_info("Parsing Mapping Files", now);
-    
-    
+
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
+    add_all_join_fields(&mappings, &mut data_fields)?;
 
     if config.debug_mode(){ // Display the configuration to see if it is correct
         info!("Showing the Created Configuration");
         println!("{:?}", config);
+        std::thread::sleep(std::time::Duration::from_secs(5))
     }
     
     eprint!("\n");
@@ -167,8 +175,50 @@ fn add_all_data_files(mappings: &Vec<Mapping>, config: &mut AppConfiguration, fi
         let field = fields.entry(data_file.clone()).or_insert(HashSet::new());
         field.extend(map.get_all_desired_fields()?);
     }
-
     config.remove_unused_files(tmp_files);
+    Ok(())
+}
+
+fn add_all_join_fields(mappings: &Vec<Mapping>, fields: &mut HashMap<PathBuf, HashSet<String>>) -> ResultApp<()>{
+    
+    let map_path = mappings.iter().map(|map|{
+        let id = map.get_identifier();
+        let path = map.source_file().unwrap();
+        (id, path)
+    }).collect::<HashMap<_, _>>();
+
+    for map in mappings.iter(){
+        for (other, field) in map.get_join_fields().unwrap().into_iter(){
+            let &p = match map_path.get(&other){
+                Some(p) => p,
+                None => {
+                    return Err(errors::ApplicationErrors::MappingNotFound)
+                }
+            };
+            let other = mappings.iter().find(|&map| map.get_identifier() == &other).unwrap();
+            let iterador = other.get_iterator().unwrap();
+            let f = fields.entry(p.clone()).or_insert(HashSet::new());
+            
+            if !iterador.is_empty(){
+                f.extend(field
+                    .into_iter()
+                    .map(|f|{
+                        let mut tmp_f = String::with_capacity(iterador.len() + f.len() + 2);
+                        tmp_f.push_str(&iterador); 
+                        tmp_f.push_str("||");
+                        tmp_f.extend(f.chars());
+                        tmp_f
+                    })
+                );
+            }
+            else{
+                f.extend(field.clone())
+
+            }
+        }
+    }
+
+
     Ok(())
 }
 
