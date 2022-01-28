@@ -182,13 +182,13 @@ impl Parts{
             _ => false
         }
     }
-    #[allow(dead_code)]
+
     pub fn is_parent(&self) -> bool{
         match self{
             Self::ParentMap(..) => true,
             Self::JoinCondition(..) => false,
             Self::PredicateObjectMap{predicate:_, object_map} => {
-                object_map.iter().any(|comp| comp.is_join())
+                object_map.iter().any(|comp| comp.is_parent())
             }
             _ => false
         }
@@ -200,7 +200,7 @@ impl Parts{
             Self::ParentMap(..) => false,
             Self::JoinCondition(..) => true,
             Self::PredicateObjectMap{predicate:_, object_map} => {
-                object_map.iter().any(|comp| comp.is_join())
+                object_map.iter().any(|comp| comp.is_join()) && object_map.iter().any(|comp| comp.is_parent())
             }
             _ => false
         }

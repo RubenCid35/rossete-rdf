@@ -88,10 +88,12 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
                 info!("File with ID: {} was readed and closed.", query);
                 left_files -= 1;
                 if left_files == 0{
+                    buffer.push_str(" COMMIT;");
                     conn.execute_batch(&buffer)?;
                     buffer.clear();
                     break
                 }
+
             }else if batch_size < MAX_BATCH{
                 batch_size += 1;
                 buffer.extend(query.chars());

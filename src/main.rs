@@ -29,7 +29,7 @@ const DEBUG: bool = cfg!(debug_assertions);
 fn main(){
 
     // This will be given by the user.
-    let output_file = path::PathBuf::from("output.nt");
+    let output_file = path::PathBuf::from("output.ttl");
     let config_file = path::PathBuf::from("config_example.json");
 
     // ;
@@ -55,8 +55,9 @@ fn main(){
 
 // Regulates all the processes
 fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
-    
-    eprint!("\n");
+
+
+    eprintln!("\n");
     info!("Starting to Parse all the given mapping files.");
 
     let now = Instant::now();
@@ -66,20 +67,20 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
     add_all_join_fields(&mappings, &mut data_fields)?;
+    
 
     if config.debug_mode(){ // Display the configuration to see if it is correct
         info!("Showing the Created Configuration");
         println!("{:?}", config);
-        std::thread::sleep(std::time::Duration::from_secs(5))
     }
     
-    eprint!("\n");
+    eprintln!("\n");
     info!("Starting to Read and Store all required data files");
     let now = Instant::now();
     let db = input::read_store_data_files(&config, data_fields)?; 
     time_info("Reading and Storing Data Files", now);
 
-    eprint!("\n");
+    eprintln!("\n");
     info!("Starting to create the RDF File from Mapping and Data Files");
     let now = Instant::now();
     materialiser::rdf_procedure(db, mappings, config)?;

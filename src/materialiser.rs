@@ -1,7 +1,4 @@
 
-#![allow(dead_code)]
-#![allow(unused_assignments, unused_variables)]
-
 use crate::ResultApp;
 use crate::errors::ApplicationErrors;
 use crate::mappings::{
@@ -137,7 +134,6 @@ fn write_file(config: Arc<config::AppConfiguration>, rdf_rx: mpsc::Receiver<Vec<
 fn create_rdf_nt<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<Mutex<rusqlite::Connection>>, write: mpsc::Sender<Vec<u8>>, tables: Arc<HashMap<String, (String, Parts)>>) -> ResultApp<()>{
 
     let table_name = map.get_table_name()?;
-    
     info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
     let mut main_columns = map.get_all_desired_fields()?;
     main_columns.insert("rowid".to_string());
@@ -226,16 +222,18 @@ fn create_rdf_nt<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<M
             buffer.push_str(".\n");
         }
 
-        for (i, &pre) in predicates.iter().enumerate(){
-            if !pre.is_join(){
-                buffer.extend(url.chars());
-                let term = rdf_term(&map, pre, val,Arc::clone(&db), &id_col, Arc::clone(&tables), &mut warn)?;
-                buffer.extend(term.chars());
-                buffer.push_str(".\n");
-            }else{
-                // TODO
-            }
-
+        for &pre in predicates.iter(){
+            buffer.extend(url.chars());
+            let term = match rdf_term(&map, pre, val,Arc::clone(&db), &id_col, Arc::clone(&tables), &mut warn){
+                Ok(t) => t,
+                Err(error) => {
+                    write.send(Vec::new())?;    
+                    rc.send(id)?;
+                    return Err(error)
+                }
+            };
+            buffer.extend(term.chars());
+            buffer.push_str(".\n");
         }
         buffer.push_str("\n\n");            
 
@@ -254,7 +252,9 @@ fn create_rdf_ttl<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<
 
     let table_name = map.get_table_name()?;
     info!("RDF FROM DB TABLE: {:<30} AND MAP: {}", &table_name, map.get_identifier());
-    let main_columns = map.get_all_desired_fields()?;
+    let mut main_columns = map.get_all_desired_fields()?;
+    main_columns.insert("rowid".to_string());
+
     let mut colum_idx = Vec::with_capacity(main_columns.len());
     let mut warn = true;
     let rows = {
@@ -343,7 +343,23 @@ fn create_rdf_ttl<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<
         }
 
         for (i, &pre) in predicates.iter().enumerate(){
-            let term = rdf_term(&map, pre, val,Arc::clone(&db), &id_col, Arc::clone(&tables), &mut warn)?;
+            if i == 0 && class_term.is_none(){
+                buffer.extend(url.chars());
+            }
+            let term;
+            if pre.is_parent(){
+                term = Ok(String::from("<TODO> <TODO>"));
+            }else{
+                term = rdf_term(&map, pre, val,Arc::clone(&db), &id_col, Arc::clone(&tables), &mut warn);
+            }
+            let term = match term {
+                Ok(t) => t,
+                Err(error) => {
+                    write.send(Vec::new())?;    
+                    rc.send(id)?;
+                    return Err(error)
+                }
+            };
             buffer.extend(term.chars());
             if i != predicates.len() - 1{
                 buffer.push_str(";\n\t\t");
@@ -413,17 +429,14 @@ fn add_definition_predicate(subject: &Parts, map: &Mapping, warn: &mut bool) -> 
 fn rdf_term(map: &Mapping, predicate_part: &Parts, from_table: &Vec<String>, db: Arc<Mutex<rusqlite::Connection>>, columns: &HashMap<String, usize>, tables: Arc<HashMap<String, (String, Parts)>>, warn: &mut bool) -> ResultApp<String>{
     if let Parts::PredicateObjectMap{predicate, object_map} = predicate_part{
         let mut rdf_term = String::with_capacity(100); 
+        
         let pred = get_predicate(predicate, map, true, warn);
         if pred.is_empty(){
             return Ok(rdf_term);
         }
         rdf_term.extend(pred.chars());
-        let object;
-        if predicate_part.is_join(){
-            object = term_from_join_object(map.get_table_name().unwrap(),&object_map,  db, from_table, columns, warn)?;
-        }else{
-            object = term_from_object(map, &object_map, from_table, columns, warn);
-        }
+       
+        let object = term_from_object(map, &object_map, from_table, columns, warn);
         rdf_term.extend(object.chars());
         Ok(rdf_term)
     }else{
@@ -475,10 +488,9 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
 
 }
 
-fn term_from_join_object(table_name: String, objects: &Vec<Parts>, db: Arc<Mutex<rusqlite::Connection>>, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> ResultApp<String>{
+fn term_from_join_object(table_name: String, objects: &Vec<Parts>, db: Arc<Mutex<rusqlite::Connection>>, from_table: &Vec<String>, columns: &HashMap<String, usize>, tables: Arc<HashMap<String, (String, Parts)>>) -> ResultApp<String>{
     let rowid = columns["rowid"];
     let id = &from_table[rowid];
-
 
     Ok("<TODO>".to_string())
 }

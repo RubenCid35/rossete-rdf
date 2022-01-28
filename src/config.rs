@@ -215,17 +215,6 @@ impl AppConfiguration{
                 }
             }
         }
-        /*
-        if let Some(output_format) = json_data.get("output-encoding"){
-            tmp.output_encoding = match output_format.as_str(){
-                Some(encoding) => get_encoding_from_str(encoding),
-                None => {
-                    error!("The option of \"output encoding\" must contain a string");
-                    return Err(ApplicationErrors::IncorrectJsonFile)
-                }
-            }
-        }
-        */      
         Ok(tmp)
     }
 
@@ -370,24 +359,6 @@ impl FileSpecs{
 
         self
     }
-
-    /*
-    #[allow(dead_code)]
-    pub fn from_other(&self, encoding: Option<&'static Encoding>, file_type: AcceptedType) -> Self{
-        let delimiter = match file_type{
-            AcceptedType::CSV => ',',
-            AcceptedType::TSV => '\t',
-            _ => ' '
-        };
-
-        Self{
-            delimiter,
-            has_header: false,
-            used_encoding: encoding.unwrap_or(encoding_rs::UTF_8),
-            file_type
-        }
-    }
-    */
 }
 
 // Relates the input text with the same encoding as desired.
@@ -433,6 +404,7 @@ fn get_encoding_from_str(value: &str) -> &'static encoding_rs::Encoding{
       "WINDOWS-1256" => encoding_rs::WINDOWS_1256,
       "WINDOWS-1257" => encoding_rs::WINDOWS_1257,
       "WINDOWS-1258" => encoding_rs::WINDOWS_1258,
+      "WINDOWS" => encoding_rs::WINDOWS_1258,
       "X-MAC-CYRILLIC" => encoding_rs::X_MAC_CYRILLIC,
       "X-USER-DEFINED" => encoding_rs::X_USER_DEFINED,
       _ => encoding_rs::UTF_8

@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Rubén Cid Costa"] # <https://github.com/RubenCid35>
 readme = "./README.md"
-about = "RDF Materialiser Made in Rust"
 description = "This application is intended to generate a rdf file from one or varios datasets in different formats and a RML mapping."
 keywords = [
     "rdf",
@@ -23,7 +22,7 @@ encoding_rs = "0.8.29"     # Lectura de datos
 encoding_rs_io = "0.1.7"   # Lectura de datos en diferentes encodings
 # Operaciones Regex: Son mejores para buscar dentro de texto.
 regex = {version="1.5.4", features=["perf-inline"]}
-lazy_static = "1.4.0"      # Faster Regex
+lazy_static = "1.4.0"      # Faster Regex. No multiple compilations
 # Data Files
 csv="*"
 serde_json = "1.0.74"
@@ -33,4 +32,4 @@ roxmltree = "0.14.1" # XML parser
 [dependencies.rusqlite]
 # Database Interface
 version = "0.26.3"
-features = ["bundled"]
+features = ["bundled"] # SQLITE Engine is builint the executable (more space but it allows better usage)

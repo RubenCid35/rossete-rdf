@@ -95,7 +95,6 @@ fn tokenize(text: String) -> Vec<String>{
             vec![token]
         }
     })
-    .map(|token| token.replace('"', ""))
     .filter(|word| !word.is_empty())
     .collect()
 }
@@ -286,7 +285,8 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize, last_map:
             static ref FILE_TYPE: Regex = Regex::new(r#"ql:(\w+)"#).unwrap();
         }
         if SOURCE.is_match(&tokens[idx]){
-            file_path = path::PathBuf::from(&tokens[idx + 1]);
+            let p = tokens[idx + 1].replace('"', "");
+            file_path = path::PathBuf::from(&p);
             if let Some(ext) = file_path.extension(){
                 file_type = AcceptedType::from_str(ext.to_str().unwrap());
             }
@@ -341,7 +341,7 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &s
             let comp: Parts;
             if CONSTANT.is_match(&tokens[idx + 1]){
                 if tokens[idx + 2].contains('"'){
-                    comp = Parts::ConstantString(tokens[idx + 2].clone());
+                    comp = Parts::ConstantString(tokens[idx + 2].replace('"', ""));
                 }else{
                     comp = Parts::ConstantTerm(tokens[idx + 2].clone());
                 }
@@ -457,12 +457,12 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &st
     let mut objs = Vec::with_capacity(2);
     while i < end{
         if REFERENCE.is_match(&tokens[i]){
-            objs.push(Parts::Reference(tokens[i+1].clone()));
+            objs.push(Parts::Reference(tokens[i+1].replace('"', "")));
             i += 1;
         }
         else if CONSTANT.is_match(&tokens[i]){
             if tokens[i+1].contains('"'){
-                objs.push(Parts::ConstantString(tokens[i+1].clone()));
+                objs.push(Parts::ConstantString(tokens[i+1].replace('"',"")));
             }else{
                 objs.push(Parts::ConstantTerm(tokens[i+1].clone()));
             }
@@ -523,10 +523,10 @@ fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, last_map:
     let mut parent = String::new();
     while i < end{
         if CHILD.is_match(&tokens[i]){
-            child = tokens[i + 1].clone();
+            child = tokens[i + 1].replace('"', "");
             i += 1;
         }else if PARENT_CON.is_match(&tokens[i]){
-            parent = tokens[i + 1].clone();
+            parent = tokens[i + 1].replace('"', "");
             i += 1;
         }else{
             error!("JOIN CONDITION ERROR: An unknown token appeared in the join condiction: {} LAST MAP: {}", &tokens[i], last_map);

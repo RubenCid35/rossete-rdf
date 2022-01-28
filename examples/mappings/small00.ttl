@@ -40,15 +40,11 @@
     rml:referenceFormulation ql:CSV;
   ];
   rr:subjectMap [
-    rr:template "http://trans.example.com/airport/{id}";
+    rr:template "http://trans.example.com/airport/{city}";
   ];
   rr:predicateObjectMap [
     rr:predicate ex:located;
     rr:objectMap [
       rr:parentTriplesMap <#LocationMapping_CSV>;
-      rr:joinCondition [
-        rr:child "city";
-        rr:parent "city";
-      ];
     ];
   ].
