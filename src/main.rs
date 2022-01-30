@@ -21,27 +21,88 @@ use std::collections::{HashMap, HashSet};
 
 use std::time::Instant;
 
-// use clap::{App, Arg};
-// use clap::{crate_authors, crate_version, crate_description};
+use clap::{App, Arg};
+use clap::{crate_authors, crate_version, crate_description};
 
 const DEBUG: bool = cfg!(debug_assertions);
 
 fn main(){
+    let m = App::new("Rossete RDF Generator")
+        .about(crate_description!())
+        .version(crate_version!())
+        .author(crate_authors!())
+        .help_message("Displays this message")
+        .arg(
+            Arg::with_name("output")
+            .long("output")
+            .value_name("OUTPUT")
+            .required(true)
+            .takes_value(true)
+            .help("File name where the output file is written")
+        )
+        .arg(
+            Arg::with_name("config")
+            .long("config")
+            .takes_value(true)
+            .case_insensitive(true)
+            .help("Sets a custom config file to create the main settings of the program")
+            .value_name("FILE")
+        )
+        .arg(
+            Arg::with_name("mappings")
+            .long("mappings")
+            .required(true)
+            .value_name("MAPPINGS")
+            .takes_value(true)
+            .help("Used mapping in the process of generated rdf. Values: Folder or a file")
+        )
+        .arg(
+            Arg::with_name("debug")
+            .short("d")
+            .long("debug")
+            .case_insensitive(true)
+            .hidden(true)
+            .help("Set the debug mode. It displays more information in the intermediary parts")
+        )
+        .arg(
+            Arg::with_name("clear")
+            .short("w")
+            .long("clear")
+            .help("Delete the database if it was created while reading the databases")
+        )
+        .get_matches();
 
+    
     // This will be given by the user.
-    let output_file = path::PathBuf::from("output.nt");
-    let config_file = path::PathBuf::from("config_example.json");
+    let output_file = if let Some(out) = m.value_of("output"){
+        path::PathBuf::from(out)
+    }else{
+        path::PathBuf::from("output.ttl")
+    };
 
-    // ;
-    let mut configuration = config::get_configuration(&output_file, Some(config_file)); 
+    let config_file = if let Some(con) = m.value_of("config"){
+        Some(path::PathBuf::from(con))
+    }else{
+        None
+    };
 
-    if DEBUG { // This will be activatedd using a cli flag
+    let mut configuration = config::get_configuration(&output_file, config_file); 
+
+    if DEBUG || m.is_present("debug") { // This will be activatedd using a cli flag
         configuration.set_debug_mode();
     }
 
+    if m.is_present("clear"){
+        configuration.set_clear_mode();
+    }
+
     // CLI Input
-    let file_name = path::PathBuf::from("./examples/mappings");
-    
+    let file_name = if let Some(maps) = m.value_of("mappings"){
+        path::PathBuf::from(maps)
+    }else{
+        path::PathBuf::from("mappings")
+    };
+
     // Application Process Controller
     match run(configuration, file_name){
         Ok(_) => {
@@ -64,10 +125,6 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     let mappings = parse_all_mappings(&config, map_path)?;
     time_info("Parsing Mapping Files", now);
 
-    for map in mappings.iter(){
-        println!("{:?}", map)
-    }
-
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
     add_all_join_fields(&mappings, &mut data_fields)?;
@@ -76,19 +133,28 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     if config.debug_mode(){ // Display the configuration to see if it is correct
         info!("Showing the Created Configuration");
         eprintln!("{:?}", config);
+        std::thread::sleep(std::time::Duration::from_secs_f32(3.5));
     }
     
     eprintln!("\n");
     info!("Starting to Read and Store all required data files");
     let now = Instant::now();
-    let db = input::read_store_data_files(&config, data_fields)?; 
+    let (db, is_file) = input::read_store_data_files(&mut config, data_fields)?; 
     time_info("Reading and Storing Data Files", now);
+
+    config.update_clear_mode(is_file);
+    let clear_mode = config.clear_mode();
 
     eprintln!("\n");
     info!("Starting to create the RDF File from Mapping and Data Files");
     let now = Instant::now();
     materialiser::rdf_procedure(db, mappings, config)?;
     time_info("Create RDF File with all Data and Mappings", now);
+
+    if clear_mode{
+        crate::warning!("Database will be removed given that clear flag was provided");
+        std::fs::remove_dir_all("./rossete-tmp")?;
+    }
 
     Ok(())
 }
@@ -228,48 +294,5 @@ fn add_all_join_fields(mappings: &Vec<Mapping>, fields: &mut HashMap<PathBuf, Ha
 }
 
 /*
-    let m = App::new("Rossete RDF Generator")
-                .about(crate_description!())
-                .version(crate_version!())
-                .author(crate_authors!())
-                .help_message("Displays this message")
-                .arg(
-                    Arg::with_name("output")
-                    .long("output")
-                    .value_name("OUTPUT")
-                    .required(true)
-                    .takes_value(true)
-                    .help("File name where the output file is written")
-                )
-                .arg(
-                    Arg::with_name("config")
-                    .long("config")
-                    .takes_value(true)
-                    .case_insensitive(true)
-                    .help("Sets a custom config file to create the main settings of the program")
-                    .value_name("FILE")
-                )
-                .arg(
-                    Arg::with_name("mappings")
-                    .long("mappings")
-                    .required(true)
-                    .value_name("MAPPINGS")
-                    .takes_value(true)
-                    .help("Used mapping in the process of generated rdf. Values: Folder or a file")
-                )
-                .arg(
-                    Arg::with_name("debug")
-                    .short("d")
-                    .long("debug")
-                    .case_insensitive(true)
-                    .hidden(true)
-                    .help("Set the debug mode. It displays more information in the intermediary parts")
-                )
-                .arg(
-                    Arg::with_name("clear")
-                    .short("w")
-                    .long("clear")
-                    .help("Delete the database if it was created while reading the databases")
-                )
-                .get_matches();
+ 
  */

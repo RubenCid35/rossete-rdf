@@ -28,7 +28,7 @@ pub fn rdf_procedure(db: rusqlite::Connection, mappings: Vec<Mapping>, config: c
 
     std::thread::sleep(std::time::Duration::from_micros(10)); // Wait a blip
 
-    create_rdf(file_tx, db, mappings, config_arc)?;
+    create_rdf(file_tx, Arc::clone(&db), mappings, config_arc)?;
     file_thread.join()?
 }
 
@@ -341,7 +341,7 @@ fn select_main_columns(table_name: &String, main_columns: HashSet<String>, db: &
     columns.pop();
 
 
-    let select = format!("SELECT DISTINCT {} , CAST(col_id as TEXT) as col_id FROM {}", columns, &table_name);
+    let select = format!("SELECT DISTINCT {0} , CAST(col_id as TEXT) as col_id FROM {1} GROUP BY {0}HAVING MIN(col_id) ORDER BY col_id;", columns, &table_name);
     let mut smt = fk.prepare(&select)?;
 
     let mut main_columns = main_columns.into_iter().collect::<Vec<_>>();
@@ -351,7 +351,6 @@ fn select_main_columns(table_name: &String, main_columns: HashSet<String>, db: &
         colum_idx.push(smt.column_index(&col).unwrap())
     }
 
-    println!("QUERY: {}", select);
     let raw_rows= smt.query_map([], |row|{
         let mut values: Vec<String> = Vec::with_capacity(main_columns.len());
         for col in colum_idx.iter(){
@@ -375,7 +374,6 @@ fn select_main_columns(table_name: &String, main_columns: HashSet<String>, db: &
     .zip(colum_idx)
     .collect::<HashMap<_, _>>();
 
-    println!("COLUMNAS ID: {:#?}", id_col);
     Ok((raw_rows, id_col))
 }
 
@@ -576,7 +574,6 @@ fn add_values_to_query(query: String, data: Vec<&String>, same_table: &bool) -> 
             que.push('"');    
         }
     }
-    println!("JOIN QUERY -> {}", &que);
     que
 }
 

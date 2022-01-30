@@ -60,7 +60,8 @@ pub struct AppConfiguration{
     output_path: PathBuf,
     output_format: OutputFormat,
     // Debug Display
-    debug: bool
+    debug: bool,
+    clear: bool
 }
 
 impl std::fmt::Debug for AppConfiguration{
@@ -114,7 +115,8 @@ impl AppConfiguration{
             threads: [3;3],
             output_path,
             output_format,
-            debug: false
+            debug: false,
+            clear: false
         }
     }
     pub fn get_data_files(&self) -> &collections::HashMap<PathBuf, FileSpecs>{
@@ -126,6 +128,17 @@ impl AppConfiguration{
     }
     pub fn set_debug_mode(&mut self){
         self.debug = true;
+    }
+
+    pub fn clear_mode(&self) -> bool{
+        self.clear
+    }
+    pub fn set_clear_mode(&mut self){
+        self.clear = true;
+    }
+
+    pub fn update_clear_mode(&mut self, is_file: bool){
+        self.clear = self.clear & is_file;
     }
 
     pub fn remove_unused_files(&mut self, files: Vec<(PathBuf, AcceptedType)>){

@@ -9,10 +9,6 @@
 <http://loc.example.com/latlong/50.901389,4.484444> ex:long  "4.484444"^^<http://www.w3.org/2001/XMLSchema#string> .
 
 
-<http://loc.example.com/latlong/50.901389,4.484444> ex:lat  "50.901389"^^<http://www.w3.org/2001/XMLSchema#string> .
-<http://loc.example.com/latlong/50.901389,4.484444> ex:long  "4.484444"^^<http://www.w3.org/2001/XMLSchema#string> .
-
-
 <https://www.mapmadrid.org/resources/Monument/409634> a <https://www.mapmadrid.org/ontologia/Monumento> .
 <https://www.mapmadrid.org/resources/Monument/409634> <https://www.mapmadrid.org/ontologia/tienePK> "409634"^^<https://www.w3.org/XMLSchema/positiveInteger> .
 <https://www.mapmadrid.org/resources/Monument/409634> <https://www.mapmadrid.org/ontologia/tieneNombre> "A Las Victimas Del Holocausto"^^<https://www.w3.org/XMLSchema/string> .
@@ -24,94 +20,6 @@
 <https://www.mapmadrid.org/resources/Monument/409634> <https://www.mapmadrid.org/ontologia/clasificacion> "Escultura conceptual o abstracta"^^<https://www.w3.org/XMLSchema/string> .
 
 
-<https://www.mapmadrid.org/resources/Monument/409512> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/tienePK> "409512"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/tieneNombre> "A Los Abuelos"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/Descripcion> "Pequeña escultura_ situada en un parque delimitado por la interseccion entre las calles Alicun y Purchena_ que fue donada por la cercana Escuela Infantil “El Carmen” al Concejal del Distrito Jorge Tapia. La obra constituye un homenaje a los abuelos y abuelas que cuidan de sus nietos."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1994"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/creadoPor> "M._ Esther"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/409512.pdf?idMonumento=2e28091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> .
-<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/clasificacion> "Grupo Escultorico"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/408781> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/tienePK> "408781"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/tieneNombre> "A Neruda-el Ser Alado"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/Descripcion> "Monumento dedicado al escritor Pablo Neruda (1904-1973)_ celebre poeta chileno que recibio el premio Nobel de Literatura en 1971 y que da nombre a esta importante avenida madrileña del distrito de Puente de Vallecas. La obra_ conocida como El Ser Alado_ fue realizada en 1988 por el grabador_ pintor y escultor menorquin Matias Quetglas (Ciudadela_ 1946). Esta situada sobre uno de los portales del bloque de viviendas ubicado en el numero 116 de la avenida de Pablo Neruda_ proyectado por los arquitectos Pablo Carvajal Urquijo_ Juan Montes Mieza y Manuel Paredes Grosso en 1986_ y edificado entre 1987 y 1989."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1988"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/creadoPor> "QUETGLÁS_ Matias"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408781.pdf?idMonumento=a218091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> .
-<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/clasificacion> "Estatua"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/408836> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/tienePK> "408836"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abogados Laboristas"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/Descripcion> "El 24 de enero de 1977 se produjo un atentado terrorista en un despacho de abogados en derecho laboral de Comisiones Obreras y del Partido Comunista_ todavia ilegal_ matando a los abogados Enrique Vandelvira_ Javier Benavides y Javier Sauquillo_ al estudiante de derecho Serafin Holgado y el administrativo Ángel Rodriguez_ dejando cuatro heridos. Fue cometido por un comando de la extrema derecha_ la Triple A_ Alianza Apostolica Anticomunista.A iniciativa del Ayuntamiento de Madrid y en recuerdo del asesinato se instalo esta lapida el 24 de enero de 1987_ en el decimo aniversario del atentado.El diseño de la lapida fue realizado por Joaquin Roldan_ Arquitecto Jefe de la Seccion del Patrimonio Historico-Artistico del Departamento de Conservacion de Edificaciones_ y ejecutado por la Empresa CONSTRUCCIONES B. BELTRÁN_ S.A."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1987"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/creadoPor> "ROLDÁN PASCUAL_ Joaquin"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408836.pdf?idMonumento=02c8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> .
-<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/408920> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/tienePK> "408920"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abstracta I"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/Descripcion> "La historica quinta de la Fuente del Berro_ declarada Jardin Artistico segun decretos de 31 de julio de 1941 y 4 de Enero de 1946. fue adquirida por el Ayuntamiento de Madrid siendo alcalde el conde de Mayalde_ segun escritura de 21 de junio de 1948. A partir de ese momento_ el Ayuntamiento abordo una reforma del conjunto_ cerrando el palacete y abriendo los jardines en 1953 como parque publico. Algunas de las piezas escultoricas que lo ornamentaban fueron retiradas por su ultimo propietario don Mauritz van Eehgen_ con lo cual el Ayuntamiento de Madrid tuvo la posibilidad de ir colocando en el lugar nuevas esculturas_ de las cuales algunas son figurativas_ conmemorativas_ o abstractas; como esta pieza del escultor madrileño Fernando Gonzalez Calisavo_ mas conocido como Gayo_ que se ubica en medio de una pradera_ enfrentada a otra escultura del mismo autor."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1992"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/creadoPor> "GONZÁLEZ CALISAVO_ Fernando"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408920.pdf?idMonumento=c938091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> .
-<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/clasificacion> "Escultura conceptual o abstracta"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/408921> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/tienePK> "408921"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abstracta Ii"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/Descripcion> "La historica quinta de la Fuente del Berro_ declarada Jardin Artistico segun decretos de 31 de julio de 1941 y 4 de Enero de 1946_ fue adquirida por el Ayuntamiento de Madrid siendo alcalde el conde de Mayalde_ segun escritura de 21 de junio de 1948. A partir de ese momento_ el Ayuntamiento abordo una reforma del conjunto_ cerrando el palacete y abriendo los jardines en 1953 como parque publico. Algunas de las piezas escultoricas que lo ornamentaban fueron retiradas por su ultimo propietario don Mauritz van Eehgen_ con lo cual el Ayuntamiento de Madrid tuvo la posibilidad de ir colocando en el lugar nuevas esculturas_ de las cuales algunas son figurativas_ conmemorativas_ o abstractas; como esta pieza del escultor madrileño Fernando Gonzalez Calisavo_ mas conocido como Gayo_ que se ubica en medio de una pradera_ enfrentada a otra escultura del mismo autor."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1992"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/creadoPor> "GONZÁLEZ CALISAVO_ Fernando"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408921.pdf?idMonumento=e938091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> .
-<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/clasificacion> "Escultura conceptual o abstracta"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/400147> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/tienePK> "400147"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abundancia"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/Descripcion> "En el año 1958 se celebro un sorteo extraordinario de la Loteria Nacional con el fin de recabar fondos para construir una nueva sede para la Central de Loterias y Apuestas del Estado_ que sustituyese a la que desde 1932 se hallaba en la calle de Montalban. El nuevo edificio se inauguro en 1963 al final de la calle de Guzman el Bueno_ y fue construido segun un proyecto de corte monumentalista –pero moderno en sus detalles– diseñado por el arquitecto Manuel Rodenas_ autor de otras obras destinadas a las Aduanas del Estado durante esos años_ que en la enfatica entrada retranqueada respecto de la calle dispuso dos grupos escultoricos flanqueando la plataforma escalonada donde se abren las puertas principales. Estos grupos fueron realizados por el escultor murciano –de Espinardo– Jose Planes Peñalver (1891-1974)_ artista con una carrera llena de exitos –como el Premio Nacional de Escultura de 1932 o el primer premio del Concurso Nacional de Bellas Artes del año 1943–_ que en 1933 fundo la Escuela de Artes y Oficios de Murcia de la que fue director_ y en 1960 fue nombrado academico de la Real Academia de Bellas Artes de San Fernando. Este edificio fue compartido con la Direccion General de Aduanas hasta el año 2000_ lo que explica que se haya querido atribuir una representacion simbolica a cada escultura en relacion con las Aduanas o la Loteria_ cuando los atributos que se hacen visibles corresponden a la Abundancia (un haz de trigo) o a la Fortuna (un cantaro con monedas)."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1963"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/creadoPor> "PLANES PEÑALVER_ Jose - TORRES GUARDIA_ Jose"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/400147.pdf?idMonumento=a038091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> .
-<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/clasificacion> "Grupo Escultorico"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/414012> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/tienePK> "414012"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/tieneNombre> "Academia De Farmacia"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/Descripcion> "La Academia de Farmacia tuvo como antecedente la Congregacion y Colegio de Boticarios_ cuya fundacion data del siglo XVI. Felipe V_ por Pragmatica de 1737_ creo el Real Colegio de Farmaceuticos; tras varios traslados por las calles Barquillo_ Relatores y Atocha_ finalmente se instalo en un edificio de la calle San Pedro. En 1830 el Estado creo el Colegio de Farmacia de San Fernando_ que se traslado a un nuevo edificio_ construido por suscripcion entre todos los farmaceuticos_ en la calle San Juan_ que pasaria entonces a llamarse calle Farmacia_ donde estuvo hasta su traslado a la actual Facultad de Farmacia en la Universidad Complutense. Al terminar la Guerra Civil_ recobro el titulo de Real y en 1946 fue incorporada al Instituto de España_ como las demas Reales Academias. El edificio fue diseñado_ dentro de la estetica neoclasica del momento_ por el arquitecto Pedro de Zengotitabengoa entre 1827 y 1830; la fachada_ parcialmente concava_ es simetrica_ con tres cuerpos: de cinco vanos el central y tres los laterales; sobre el vano central del primer piso aparece una lapida de marmol_ dedicada a Fernando VII recordando que bajo su reinado se construyo este edificio; posteriormente se añadio un fronton triangular_ con escudo  timbrado de corona real_ realizado en caliza blanca. Al celebrarse el centenario de la fundacion de la Academia de Farmacia_ se instalaron dos lapidas (una de ellas ha desaparecido)_ patrocinadas por los farmaceuticos colegiados."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1930"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/creadoPor> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/414012.pdf?idMonumento=c2a8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> .
-<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Monument/409550> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/tienePK> "409550"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/tieneNombre> "Acueducto Y Rejas Sobre El Arroyo Del Barranco De La Zorra"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/Descripcion> "Esta construccion_ hibrida de puente-acueducto y puerta_ alberga uno de los cerramientos con rejeria de hierro de fundicion_ comunmente conocidos como &amp;ldquo;rejas&amp;rdquo; de la Casa de Campo y concebido para permitir que los arroyos procedentes del municipio de Pozuelo de Alarcon discurrieran por su cauce natural hasta su desembocadura en el rio Manzanares_ atravesando el bosque real. Como tal_ es una de las cinco rejas que han llegado a nuestros dias: la del arroyo Meaques_ la del arroyo de Prado del Rey_ las dos del arroyo de Antequina y esta del barranco del arroyo de la Zorra. Como todas ellas tambien_ se enmarca en una obra en ladrillo construida por Francisco Sabatini_ a la sazon arquitecto e ingeniero real_ datada en 1768 y promovida a instancias de la Casa del Rey dentro del proyecto global de las infraestructuras hidraulicas de la Casa de Campo encomendadas al insigne arquitecto_ siendo una demostracion mas de su reconocido talento tecnico y de su versatilidad intelectual y artistica_ lo que ha debido de contribuir a su reciente inclusion en el Catalogo de monumentos y elementos urbanos por parte del Ayuntamiento de Madrid como elementos susceptibles de proteccion historico-artistica (nivel 1). En la actualidad_ el muro o vallado de cerramiento al que se adosa ha quedado adjunto a una urbanizacion de viviendas unifamiliares apoyadas materialmente en el mismo."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1768"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/creadoPor> "SABATINI_ Francisco"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/409550.pdf?idMonumento=27e8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> .
-<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/clasificacion> "Puente_ construccion civil"^^<https://www.w3.org/XMLSchema/string> .
-
-
 <https://www.mapmadrid.org/resources/Monument/400108> a <https://www.mapmadrid.org/ontologia/Monumento> .
 <https://www.mapmadrid.org/resources/Monument/400108> <https://www.mapmadrid.org/ontologia/tienePK> "400108"^^<https://www.w3.org/XMLSchema/positiveInteger> .
 <https://www.mapmadrid.org/resources/Monument/400108> <https://www.mapmadrid.org/ontologia/tieneNombre> "Ad Iesum Per Mariam"^^<https://www.w3.org/XMLSchema/string> .
@@ -121,6 +29,17 @@
 <https://www.mapmadrid.org/resources/Monument/400108> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/400108.pdf?idMonumento=6f28091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Monument/400108> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/AvenidaMachupichuNum539> .
 <https://www.mapmadrid.org/resources/Monument/400108> <https://www.mapmadrid.org/ontologia/clasificacion> "Grupo Escultorico"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Monument/400472> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/tienePK> "400472"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/tieneNombre> "Atrio De La Ermita De San Isidro"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/Descripcion> "Lapida erigida en 1979 por la Archicofradia Sacramental de San Pedro_ San Andres y San Isidro en conmemoracion de dos hechos: la ampliacion de la Sacramental y la restauracion de la ermita de San Isidro_ adosandose a un muro del atrio de esta. La cofradia nacio como una asociacion de labradores denominada “Cabildo del Señor Santo Isidro de la Villa de Madrid”_ tenia su sede en la parroquia de San Andres y se doto de ordenanzas en 1387; dos siglos despues_ en 1586_ se fusionaria con la Cofradia Sacramental de San Andres_ denominandose “Archicofradia Sacramental de San Andres y San Isidro” y un año mas tarde se fundiria con la Sacramental de la parroquia de San Pedro el Real o San Pedro el Viejo_ fundada a su vez en 1581_ con lo que se llegaria al nombre que ahora ostenta_ si bien todavia en 1619 se le agregaria la Congregacion de Ánimas Benditas_ con domicilio igualmente en San Andres. La sede de la cofradia se encuentra en la casa que_ segun la tradicion_ ocupa el solar de aquella en la que nacio Isidro en la calle del Águila_ al igual que la ermita se alza sobre los terrenos de la casa de labor que fue residencia del santo y su esposa_ Santa Maria de la Cabeza_ escenario de numerosos milagros como el de los bueyes arando guiados por un angel o el del surgimiento de un manantial que San Isidro hizo manar ante la fuerte sequia que asolaba la ciudad y que en la actualidad alimenta la fuente adjunta a la ermita. La cofradia ha estado secularmente ligada a una serie de construcciones madrileñas emblematicas: la primera plaza de toros fija levantada en madera por Pedro de Ribera a las afueras de la Puerta de Toledo_ que existio hasta mediado el siglo XIX y con cuyos ingresos se financiaban diversas actividades; el puente de Pontones_ frente a la ermita_ que la comunicaba con la ciudad; la propia ermita_ erigida por la Sacramental junto a la fuente_ reconstruida en 1528 por Isabel de Portugal_ esposa de Carlos V_ y ampliada sucesivamente en 1620 a expensas de Cristobal de Urgel y en 1730 por Baltasar de Zuñiga_ marques de Valero; y el cementerio_ comenzado en 1811 con un patio unico (San Pedro) y en el que intervinieron_ en las numerosas fases que lo fueron conformando con el añadido de nuevos patios (San Andres_ San Isidro_ Purisima Concepcion_ Santa Maria de la Cabeza_ Santisimo Sacramento_ San Juan_ Nuestra Señora del Carmen...)_ algunos de los mas famosos arquitectos madrileños."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1979"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/creadoPor> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/400472.pdf?idMonumento=acd8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> .
+<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Monument/412017> a <https://www.mapmadrid.org/ontologia/Monumento> .
@@ -220,6 +139,17 @@
 <https://www.mapmadrid.org/resources/Monument/408978> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408978.pdf?idMonumento=8a38091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Monument/408978> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/ParqueAgustinRodriguezSahagunNum78040> .
 <https://www.mapmadrid.org/resources/Monument/408978> <https://www.mapmadrid.org/ontologia/clasificacion> "Escultura conceptual o abstracta"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Monument/409512> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/tienePK> "409512"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/tieneNombre> "A Los Abuelos"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/Descripcion> "Pequeña escultura_ situada en un parque delimitado por la interseccion entre las calles Alicun y Purchena_ que fue donada por la cercana Escuela Infantil “El Carmen” al Concejal del Distrito Jorge Tapia. La obra constituye un homenaje a los abuelos y abuelas que cuidan de sus nietos."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1994"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/creadoPor> "M._ Esther"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/409512.pdf?idMonumento=2e28091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> .
+<https://www.mapmadrid.org/resources/Monument/409512> <https://www.mapmadrid.org/ontologia/clasificacion> "Grupo Escultorico"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Monument/408440> a <https://www.mapmadrid.org/ontologia/Monumento> .
@@ -332,6 +262,17 @@
 <https://www.mapmadrid.org/resources/Monument/409099> <https://www.mapmadrid.org/ontologia/clasificacion> "Fuente_ Estanque_ Lamina de agua"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Monument/408781> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/tienePK> "408781"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/tieneNombre> "A Neruda-el Ser Alado"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/Descripcion> "Monumento dedicado al escritor Pablo Neruda (1904-1973)_ celebre poeta chileno que recibio el premio Nobel de Literatura en 1971 y que da nombre a esta importante avenida madrileña del distrito de Puente de Vallecas. La obra_ conocida como El Ser Alado_ fue realizada en 1988 por el grabador_ pintor y escultor menorquin Matias Quetglas (Ciudadela_ 1946). Esta situada sobre uno de los portales del bloque de viviendas ubicado en el numero 116 de la avenida de Pablo Neruda_ proyectado por los arquitectos Pablo Carvajal Urquijo_ Juan Montes Mieza y Manuel Paredes Grosso en 1986_ y edificado entre 1987 y 1989."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1988"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/creadoPor> "QUETGLÁS_ Matias"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408781.pdf?idMonumento=a218091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> .
+<https://www.mapmadrid.org/resources/Monument/408781> <https://www.mapmadrid.org/ontologia/clasificacion> "Estatua"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Monument/408837> a <https://www.mapmadrid.org/ontologia/Monumento> .
 <https://www.mapmadrid.org/resources/Monument/408837> <https://www.mapmadrid.org/ontologia/tienePK> "408837"^^<https://www.w3.org/XMLSchema/positiveInteger> .
 <https://www.mapmadrid.org/resources/Monument/408837> <https://www.mapmadrid.org/ontologia/tieneNombre> "Alberto Aguilera"^^<https://www.w3.org/XMLSchema/string> .
@@ -440,6 +381,17 @@
 <https://www.mapmadrid.org/resources/Monument/408007> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408007.pdf?idMonumento=2108091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Monument/408007> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/JardinesSabatiniNum7227> .
 <https://www.mapmadrid.org/resources/Monument/408007> <https://www.mapmadrid.org/ontologia/clasificacion> "Estatua"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Monument/408836> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/tienePK> "408836"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abogados Laboristas"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/Descripcion> "El 24 de enero de 1977 se produjo un atentado terrorista en un despacho de abogados en derecho laboral de Comisiones Obreras y del Partido Comunista_ todavia ilegal_ matando a los abogados Enrique Vandelvira_ Javier Benavides y Javier Sauquillo_ al estudiante de derecho Serafin Holgado y el administrativo Ángel Rodriguez_ dejando cuatro heridos. Fue cometido por un comando de la extrema derecha_ la Triple A_ Alianza Apostolica Anticomunista.A iniciativa del Ayuntamiento de Madrid y en recuerdo del asesinato se instalo esta lapida el 24 de enero de 1987_ en el decimo aniversario del atentado.El diseño de la lapida fue realizado por Joaquin Roldan_ Arquitecto Jefe de la Seccion del Patrimonio Historico-Artistico del Departamento de Conservacion de Edificaciones_ y ejecutado por la Empresa CONSTRUCCIONES B. BELTRÁN_ S.A."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1987"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/creadoPor> "ROLDÁN PASCUAL_ Joaquin"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408836.pdf?idMonumento=02c8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> .
+<https://www.mapmadrid.org/resources/Monument/408836> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Monument/408290> a <https://www.mapmadrid.org/ontologia/Monumento> .
@@ -552,6 +504,17 @@
 <https://www.mapmadrid.org/resources/Monument/409396> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Monument/408920> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/tienePK> "408920"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abstracta I"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/Descripcion> "La historica quinta de la Fuente del Berro_ declarada Jardin Artistico segun decretos de 31 de julio de 1941 y 4 de Enero de 1946. fue adquirida por el Ayuntamiento de Madrid siendo alcalde el conde de Mayalde_ segun escritura de 21 de junio de 1948. A partir de ese momento_ el Ayuntamiento abordo una reforma del conjunto_ cerrando el palacete y abriendo los jardines en 1953 como parque publico. Algunas de las piezas escultoricas que lo ornamentaban fueron retiradas por su ultimo propietario don Mauritz van Eehgen_ con lo cual el Ayuntamiento de Madrid tuvo la posibilidad de ir colocando en el lugar nuevas esculturas_ de las cuales algunas son figurativas_ conmemorativas_ o abstractas; como esta pieza del escultor madrileño Fernando Gonzalez Calisavo_ mas conocido como Gayo_ que se ubica en medio de una pradera_ enfrentada a otra escultura del mismo autor."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1992"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/creadoPor> "GONZÁLEZ CALISAVO_ Fernando"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408920.pdf?idMonumento=c938091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> .
+<https://www.mapmadrid.org/resources/Monument/408920> <https://www.mapmadrid.org/ontologia/clasificacion> "Escultura conceptual o abstracta"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Monument/408011> a <https://www.mapmadrid.org/ontologia/Monumento> .
 <https://www.mapmadrid.org/resources/Monument/408011> <https://www.mapmadrid.org/ontologia/tienePK> "408011"^^<https://www.w3.org/XMLSchema/positiveInteger> .
 <https://www.mapmadrid.org/resources/Monument/408011> <https://www.mapmadrid.org/ontologia/tieneNombre> "Álvaro De Bazan"^^<https://www.w3.org/XMLSchema/string> .
@@ -660,6 +623,17 @@
 <https://www.mapmadrid.org/resources/Monument/408533> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408533.pdf?idMonumento=2bb8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Monument/408533> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CManuelAlonsoNum10913> .
 <https://www.mapmadrid.org/resources/Monument/408533> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Monument/408921> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/tienePK> "408921"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abstracta Ii"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/Descripcion> "La historica quinta de la Fuente del Berro_ declarada Jardin Artistico segun decretos de 31 de julio de 1941 y 4 de Enero de 1946_ fue adquirida por el Ayuntamiento de Madrid siendo alcalde el conde de Mayalde_ segun escritura de 21 de junio de 1948. A partir de ese momento_ el Ayuntamiento abordo una reforma del conjunto_ cerrando el palacete y abriendo los jardines en 1953 como parque publico. Algunas de las piezas escultoricas que lo ornamentaban fueron retiradas por su ultimo propietario don Mauritz van Eehgen_ con lo cual el Ayuntamiento de Madrid tuvo la posibilidad de ir colocando en el lugar nuevas esculturas_ de las cuales algunas son figurativas_ conmemorativas_ o abstractas; como esta pieza del escultor madrileño Fernando Gonzalez Calisavo_ mas conocido como Gayo_ que se ubica en medio de una pradera_ enfrentada a otra escultura del mismo autor."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1992"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/creadoPor> "GONZÁLEZ CALISAVO_ Fernando"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/408921.pdf?idMonumento=e938091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> .
+<https://www.mapmadrid.org/resources/Monument/408921> <https://www.mapmadrid.org/ontologia/clasificacion> "Escultura conceptual o abstracta"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Monument/408545> a <https://www.mapmadrid.org/ontologia/Monumento> .
@@ -772,6 +746,17 @@
 <https://www.mapmadrid.org/resources/Monument/409622> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Monument/400147> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/tienePK> "400147"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/tieneNombre> "Abundancia"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/Descripcion> "En el año 1958 se celebro un sorteo extraordinario de la Loteria Nacional con el fin de recabar fondos para construir una nueva sede para la Central de Loterias y Apuestas del Estado_ que sustituyese a la que desde 1932 se hallaba en la calle de Montalban. El nuevo edificio se inauguro en 1963 al final de la calle de Guzman el Bueno_ y fue construido segun un proyecto de corte monumentalista –pero moderno en sus detalles– diseñado por el arquitecto Manuel Rodenas_ autor de otras obras destinadas a las Aduanas del Estado durante esos años_ que en la enfatica entrada retranqueada respecto de la calle dispuso dos grupos escultoricos flanqueando la plataforma escalonada donde se abren las puertas principales. Estos grupos fueron realizados por el escultor murciano –de Espinardo– Jose Planes Peñalver (1891-1974)_ artista con una carrera llena de exitos –como el Premio Nacional de Escultura de 1932 o el primer premio del Concurso Nacional de Bellas Artes del año 1943–_ que en 1933 fundo la Escuela de Artes y Oficios de Murcia de la que fue director_ y en 1960 fue nombrado academico de la Real Academia de Bellas Artes de San Fernando. Este edificio fue compartido con la Direccion General de Aduanas hasta el año 2000_ lo que explica que se haya querido atribuir una representacion simbolica a cada escultura en relacion con las Aduanas o la Loteria_ cuando los atributos que se hacen visibles corresponden a la Abundancia (un haz de trigo) o a la Fortuna (un cantaro con monedas)."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1963"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/creadoPor> "PLANES PEÑALVER_ Jose - TORRES GUARDIA_ Jose"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/400147.pdf?idMonumento=a038091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> .
+<https://www.mapmadrid.org/resources/Monument/400147> <https://www.mapmadrid.org/ontologia/clasificacion> "Grupo Escultorico"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Monument/408183> a <https://www.mapmadrid.org/ontologia/Monumento> .
 <https://www.mapmadrid.org/resources/Monument/408183> <https://www.mapmadrid.org/ontologia/tienePK> "408183"^^<https://www.w3.org/XMLSchema/positiveInteger> .
 <https://www.mapmadrid.org/resources/Monument/408183> <https://www.mapmadrid.org/ontologia/tieneNombre> "Antonia Merce_ La Argentina"^^<https://www.w3.org/XMLSchema/string> .
@@ -880,6 +865,17 @@
 <https://www.mapmadrid.org/resources/Monument/409288> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/409288.pdf?idMonumento=ccc8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Monument/409288> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CAntonioMauraNum2327> .
 <https://www.mapmadrid.org/resources/Monument/409288> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Monument/414012> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/tienePK> "414012"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/tieneNombre> "Academia De Farmacia"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/Descripcion> "La Academia de Farmacia tuvo como antecedente la Congregacion y Colegio de Boticarios_ cuya fundacion data del siglo XVI. Felipe V_ por Pragmatica de 1737_ creo el Real Colegio de Farmaceuticos; tras varios traslados por las calles Barquillo_ Relatores y Atocha_ finalmente se instalo en un edificio de la calle San Pedro. En 1830 el Estado creo el Colegio de Farmacia de San Fernando_ que se traslado a un nuevo edificio_ construido por suscripcion entre todos los farmaceuticos_ en la calle San Juan_ que pasaria entonces a llamarse calle Farmacia_ donde estuvo hasta su traslado a la actual Facultad de Farmacia en la Universidad Complutense. Al terminar la Guerra Civil_ recobro el titulo de Real y en 1946 fue incorporada al Instituto de España_ como las demas Reales Academias. El edificio fue diseñado_ dentro de la estetica neoclasica del momento_ por el arquitecto Pedro de Zengotitabengoa entre 1827 y 1830; la fachada_ parcialmente concava_ es simetrica_ con tres cuerpos: de cinco vanos el central y tres los laterales; sobre el vano central del primer piso aparece una lapida de marmol_ dedicada a Fernando VII recordando que bajo su reinado se construyo este edificio; posteriormente se añadio un fronton triangular_ con escudo  timbrado de corona real_ realizado en caliza blanca. Al celebrarse el centenario de la fundacion de la Academia de Farmacia_ se instalaron dos lapidas (una de ellas ha desaparecido)_ patrocinadas por los farmaceuticos colegiados."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1930"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/creadoPor> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/414012.pdf?idMonumento=c2a8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> .
+<https://www.mapmadrid.org/resources/Monument/414012> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Monument/409831> a <https://www.mapmadrid.org/ontologia/Monumento> .
@@ -992,6 +988,17 @@
 <https://www.mapmadrid.org/resources/Monument/408417> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Monument/409550> a <https://www.mapmadrid.org/ontologia/Monumento> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/tienePK> "409550"^^<https://www.w3.org/XMLSchema/positiveInteger> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/tieneNombre> "Acueducto Y Rejas Sobre El Arroyo Del Barranco De La Zorra"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/Descripcion> "Esta construccion_ hibrida de puente-acueducto y puerta_ alberga uno de los cerramientos con rejeria de hierro de fundicion_ comunmente conocidos como &amp;ldquo;rejas&amp;rdquo; de la Casa de Campo y concebido para permitir que los arroyos procedentes del municipio de Pozuelo de Alarcon discurrieran por su cauce natural hasta su desembocadura en el rio Manzanares_ atravesando el bosque real. Como tal_ es una de las cinco rejas que han llegado a nuestros dias: la del arroyo Meaques_ la del arroyo de Prado del Rey_ las dos del arroyo de Antequina y esta del barranco del arroyo de la Zorra. Como todas ellas tambien_ se enmarca en una obra en ladrillo construida por Francisco Sabatini_ a la sazon arquitecto e ingeniero real_ datada en 1768 y promovida a instancias de la Casa del Rey dentro del proyecto global de las infraestructuras hidraulicas de la Casa de Campo encomendadas al insigne arquitecto_ siendo una demostracion mas de su reconocido talento tecnico y de su versatilidad intelectual y artistica_ lo que ha debido de contribuir a su reciente inclusion en el Catalogo de monumentos y elementos urbanos por parte del Ayuntamiento de Madrid como elementos susceptibles de proteccion historico-artistica (nivel 1). En la actualidad_ el muro o vallado de cerramiento al que se adosa ha quedado adjunto a una urbanizacion de viviendas unifamiliares apoyadas materialmente en el mismo."^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1768"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/creadoPor> "SABATINI_ Francisco"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/409550.pdf?idMonumento=27e8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> .
+<https://www.mapmadrid.org/resources/Monument/409550> <https://www.mapmadrid.org/ontologia/clasificacion> "Puente_ construccion civil"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Monument/408109> a <https://www.mapmadrid.org/ontologia/Monumento> .
 <https://www.mapmadrid.org/resources/Monument/408109> <https://www.mapmadrid.org/ontologia/tienePK> "408109"^^<https://www.w3.org/XMLSchema/positiveInteger> .
 <https://www.mapmadrid.org/resources/Monument/408109> <https://www.mapmadrid.org/ontologia/tieneNombre> "Artieda Y Labiano"^^<https://www.w3.org/XMLSchema/string> .
@@ -1102,17 +1109,6 @@
 <https://www.mapmadrid.org/resources/Monument/400086> <https://www.mapmadrid.org/ontologia/clasificacion> "Estatua"^^<https://www.w3.org/XMLSchema/string> .
 
 
-<https://www.mapmadrid.org/resources/Monument/400472> a <https://www.mapmadrid.org/ontologia/Monumento> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/tienePK> "400472"^^<https://www.w3.org/XMLSchema/positiveInteger> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/tieneNombre> "Atrio De La Ermita De San Isidro"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/Descripcion> "Lapida erigida en 1979 por la Archicofradia Sacramental de San Pedro_ San Andres y San Isidro en conmemoracion de dos hechos: la ampliacion de la Sacramental y la restauracion de la ermita de San Isidro_ adosandose a un muro del atrio de esta. La cofradia nacio como una asociacion de labradores denominada “Cabildo del Señor Santo Isidro de la Villa de Madrid”_ tenia su sede en la parroquia de San Andres y se doto de ordenanzas en 1387; dos siglos despues_ en 1586_ se fusionaria con la Cofradia Sacramental de San Andres_ denominandose “Archicofradia Sacramental de San Andres y San Isidro” y un año mas tarde se fundiria con la Sacramental de la parroquia de San Pedro el Real o San Pedro el Viejo_ fundada a su vez en 1581_ con lo que se llegaria al nombre que ahora ostenta_ si bien todavia en 1619 se le agregaria la Congregacion de Ánimas Benditas_ con domicilio igualmente en San Andres. La sede de la cofradia se encuentra en la casa que_ segun la tradicion_ ocupa el solar de aquella en la que nacio Isidro en la calle del Águila_ al igual que la ermita se alza sobre los terrenos de la casa de labor que fue residencia del santo y su esposa_ Santa Maria de la Cabeza_ escenario de numerosos milagros como el de los bueyes arando guiados por un angel o el del surgimiento de un manantial que San Isidro hizo manar ante la fuerte sequia que asolaba la ciudad y que en la actualidad alimenta la fuente adjunta a la ermita. La cofradia ha estado secularmente ligada a una serie de construcciones madrileñas emblematicas: la primera plaza de toros fija levantada en madera por Pedro de Ribera a las afueras de la Puerta de Toledo_ que existio hasta mediado el siglo XIX y con cuyos ingresos se financiaban diversas actividades; el puente de Pontones_ frente a la ermita_ que la comunicaba con la ciudad; la propia ermita_ erigida por la Sacramental junto a la fuente_ reconstruida en 1528 por Isabel de Portugal_ esposa de Carlos V_ y ampliada sucesivamente en 1620 a expensas de Cristobal de Urgel y en 1730 por Baltasar de Zuñiga_ marques de Valero; y el cementerio_ comenzado en 1811 con un patio unico (San Pedro) y en el que intervinieron_ en las numerosas fases que lo fueron conformando con el añadido de nuevos patios (San Andres_ San Isidro_ Purisima Concepcion_ Santa Maria de la Cabeza_ Santisimo Sacramento_ San Juan_ Nuestra Señora del Carmen...)_ algunos de los mas famosos arquitectos madrileños."^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/fechaCreacion> "1979"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/creadoPor> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/extraInfo> "https://patrimonioypaisaje.madrid.es/FrameWork/generacionPDFMonumenta/400472.pdf?idMonumento=acd8091d1b9c4510091d1b9c45102e085a0aRCRD&tipoMon=M"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/estaLocalizado> <https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> .
-<https://www.mapmadrid.org/resources/Monument/400472> <https://www.mapmadrid.org/ontologia/clasificacion> "Elemento Conmemorativo_ Lapida"^^<https://www.w3.org/XMLSchema/string> .
-
-
 <https://www.mapmadrid.org/resources/Localizacion/JardinTresCulturasNum67408> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
 <https://www.mapmadrid.org/resources/Localizacion/JardinTresCulturasNum67408> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> .
 <https://www.mapmadrid.org/resources/Localizacion/JardinTresCulturasNum67408> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> .
@@ -1120,67 +1116,18 @@
 <https://www.mapmadrid.org/resources/Localizacion/JardinTresCulturasNum67408> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46432173275739N9413> .
 
 
-<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> .
-<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Apostol-santiago> .
-<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> .
-<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Puente-de-vallecas> .
-<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Portazgo> .
-<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> .
-<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
-<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cortes> .
-<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> .
-<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> .
-<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> .
-<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> .
-<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> .
-<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
-<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> .
-<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> .
-<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> .
-<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> .
-<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> .
-<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> .
-
-
 <https://www.mapmadrid.org/resources/Localizacion/AvenidaMachupichuNum539> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
 <https://www.mapmadrid.org/resources/Localizacion/AvenidaMachupichuNum539> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> .
 <https://www.mapmadrid.org/resources/Localizacion/AvenidaMachupichuNum539> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-piovera> .
 <https://www.mapmadrid.org/resources/Localizacion/AvenidaMachupichuNum539> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> .
 <https://www.mapmadrid.org/resources/Localizacion/AvenidaMachupichuNum539> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/455452874785294N4389> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> .
+<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-isidro> .
+<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> .
+<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/CFranciscoYJacintoAlcantaraNum73312> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
@@ -1244,6 +1191,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/ParqueAgustinRodriguezSahagunNum78040> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> .
 <https://www.mapmadrid.org/resources/Localizacion/ParqueAgustinRodriguezSahagunNum78040> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N30094> .
 <https://www.mapmadrid.org/resources/Localizacion/ParqueAgustinRodriguezSahagunNum78040> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/47046574313513N345> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> .
+<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Apostol-santiago> .
+<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> .
+<https://www.mapmadrid.org/resources/Localizacion/CAlicunNum40912> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/PzaColonNum56036> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
@@ -1316,6 +1270,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/JardinTresCulturasNum26831> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46432173275739N1694> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Puente-de-vallecas> .
+<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Portazgo> .
+<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> .
+<https://www.mapmadrid.org/resources/Localizacion/GtaJoseLuisOzoresNum49854> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/CalleMagdalenaNum41437> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
 <https://www.mapmadrid.org/resources/Localizacion/CalleMagdalenaNum41437> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
 <https://www.mapmadrid.org/resources/Localizacion/CalleMagdalenaNum41437> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> .
@@ -1384,6 +1345,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/JardinesSabatiniNum7227> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> .
 <https://www.mapmadrid.org/resources/Localizacion/JardinesSabatiniNum7227> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N3504> .
 <https://www.mapmadrid.org/resources/Localizacion/JardinesSabatiniNum7227> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421539992385334N364> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
+<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cortes> .
+<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> .
+<https://www.mapmadrid.org/resources/Localizacion/CAtochaNum98339> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/PaseoChileNum4273> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
@@ -1456,6 +1424,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/CJuanEsplandiuNum84188> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41580670295219N8528> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum56254> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/PzaVillaNum28604> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
 <https://www.mapmadrid.org/resources/Localizacion/PzaVillaNum28604> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
 <https://www.mapmadrid.org/resources/Localizacion/PzaVillaNum28604> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> .
@@ -1524,6 +1499,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/CManuelAlonsoNum10913> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/El-pardo> .
 <https://www.mapmadrid.org/resources/Localizacion/CManuelAlonsoNum10913> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N22494> .
 <https://www.mapmadrid.org/resources/Localizacion/CManuelAlonsoNum10913> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/52023162298215N8626> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> .
+<https://www.mapmadrid.org/resources/Localizacion/NoDireccionNum47010> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/ParqueDehesaDeLaVillaNum34088> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
@@ -1596,6 +1578,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/CPozoNum9253> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41625481659995N6478> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> .
+<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> .
+<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> .
+<https://www.mapmadrid.org/resources/Localizacion/CalleGuzmanElBuenoNum97161> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/CAveMariaNum29619> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
 <https://www.mapmadrid.org/resources/Localizacion/CAveMariaNum29619> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
 <https://www.mapmadrid.org/resources/Localizacion/CAveMariaNum29619> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> .
@@ -1664,6 +1653,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/CAntonioMauraNum2327> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> .
 <https://www.mapmadrid.org/resources/Localizacion/CAntonioMauraNum2327> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48630> .
 <https://www.mapmadrid.org/resources/Localizacion/CAntonioMauraNum2327> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4164135338355N9346> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
+<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> .
+<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> .
+<https://www.mapmadrid.org/resources/Localizacion/CFarmaciaNum31501> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/PzaCristinoMartosNum49440> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
@@ -1736,6 +1732,13 @@
 <https://www.mapmadrid.org/resources/Localizacion/CalleMaldonadoNum45612> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/433928351058015N9039> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
+<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> .
+<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> .
+<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> .
+<https://www.mapmadrid.org/resources/Localizacion/CaminoHumeraNum23642> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/CNavasDeTolosaNum8060> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
 <https://www.mapmadrid.org/resources/Localizacion/CNavasDeTolosaNum8060> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> .
 <https://www.mapmadrid.org/resources/Localizacion/CNavasDeTolosaNum8060> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> .
@@ -1806,61 +1809,19 @@
 <https://www.mapmadrid.org/resources/Localizacion/CClaraCampoamorNum38358> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38318343414461N7564> .
 
 
-<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> a <https://www.mapmadrid.org/ontologia/Localizaciones> .
-<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/enDistrito> <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> .
-<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/enBarrio> <https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-isidro> .
-<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/tieneDirreccion> <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> .
-<https://www.mapmadrid.org/resources/Localizacion/PºErmitaDelSantoNum90880> <https://www.mapmadrid.org/ontologia/tieneCoordenadas> <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> .
-
-
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46432173275739N9413> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46432173275739N9413> <http://www.schema.org/latitude> "40.46432173275739"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46432173275739N9413> <http://www.schema.org/longitude> "-3.6035577418764246"^^<http://www.schema.org/Number> .
 
 
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> <http://www.schema.org/latitude> "40.479811874274304"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> <http://www.schema.org/longitude> "-3.6617189257190366"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> <http://www.schema.org/latitude> "40.38185544198019"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> <http://www.schema.org/longitude> "-3.652418582261822"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> <http://www.schema.org/latitude> "40.41291066085913"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> <http://www.schema.org/longitude> "-3.7000168301267395"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> <http://www.schema.org/latitude> "40.421745563287864"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> <http://www.schema.org/longitude> "-3.6622930226849992"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> <http://www.schema.org/latitude> "40.4219619708435"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> <http://www.schema.org/longitude> "-3.6622597814331255"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> <http://www.schema.org/latitude> "40.444200911178676"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> <http://www.schema.org/longitude> "-3.712595448820414"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> <http://www.schema.org/latitude> "40.42396655835703"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> <http://www.schema.org/longitude> "-3.69971884411894"^^<http://www.schema.org/Number> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> <http://www.schema.org/latitude> "40.41174353391996"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> <http://www.schema.org/longitude> "-3.7788899519852"^^<http://www.schema.org/Number> .
-
-
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/455452874785294N4389> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/455452874785294N4389> <http://www.schema.org/latitude> "40.455452874785294"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/455452874785294N4389> <http://www.schema.org/longitude> "-3.6235245684794966"^^<http://www.schema.org/Number> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> <http://www.schema.org/latitude> "40.40061713604628"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> <http://www.schema.org/longitude> "-3.7256967364055464"^^<http://www.schema.org/Number> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42664258568505N7652> a <http://www.schema.org/GeoCoordinatess> .
@@ -1906,6 +1867,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/47046574313513N345> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/47046574313513N345> <http://www.schema.org/latitude> "40.47046574313513"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/47046574313513N345> <http://www.schema.org/longitude> "-3.7116938453044517"^^<http://www.schema.org/Number> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> <http://www.schema.org/latitude> "40.479811874274304"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/479811874274304N9955> <http://www.schema.org/longitude> "-3.6617189257190366"^^<http://www.schema.org/Number> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42473041132888N2944> a <http://www.schema.org/GeoCoordinatess> .
@@ -1958,6 +1924,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46432173275739N1694> <http://www.schema.org/longitude> "-3.6035577418764246"^^<http://www.schema.org/Number> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> <http://www.schema.org/latitude> "40.38185544198019"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38185544198019N4237> <http://www.schema.org/longitude> "-3.652418582261822"^^<http://www.schema.org/Number> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41236475188858N8609> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41236475188858N8609> <http://www.schema.org/latitude> "40.41236475188858"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41236475188858N8609> <http://www.schema.org/longitude> "-3.7028056847304587"^^<http://www.schema.org/Number> .
@@ -2006,6 +1977,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421539992385334N364> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421539992385334N364> <http://www.schema.org/latitude> "40.421539992385334"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421539992385334N364> <http://www.schema.org/longitude> "-3.7133117877488413"^^<http://www.schema.org/Number> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> <http://www.schema.org/latitude> "40.41291066085913"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41291066085913N4372> <http://www.schema.org/longitude> "-3.7000168301267395"^^<http://www.schema.org/Number> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/417435974892165N4792> a <http://www.schema.org/GeoCoordinatess> .
@@ -2058,6 +2034,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41580670295219N8528> <http://www.schema.org/longitude> "-3.662623751583081"^^<http://www.schema.org/Number> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> <http://www.schema.org/latitude> "40.421745563287864"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/421745563287864N3194> <http://www.schema.org/longitude> "-3.6622930226849992"^^<http://www.schema.org/Number> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41510852626656N7389> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41510852626656N7389> <http://www.schema.org/latitude> "40.41510852626656"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41510852626656N7389> <http://www.schema.org/longitude> "-3.7104118761990375"^^<http://www.schema.org/Number> .
@@ -2106,6 +2087,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/52023162298215N8626> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/52023162298215N8626> <http://www.schema.org/latitude> "40.52023162298215"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/52023162298215N8626> <http://www.schema.org/longitude> "-3.776601664007669"^^<http://www.schema.org/Number> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> <http://www.schema.org/latitude> "40.4219619708435"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4219619708435N2375> <http://www.schema.org/longitude> "-3.6622597814331255"^^<http://www.schema.org/Number> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/46325799880778N2105> a <http://www.schema.org/GeoCoordinatess> .
@@ -2158,6 +2144,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41625481659995N6478> <http://www.schema.org/longitude> "-3.7012066011312754"^^<http://www.schema.org/Number> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> <http://www.schema.org/latitude> "40.444200911178676"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/444200911178676N5318> <http://www.schema.org/longitude> "-3.712595448820414"^^<http://www.schema.org/Number> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41165634023262N3896> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41165634023262N3896> <http://www.schema.org/latitude> "40.41165634023262"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41165634023262N3896> <http://www.schema.org/longitude> "-3.7003574143596234"^^<http://www.schema.org/Number> .
@@ -2206,6 +2197,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4164135338355N9346> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4164135338355N9346> <http://www.schema.org/latitude> "40.4164135338355"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/4164135338355N9346> <http://www.schema.org/longitude> "-3.6897985288705177"^^<http://www.schema.org/Number> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> <http://www.schema.org/latitude> "40.42396655835703"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42396655835703N5652> <http://www.schema.org/longitude> "-3.69971884411894"^^<http://www.schema.org/Number> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/42536059710678N8379> a <http://www.schema.org/GeoCoordinatess> .
@@ -2258,6 +2254,11 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/433928351058015N9039> <http://www.schema.org/longitude> "-3.6823188457332994"^^<http://www.schema.org/Number> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> a <http://www.schema.org/GeoCoordinatess> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> <http://www.schema.org/latitude> "40.41174353391996"^^<http://www.schema.org/Number> .
+<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/41174353391996N7521> <http://www.schema.org/longitude> "-3.7788899519852"^^<http://www.schema.org/Number> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/419237264967286N4421> a <http://www.schema.org/GeoCoordinatess> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/419237264967286N4421> <http://www.schema.org/latitude> "40.419237264967286"^^<http://www.schema.org/Number> .
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/419237264967286N4421> <http://www.schema.org/longitude> "-3.7070487494642546"^^<http://www.schema.org/Number> .
@@ -2308,11 +2309,6 @@
 <https://www.mapmadrid.org/resources/Localizacion/Coordenadas/38318343414461N7564> <http://www.schema.org/longitude> "-3.7344396778350144"^^<http://www.schema.org/Number> .
 
 
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> a <http://www.schema.org/GeoCoordinatess> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> <http://www.schema.org/latitude> "40.40061713604628"^^<http://www.schema.org/Number> .
-<https://www.mapmadrid.org/resources/Localizacion/Coordenadas/40061713604628N8687> <http://www.schema.org/longitude> "-3.7256967364055464"^^<http://www.schema.org/Number> .
-
-
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67725> a <http://www.schema.org/PostalAddress> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67725> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67725> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
@@ -2321,76 +2317,20 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67725> <http://www.schema.org/streetAddress> "JARDIN TRES CULTURAS"^^<https://www.w3.org/XMLSchema/string> .
 
 
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/streetAddress> "C Alicun"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/streetAddress> "Gta Jose Luis Ozores"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/streetAddress> "C Atocha"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/streetAddress> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/streetAddress> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/postalCode> "28003"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/streetAddress> "CALLE GUZMAN EL BUENO"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/streetAddress> "C Farmacia"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/streetAddress> "CAMINO HUMERA"^^<https://www.w3.org/XMLSchema/string> .
-
-
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> a <http://www.schema.org/PostalAddress> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> <http://www.schema.org/postalCode> "28043"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28043N74396> <http://www.schema.org/streetAddress> "AVENIDA MACHUPICHU"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/streetAddress> "Pº Ermita del Santo"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N92950> a <http://www.schema.org/PostalAddress> .
@@ -2463,6 +2403,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N30094> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N30094> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N30094> <http://www.schema.org/streetAddress> "PARQUE AGUSTIN RODRIGUEZ SAHAGUN"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61531> <http://www.schema.org/streetAddress> "C Alicun"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N51724> a <http://www.schema.org/PostalAddress> .
@@ -2545,6 +2493,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N19079> <http://www.schema.org/streetAddress> "JARDIN TRES CULTURAS"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N36181> <http://www.schema.org/streetAddress> "Gta Jose Luis Ozores"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28012N79426> a <http://www.schema.org/PostalAddress> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28012N79426> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28012N79426> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
@@ -2623,6 +2579,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N3504> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N3504> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N3504> <http://www.schema.org/streetAddress> "JARDINES SABATINI"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N74913> <http://www.schema.org/streetAddress> "C Atocha"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48627> a <http://www.schema.org/PostalAddress> .
@@ -2705,6 +2669,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N10908> <http://www.schema.org/streetAddress> "C Juan Esplandiu"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N86822> <http://www.schema.org/streetAddress> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67650> a <http://www.schema.org/PostalAddress> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67650> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N67650> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
@@ -2783,6 +2755,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N22494> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N22494> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N22494> <http://www.schema.org/streetAddress> "C Manuel Alonso"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N21011> <http://www.schema.org/streetAddress> "NOConocido"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N38913> a <http://www.schema.org/PostalAddress> .
@@ -2865,6 +2845,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N61860> <http://www.schema.org/streetAddress> "C Pozo"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/postalCode> "28003"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/28003N50117> <http://www.schema.org/streetAddress> "CALLE GUZMAN EL BUENO"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N25913> a <http://www.schema.org/PostalAddress> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N25913> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N25913> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
@@ -2943,6 +2931,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48630> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48630> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48630> <http://www.schema.org/streetAddress> "C Antonio Maura"^^<https://www.w3.org/XMLSchema/string> .
+
+
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N48951> <http://www.schema.org/streetAddress> "C Farmacia"^^<https://www.w3.org/XMLSchema/string> .
 
 
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N5406> a <http://www.schema.org/PostalAddress> .
@@ -3025,6 +3021,14 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/28006N84338> <http://www.schema.org/streetAddress> "CALLE MALDONADO"^^<https://www.w3.org/XMLSchema/string> .
 
 
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> a <http://www.schema.org/PostalAddress> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
+<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N44197> <http://www.schema.org/streetAddress> "CAMINO HUMERA"^^<https://www.w3.org/XMLSchema/string> .
+
+
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N47658> a <http://www.schema.org/PostalAddress> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N47658> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N47658> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
@@ -3105,50 +3109,15 @@
 <https://www.mapmadrid.org/resources/Localizacion/Postal/10000N65073> <http://www.schema.org/streetAddress> "C Clara Campoamor"^^<https://www.w3.org/XMLSchema/string> .
 
 
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> a <http://www.schema.org/PostalAddress> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/addressCountry> "España"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/addressLocality> "Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/addressRegion> "Community of Madrid"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/postalCode> "10000"^^<https://www.w3.org/XMLSchema/string> .
-<https://www.mapmadrid.org/resources/Localizacion/Postal/10000N23371> <http://www.schema.org/streetAddress> "Pº Ermita del Santo"^^<https://www.w3.org/XMLSchema/string> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Apostol-santiago> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Apostol-santiago> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q11906303"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Portazgo> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Portazgo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q18005921"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cortes> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cortes> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2535637"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814564"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814564"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q6122685"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1992319"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-piovera> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-piovera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q5964851"^^<https://www.w3.org/XMLSchema/anyURI> .
+
+
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-isidro> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-isidro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3813733"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casa-de-campo> a <https://www.mapmadrid.org/ontologia/Barrio> .
@@ -3161,10 +3130,6 @@
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-universitaria> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-universitaria> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3319235"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casa-de-campo> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casa-de-campo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q16302441"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cuatro-caminos> a <https://www.mapmadrid.org/ontologia/Barrio> .
@@ -3183,8 +3148,9 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2449844"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Apostol-santiago> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Apostol-santiago> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q11906303"^^<https://www.w3.org/XMLSchema/anyURI> .
+
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Recoletos> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Recoletos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814551"^^<https://www.w3.org/XMLSchema/anyURI> .
@@ -3194,24 +3160,12 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Las-aguilas> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q5971372"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Recoletos> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Recoletos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814551"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casa-de-campo> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casa-de-campo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q16302441"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Nueva-españa> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Nueva-españa> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10338128"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-castellana> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-castellana> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Argüelles> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Argüelles> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q64874"^^<https://www.w3.org/XMLSchema/anyURI> .
-
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Rosas> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Rosas> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q18880469"^^<https://www.w3.org/XMLSchema/anyURI> .
@@ -3221,11 +3175,8 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Orcasur> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10341270"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2449844"^^<https://www.w3.org/XMLSchema/anyURI> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Portazgo> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Portazgo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q18005921"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Goya> a <https://www.mapmadrid.org/ontologia/Barrio> .
@@ -3235,9 +3186,6 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Arapiles> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Arapiles> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10856744"^^<https://www.w3.org/XMLSchema/anyURI> .
 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10306766"^^<https://www.w3.org/XMLSchema/anyURI> .
@@ -3251,75 +3199,24 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Recoletos> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Recoletos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814551"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-universitaria> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-universitaria> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3319235"^^<https://www.w3.org/XMLSchema/anyURI> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cortes> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Cortes> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2535637"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-paz> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-paz> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q5869740"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-castellana> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-castellana> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10306766"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-estrella> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-estrella> 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Fuente-del-berro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814564"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Universidad> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Universidad> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10387767"^^<https://www.w3.org/XMLSchema/anyURI> .
 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q6122685"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-castellana> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-castellana> 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-diego> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-diego> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q11946851"^^<https://www.w3.org/XMLSchema/anyURI> .
@@ -3337,19 +3234,8 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/El-pardo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3314337"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10306766"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-jardin> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-jardin> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3773744"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1992319"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casco-h.vicalvaro> a <https://www.mapmadrid.org/ontologia/Barrio> .
@@ -3359,43 +3245,9 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-fermin-(madrid)> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q71758"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814559"^^<https://www.w3.org/XMLSchema/anyURI> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Vallehermoso> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q6122685"^^<https://www.w3.org/XMLSchema/anyURI> .
 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814559"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2465181"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2465181"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2449844"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814559"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/La-guindalera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3814559"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casco-h.vicalvaro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Casco-h.vicalvaro> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Valdezarza> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Valdezarza> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10388728"^^<https://www.w3.org/XMLSchema/anyURI> .
@@ -3409,50 +3261,20 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Arcos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q9627876"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Jeronimos> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10306766"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Universidad> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Universidad> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10387767"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Justicia> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1992319"^^<https://www.w3.org/XMLSchema/anyURI> .
 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Embajadores> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2449844"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Las-aguilas> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Las-aguilas> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q5971372"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Pavones> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Pavones> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q71760"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Noconocido> 
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Pinar-del-rey> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Pinar-del-rey> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q10349788"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-universitaria> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Ciudad-universitaria> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3319235"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Castellana> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Castellana> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q4781"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2465181"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Concepcion> a <https://www.mapmadrid.org/ontologia/Barrio> .
@@ -3471,79 +3293,12 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/Puerta-bonita> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3813762"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Palacio> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2136510"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Sol> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2465181"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/El-viso> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Barrio/El-viso> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q4778"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Puerta-bonita> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/Puerta-bonita> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3813762"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-isidro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Barrio/San-isidro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q3813733"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1928529"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Puente-de-vallecas> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Puente-de-vallecas> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2003054"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763370"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1928529"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
-
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
@@ -3553,47 +3308,20 @@
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Tetuan> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773540"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2002296"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
+<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1928529"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Latina> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Latina> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q794954"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamartin> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamartin> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1766348"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/San-blas> a <https://www.mapmadrid.org/ontologia/Barrio> .
@@ -3602,281 +3330,38 @@
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Usera> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Usera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q953368"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763370"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2002296"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Fuencarral-el-pardo> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Fuencarral-el-pardo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q656196"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2002296"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2002296"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763370"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Puente-de-vallecas> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Puente-de-vallecas> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2003054"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
+<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
+
+
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Fuencarral-el-pardo> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Fuencarral-el-pardo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q656196"^^<https://www.w3.org/XMLSchema/anyURI> .
+
+
+<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
+<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Ciudad-lineal> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Ciudad-lineal> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763694"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Fuencarral-el-pardo> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Fuencarral-el-pardo> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q656196"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2002296"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamartin> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamartin> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1766348"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Vicalvaro> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Vicalvaro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q589403"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Usera> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Usera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q953368"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Vicalvaro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Vicalvaro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q589403"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamberi> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763370"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/San-blas> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/San-blas> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2001937"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Retiro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2002296"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Latina> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Latina> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q794954"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moratalaz> a <https://www.mapmadrid.org/ontologia/Barrio> .
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moratalaz> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2076109"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Distrito> 
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Hortaleza> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1928529"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Moncloa-aravaca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q2017682"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Salamanca> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1773521"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Ciudad-lineal> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Ciudad-lineal> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763694"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Usera> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Usera> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q953368"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Ciudad-lineal> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Ciudad-lineal> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763694"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1001991"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Centro> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1763376"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamartin> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Chamartin> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1766348"^^<https://www.w3.org/XMLSchema/anyURI> .
-
-
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> a <https://www.mapmadrid.org/ontologia/Barrio> .
-<https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> <http://www.w3.org/2002/07/owlsameAs> "https://wikidata.org/entity/Q1001991"^^<https://www.w3.org/XMLSchema/anyURI> .
 
 
 <https://www.mapmadrid.org/recursos/Localizacion/Distrito/Carabanchel> a <https://www.mapmadrid.org/ontologia/Barrio> .

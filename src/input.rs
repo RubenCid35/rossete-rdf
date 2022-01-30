@@ -16,7 +16,7 @@ use jsonpath_lib::selector;
 // Trial and error
 const MAX_BATCH: usize = 23; // Number of Insert Queries that are executed by batch
 
-pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<rusqlite::Connection>{
+pub fn read_store_data_files(config: &mut config::AppConfiguration, fields: HashMap<PathBuf, HashSet<String>>) -> ResultApp<(rusqlite::Connection, bool)>{
     let mut fi = Vec::new();
     let mut paths = Vec::new();
     
@@ -27,7 +27,7 @@ pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<
         paths.push(p.clone());
     }
     
-    let loc = select_storage_loc(&fi, &config)?;
+    let (loc, is_file) = select_storage_loc(&fi, &config)?;
     let (data_tx, data_rx) = mpsc::channel();
 
     let num_files = files.len();
@@ -36,10 +36,14 @@ pub fn read_store_data_files(config: &config::AppConfiguration, fields: HashMap<
     });
     create_tables(data_tx.clone(), &files, &fields)?; // This will not fail for sure.
     reading_procedure(config, data_tx, &fields)?;    
-    handler.join()?
+    
+    match handler.join()?{
+        Ok(db) => Ok((db, is_file)),
+        Err(error) => Err(error)
+    }
 }
 
-fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> ResultApp<&'static str>{    
+fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> ResultApp<(&'static str, bool)>{    
     // Get an extimated Size of the datafiles combined. This is more as a guide, given that could be some dupllicate rows that are going to be eliminated.
     let total_memory_usage: usize = fi.iter()
         .map(|file| {
@@ -49,9 +53,13 @@ fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> 
 
     let total_memory_usage = total_memory_usage  / 1048576; // To Transform the number of bytes to megabytes (MB) 
 
+    let loc; 
+    let is_file;
     if !config.debug_mode() && config.can_be_in_memory_db(total_memory_usage){
         info!("All the files is estimated to requiere {} MB, TMP Database will be created in memory", total_memory_usage);
-        Ok(":memory:")
+
+        loc = ":memory:";
+        is_file = false;
     }else{
         info!("All the files is estimated to requiere {} MB, TMP Database will be created in a sqlite DB File", total_memory_usage);
         // If it was already created
@@ -60,8 +68,11 @@ fn select_storage_loc(fi: &Vec<fs::File>, config: &config::AppConfiguration) -> 
             fs::remove_dir_all("./rossete-tmp")?;
         }
         fs::create_dir("rossete-tmp")?;
-        Ok("./rossete-tmp/data_tmp.sqlite")
+        is_file = true;
+        loc = "./rossete-tmp/data_tmp.sqlite";
     }
+
+    Ok((loc, is_file))
 }
 
 fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: usize) -> ResultApp<rusqlite::Connection>{
