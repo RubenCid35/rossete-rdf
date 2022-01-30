@@ -68,8 +68,8 @@ that are already in.
 
 | Format           | Working in Progress  | Ready     |
 |------------------|----------------------|-----------|
-| Turttle          |  &#x2611;            |  &#x2613; |    
-| TriplesMap       |  &#x2611;            |  &#x2613; |    
+| Turttle          |  &#x2611;            |  &#x2611; |    
+| TriplesMap       |  &#x2611;            |  &#x2611; |    
 | Yarm             |  &#x2613;            |  &#x2613; |
 
 # Autors:

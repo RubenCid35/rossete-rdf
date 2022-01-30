@@ -78,7 +78,7 @@ impl std::fmt::Debug for Parts{
                 writeln!(f, "rr:parentTriplesMap <#{}>;", other_map)
             }
             Self::JoinCondition(child, parent) => {
-                writeln!(f, "\t\t\trr:joinCondition [")?;
+                writeln!(f, "rr:joinCondition [")?;
                 writeln!(f, "\t\t\t\trr:child \"{}\";", child)?;
                 writeln!(f, "\t\t\t\trr:parent \"{}\";", parent)?;
                 writeln!(f, "\t\t\t]")

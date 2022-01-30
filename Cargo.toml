@@ -32,4 +32,4 @@ roxmltree = "0.14.1" # XML parser
 [dependencies.rusqlite]
 # Database Interface
 version = "0.26.3"
-features = ["bundled"] # SQLITE Engine is builint the executable (more space but it allows better usage)
+features = ["bundled", "array"] # SQLITE Engine is builint the executable (more space but it allows better usage)

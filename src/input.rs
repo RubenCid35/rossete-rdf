@@ -77,6 +77,7 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
     buffer.push_str("BEGIN; ");
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
+            //println!("RECEIVED QUERY: {}", &query);
             if query.len() == 0{ // Interrumpt
                 buffer.push_str(" COMMIT;");
 
@@ -131,7 +132,7 @@ fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::Fil
                 info!("The following table was created in the database: {}", &table_name);
    
                 let mut query = String::with_capacity(1000);
-                query.extend(format!("CREATE TABLE {} (\"", table_name).chars());
+                query.extend(format!("CREATE TABLE {} (\"col_id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"", table_name).chars());
    
                 for (i, field) in iteradores[iter].iter().enumerate(){
                     query.extend(field.1.chars());
@@ -149,7 +150,7 @@ fn create_tables(con: mpsc::Sender<String>, files: &HashMap<PathBuf, config::Fil
             let table_name = get_table_name(file, file_type);
             info!("The following table was created in the database: {}", &table_name);
             let mut query = String::with_capacity(1000);
-            query.extend(format!("CREATE TABLE {} (\"", table_name).chars());
+            query.extend(format!("CREATE TABLE {} (\"col_id\" INTEGER PRIMARY KEY AUTOINCREMENT, \"", table_name).chars());
             for (i, field) in input_fields[file].iter().enumerate(){
                 query.extend(field.chars());
                 if i != input_fields[file].len() - 1{
@@ -328,6 +329,7 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
         let iterable_data = data_iterator(iterator)?;
         let table_name = get_table_name_with_iterator(&path, specs.get_file_type(), iterator);
         for data in iterable_data.iter(){
+
             let mut field_sel = selector(data);
             let mut init_query = format!("INSERT INTO {} (\"", &table_name); // until the insert of the data
             let mut data_query = String::with_capacity(255);    
@@ -335,7 +337,7 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
                 let retrieven = field_sel(field)?;
                 if retrieven.is_empty(){
                     if i == associated_fields.len() - 1{
-                        init_query.push_str("\") VALUES (\"");
+                        init_query.push_str("\") VALUES (");
                         data_query.push_str(");");
                     }
                     continue
@@ -345,12 +347,12 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
                     None => {
                         if i == associated_fields.len() - 1{
                             // remove last added chars
-                            init_query.pop();
-                            init_query.pop();
-                            init_query.pop();
+                            init_query.pop(); // "
+                            init_query.pop(); // _
+                            init_query.pop(); // ,
 
-                            data_query.pop();
-                            data_query.pop();
+                            data_query.pop(); // _ 
+                            data_query.pop(); // ,
 
                             init_query.push_str(") VALUES (");
                             data_query.push_str(");");
@@ -370,6 +372,7 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
                     data_query.push_str(");");
                 }
             }
+
             init_query.extend(data_query.chars());
             con.send(init_query)?;
         }

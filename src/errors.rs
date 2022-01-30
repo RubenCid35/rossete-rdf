@@ -64,7 +64,10 @@ impl From<io::Error> for ApplicationErrors{
              io::ErrorKind::PermissionDenied => Self::FilePermissionDenied,
              io::ErrorKind::WriteZero => Self::FileCantWrite,
              io::ErrorKind::NotFound => Self::FileNotFound,
-             _ => Self::Miscelaneous
+             _ => {
+                crate::error!("ERROR CODE: {:?}", error);
+                Self::Miscelaneous
+             }
          } 
     }
 }
@@ -95,10 +98,16 @@ impl From<Box<dyn Any + Send>> for ApplicationErrors{
 impl From<rusqlite::Error> for ApplicationErrors{
     fn from(error: rusqlite::Error) -> Self{
         match error{
-            rusqlite::Error::SqliteFailure(..) => Self::CantOpenDatabase,
+            rusqlite::Error::SqliteFailure(error, data) => {
+                if data.is_some(){
+                    crate::error!("ERROR DB -> REASON: {}", data.unwrap());
+                }
+                crate::error!("FFI ERROR: {:?}", error);
+                Self::FailedToInteractWithDB
+            }
             rusqlite::Error::InvalidColumnIndex(..) => Self::MissingFieldInData,
             rusqlite::Error::InvalidQuery => Self::InvalidDataEntry,
-            _ => Self::FailedToInteractWithDB
+            _ => Self::CantOpenDatabase
         }
     }
 }

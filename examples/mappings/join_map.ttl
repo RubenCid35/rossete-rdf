@@ -1,0 +1,72 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix schema: <http://schema.org/>.
+@prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#lat>.
+@prefix gn: <http://www.geonames.org/ontology#>.
+@base <http://example.com/ns#>.
+
+<#VenueMapping> a rr:TriplesMap;
+  rml:logicalSource [
+    rml:source "./examples/data/file-3.json";
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$"
+  ];
+
+  rr:subjectMap [
+    rr:template "http://loc.example.com/city/{location.city}";
+    rr:class schema:City
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate wgs84_pos:lat;
+    rr:objectMap [
+      rml:reference "venue.latitude"
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate wgs84_pos:long;
+    rr:objectMap [
+      rml:reference "venue.longitude"
+    ]
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate gn:countryCode;
+    rr:objectMap [
+      rml:reference "location.country"
+    ]
+  ];
+
+  rr:predicateObjectMap [
+      rr:predicate gn:Localization;
+      rr:objectMap [
+        rr:parentTriplesMap <#LocationMapping_CSV>;
+        rr:joinCondition [
+            rr:child "location.city";  rr:parent "city";
+        ];
+    ]
+]
+  
+<#LocationMapping_CSV>
+    rml:logicalSource [
+        rml:source "./examples/data/file-1.csv" ;
+        rml:referenceFormulation ql:CSV
+    ];
+    rr:subjectMap [
+        rr:template "http://loc.example.com/latlong/{latitude},{longitude}"
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:lat;
+        rr:objectMap [
+            rml:reference "latitude" 
+        ]
+    ];
+    rr:predicateObjectMap [
+        rr:predicate ex:long;
+        rr:objectMap [
+            rml:reference "longitude"
+    ]
+].

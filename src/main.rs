@@ -29,7 +29,7 @@ const DEBUG: bool = cfg!(debug_assertions);
 fn main(){
 
     // This will be given by the user.
-    let output_file = path::PathBuf::from("output.ttl");
+    let output_file = path::PathBuf::from("output.nt");
     let config_file = path::PathBuf::from("config_example.json");
 
     // ;
@@ -64,6 +64,10 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
     let mappings = parse_all_mappings(&config, map_path)?;
     time_info("Parsing Mapping Files", now);
 
+    for map in mappings.iter(){
+        println!("{:?}", map)
+    }
+
     let mut data_fields = HashMap::new();
     add_all_data_files(&mappings, &mut config, &mut data_fields)?;
     add_all_join_fields(&mappings, &mut data_fields)?;
@@ -71,7 +75,7 @@ fn run(mut config: AppConfiguration, map_path: PathBuf) -> ResultApp<()>{
 
     if config.debug_mode(){ // Display the configuration to see if it is correct
         info!("Showing the Created Configuration");
-        println!("{:?}", config);
+        eprintln!("{:?}", config);
     }
     
     eprintln!("\n");

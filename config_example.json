@@ -10,9 +10,9 @@
     
     ],
     "threads": {
-        "parsing": 5,
-        "reading": 5,
-        "writing": 5
+        "parsing": 1,
+        "reading": 1,
+        "writing": 1
     },
     "max-memory-usage": 100
 }

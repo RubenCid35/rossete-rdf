@@ -41,6 +41,7 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
     // Tokenize the file so we can be parsed.
     let tokens = tokenize(buffer);
+
     // Get the tokens into diferent mappings and prefixes.
     match parse_tokens(tokens, debug){
         Ok(mappings) => {
@@ -57,25 +58,33 @@ pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<Result
 
 }
 
-/// Divide the file into words or tokens so they can be processed quickier.
+// println!("PHRASE: {}", sentence);
+// if let Some(cap) = comment.captures(sentence){
+//     println!("COMMENT: {}", sentence);
+//     let init = cap.get(1).unwrap().start();
+//     if init == 0{
+//         String::new()
+//     }else{
+//         sentence.chars().into_iter().take(init).collect::<String>()
+//     }
+// }else{
+//     sentence.to_string()
+// }
+
+
+
+// Divide the file into words or tokens so they can be processed quickier.
 fn tokenize(text: String) -> Vec<String>{
-    let comment: Regex = Regex::new(r#"^[\s\n]?[^(https?:)><|]?#[^>][ \na-zA-Z0-9<>:._/@]+$"#).unwrap();
+    // let regex = "(?=(^#.*)|([^<]{1}#[^>].*$))"; // ^[\s\n]?[^(https?:)><|]?#[^>][ \na-zA-Z0-9<>:._/@]+$
+    // let comment: Regex = Regex::new(regex).unwrap();
     // COMMENT WITH MAP DEC: <#[0-9a-zA-Z-]*>[0-9a-zA-Z-:;\ ]*(#.*)
     text
+    .replace(';', "\n")
     .replace('\r', "\n")
     .split("\n")
     .filter(|&sentence| !sentence.is_empty())
     .map(|sentence|{
-        if let Some(f) = comment.find(sentence){
-            println!("COMMENT: {}", sentence);
-            if f.start() == 0{
-                String::new()
-            }else{
-                sentence.chars().into_iter().take(f.start()).collect::<String>()
-            }
-        }else{
-            sentence.to_string()
-        }
+        remove_comments(sentence)
     })
     .flat_map(|sentence| sentence.split(' ').map(|word| word.trim().to_string()).collect::<Vec<String>>())
     .flat_map(|sentence| sentence.split(';').map(|word| word.trim().to_string()).collect::<Vec<String>>())
@@ -99,7 +108,37 @@ fn tokenize(text: String) -> Vec<String>{
     .collect()
 }
 
-/// Get the index of the closing bracket if there is.
+fn remove_comments(sentence: &str) -> String{
+    let mut phrase = String::with_capacity(sentence.len());
+
+    let sentence = sentence.chars().collect::<Vec<_>>();
+
+    let mut in_uri = false;
+    for i in 0..sentence.len(){
+        let c = sentence[i];
+        if !in_uri && c == '#'{
+            if i == 0{
+                break
+            }else if sentence[i - 1] == '<'{
+                phrase.push(c);
+            }else if i != phrase.len() - 1 && sentence[i + 1] == '>'{
+                phrase.push(c);
+            }
+            else{
+                break
+            }
+        }else if c == '<' || c == '>'{
+            in_uri = !in_uri;
+            phrase.push(c);
+        }else{
+            phrase.push(c);
+        }
+    }
+    phrase
+}
+
+
+// Get the index of the closing bracket if there is.
 fn find_closing_bracket(map_str: &Vec<String>, initial: usize) -> Option<usize>{
     let mut close = initial;
     let mut closing = 0;
@@ -292,7 +331,7 @@ fn parse_logical_source(tokens: &Vec<String>, init: usize, end: usize, last_map:
             }
             idx += 1;
         }else if ITERATOR.is_match(&tokens[idx]){
-            iterator = tokens[idx + 1].clone();
+            iterator = tokens[idx + 1].replace('"', "");
             idx += 1;
         }else if IS_FILE_TYPE.is_match(&tokens[idx]){
             if let Some(cap) = FILE_TYPE.captures(&tokens[idx + 1]){
@@ -536,4 +575,38 @@ fn parse_join_condition(tokens: &Vec<String>, init: usize, end: usize, last_map:
     }
 
     Ok(Parts::JoinCondition(child, parent))
+}
+
+
+#[cfg(test)]
+mod test_parser{
+    use super::remove_comments;
+
+    #[test]
+    fn remove_comment_simple(){
+        let test = "# hola mundo";
+        let result = remove_comments(test);
+        assert_eq!(&result, "");
+    }
+
+    #[test]
+    fn remove_uri(){
+        let test = "@prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#lat>.";
+        let result = remove_comments(test);
+        assert_eq!(&result, test);
+    }
+
+    #[test]
+    fn remove_uri_comment(){
+        let test = "@prefix xsd: <http://www.w3.org/2001/XMLSchema#>. # Esto debe borrarse";
+        let result = remove_comments(test);
+        assert_eq!(&result, "@prefix xsd: <http://www.w3.org/2001/XMLSchema#>. ");
+    }
+
+    #[test]
+    fn do_nothing(){
+        let test = "rr:predicateObjectMap [";
+        let result = remove_comments(test);
+        assert_eq!(&result, test);
+    }
 }
