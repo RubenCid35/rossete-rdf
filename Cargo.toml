@@ -5,7 +5,6 @@ edition = "2021"
 authors = ["Rubén Cid Costa"] # <https://github.com/RubenCid35>
 readme = "./README.md"
 license = "MIT"
-documentation = ""
 repository = "https://github.com/RubenCid35/rossete-rdf"
 description = "This application is intended to generate a rdf file from one or varios datasets in different formats and a RML mapping."
 keywords = [
