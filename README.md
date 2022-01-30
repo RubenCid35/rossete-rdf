@@ -13,7 +13,7 @@ To run this application, you need to run the following CLI command.
 For more information, you can use the help flag (-h|--help). If you use it,
 the following prompt will appear with the possible custom usage options and others.
 ```
-Rossete RDF Materisaliser 0.1.0
+Rossete RDF Generator 0.1.0
 Rubén Cid Costa
 This application is intended to generate a rdf file from one or varios datasets in different formats and a RML mapping.
 
@@ -30,6 +30,16 @@ OPTIONS:
         --mappings <MAPPINGS>    Used mapping in the process of generated rdf. Values: Folder or a file
         --output <OUTPUT>        File name where the output file is written
 ```
+## Example
+
+In this repository, there is an example with the mappings that are used in the RML Documentation of the following link: [LINK](https://rml.io/specs/rml/).
+To run it, you can run the following command with the application:
+
+```
+rossete-rdf.exe --mappings ./examples/mappings --config config_example.json --output output.ttl
+```
+
+This command will create a Turtle File with the generated RDF.
 
 ## Requirements
 To use this executable, you need to install rust and cargo in your computer, so you can compile this repository.
