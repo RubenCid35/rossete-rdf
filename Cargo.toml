@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Rubén Cid Costa"] # <https://github.com/RubenCid35>
 readme = "./README.md"
+license = "LICENSE"
 description = "This application is intended to generate a rdf file from one or varios datasets in different formats and a RML mapping."
 keywords = [
     "rdf",
