@@ -5,7 +5,6 @@ edition = "2021"
 authors = ["Rubén Cid Costa"] # <https://github.com/RubenCid35>
 readme = "./README.md"
 license = "MIT"
-license-file = "LICENSE"
 documentation = ""
 homepage = ""
 repository = "https://github.com/RubenCid35/rossete-rdf"
