@@ -33,6 +33,7 @@ OPTIONS:
 ## Example
 
 In this repository, there is an example with the mappings that are used in the RML Documentation of the following link: [LINK](https://rml.io/specs/rml/).
+
 To run it, you can run the following command with the application:
 
 ```
