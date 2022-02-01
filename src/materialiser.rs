@@ -464,6 +464,17 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
 
     for element in objects{
         match element{
+            Parts::Template{template, input_fields} => {
+                term_kind = false;
+                let input_data = input_fields.iter()
+                .map(|f| columns[f])
+                .map(|i| from_table[i].clone())
+                .collect::<Vec<_>>();
+                
+                object = format_uri(template.clone(), &input_data);
+                break
+            }
+
             Parts::Reference(obj) => {
                 let i = columns[obj];
                 object = from_table[i].clone();
