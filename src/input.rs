@@ -7,11 +7,13 @@ use crate::errors::ApplicationErrors;
 
 
 use std::fs;
+use std::io::Read;
 use std::path::PathBuf;
 use std::sync::{mpsc};
 
 use std::collections::{HashMap, HashSet};
 use jsonpath_lib::selector;
+use sxd_xpath::evaluate_xpath;
 
 // Trial and error
 const MAX_BATCH: usize = 23; // Number of Insert Queries that are executed by batch
@@ -88,10 +90,8 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
     buffer.push_str("BEGIN; ");
     loop{
         if let Ok(query) = data_rx.recv_timeout(std::time::Duration::from_millis(150)){
-            //println!("RECEIVED QUERY: {}", &query);
             if query.len() == 0{ // Interrumpt
                 buffer.push_str(" COMMIT;");
-
                 conn.execute_batch(&buffer)?;
                 buffer.clear();
                 break
@@ -113,7 +113,6 @@ fn store_data(localization: &str, data_rx: mpsc::Receiver<String>, total_files: 
             
             if batch_size == MAX_BATCH{
                 buffer.push_str(" COMMIT;");
-
                 conn.execute_batch(&buffer)?;
 
                 buffer.clear();
@@ -399,8 +398,28 @@ fn read_json(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Send
 }
 
 fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sender<String>, rc: mpsc::Sender<usize>, fields: Vec<String>) -> ResultApp<()>{
-    let table_name = get_table_name(&path, specs.get_file_type());
     // TODO Read XML files
+    let file = fs::File::open(&path)?;
+    let mut xml_string = String::with_capacity(file.metadata().unwrap().len() as usize); 
+    let encoding = specs.get_encoding();
+    let mut file_reader = encoding_rs_io::DecodeReaderBytesBuilder::new()
+                                            .encoding(Some(encoding))
+                                            .build(file);
+
+
+    
+    file_reader.read_to_string(&mut xml_string)?;
+    let xml_package = sxd_document::parser::parse(&xml_string)?;
+    let xml_doc = xml_package.as_document();
+
+    let iter_field = extract_iterator_and_fields(&fields);
+    for (iterator, __associated_fields) in iter_field.iter(){
+        let __table_name = get_table_name_with_iterator(&path, specs.get_file_type(), iterator);
+        let __iterable_data = evaluate_xpath(&xml_doc, iterator)?;        
+        // let remove_duplicates = query_remove_duplicates(&table_name, &fields);
+        // con.send(remove_duplicates)?;
+    }
+
     // Read File
 
     
@@ -408,8 +427,6 @@ fn read_xml(id: usize, path: PathBuf, specs: config::FileSpecs, con: mpsc::Sende
     // Iterate by the iterators and get the need data
 
     // Remove duplicates
-    let remove_duplicates = query_remove_duplicates(&table_name, &fields);
-    con.send(remove_duplicates)?;
 
     // End Transmission
     con.send(format!("{:6}", id))?;

@@ -1,3 +1,3 @@
-id,city,bus,latitude,longitude
-6523,Brussels,25,50.901389,4.484444
-6523,Paris,25,50.901389,4.484444
+id,city,bus,latitude,longitude,stop
+6523,Brussels,25,50.901389,4.484444,None
+6523,Paris,25,50.901389,4.484444,None

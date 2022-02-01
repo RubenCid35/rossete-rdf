@@ -1,0 +1,19 @@
+<http://airport.example.com/6523> a <http://vocab.org/transit/terms/Stop> ;
+		<http://vocab.org/transit/terms/route> "None"^^<http://www.w3.org/2001/XMLSchema#int> ;
+		<http://www.w3.org/2003/01/geo/wgs84_pos#lat> "50.901389"^^<http://www.w3.org/2001/XMLSchema#string> ;
+		<http://www.w3.org/2003/01/geo/wgs84_pos#long> "4.484444"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+
+<http://loc.example.com/city/Paris> a <http://schema.org/City> ;
+		<http://www.w3.org/2003/01/geo/wgs84_pos#latlat> "51.0500000"^^<http://www.w3.org/2001/XMLSchema#string> ;
+		<http://www.w3.org/2003/01/geo/wgs84_pos#latlong> "3.7166700"^^<http://www.w3.org/2001/XMLSchema#string> ;
+		<http://www.geonames.org/ontology#countryCode> "BE"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+
+
+
+<http://trans.example.com/airport/6523> ex:located  <http://venue.example.com/Paris> .
+
+
+
+

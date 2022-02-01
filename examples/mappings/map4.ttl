@@ -21,7 +21,7 @@
   <#TriplesMap2> a rr:TriplesMap;
   rml:logicalSource [
     rml:source "./examples/data/file-3.json" ;
-    rml:iterator "$.venue[*]";
+    rml:iterator "$";
   ];
   rr:subjectMap [
     rr:template "http://venue.example.com/{location.city}"

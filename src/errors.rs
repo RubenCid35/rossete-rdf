@@ -3,8 +3,6 @@ use std::any::Any;
 use std::io;
 use std::sync::mpsc;
 
-use roxmltree as xml;
-
 #[derive(Debug, Clone)]
 pub enum ApplicationErrors{
     // Input and Data Errors
@@ -21,7 +19,6 @@ pub enum ApplicationErrors{
     IncorrectJsonFile,
     IncorrectJsonPath,
     IncorrectXMLFile,
-    #[allow(dead_code)] // USe in the XML Reading: TODO
     IncorrectXPath,
 
     // Database Errors
@@ -33,15 +30,9 @@ pub enum ApplicationErrors{
     // Reading Mapping Errors.
     MissingLogicalSource,
     MissingSubjectMap,
-    #[allow(dead_code)] // Use it in reading precedure TODO
-    InvalidSourceDataFormat, // Maybe it will be eliminated
     NoInputFieldURISubject,
     ComponentInIncorrectLocation,
     IncorrectMappingFormat,
-    #[allow(dead_code)]
-    MissingPrefixInMap,
-    #[allow(dead_code)]
-    MissingMappingPart,
     MissingClosingBracket,
     MappingNotFound,
      
@@ -107,7 +98,10 @@ impl From<rusqlite::Error> for ApplicationErrors{
             }
             rusqlite::Error::InvalidColumnIndex(..) => Self::MissingFieldInData,
             rusqlite::Error::InvalidQuery => Self::InvalidDataEntry,
-            _ => Self::CantOpenDatabase
+            _ => {
+                crate::error!("ERROR DB: {:?}", error);    
+                Self::CantOpenDatabase
+            }
         }
     }
 }
@@ -118,9 +112,15 @@ impl From<csv::Error> for ApplicationErrors{
     }
 }
 
-impl From<xml::Error> for ApplicationErrors{
-    fn from(_: xml::Error) -> Self{
+impl From<sxd_document::parser::Error> for ApplicationErrors{
+    fn from(_: sxd_document::parser::Error) -> Self{
         Self::IncorrectXMLFile
+    }
+}
+
+impl From<sxd_xpath::Error> for ApplicationErrors{
+    fn from(_: sxd_xpath::Error) -> Self{
+        Self::IncorrectXPath
     }
 }
 

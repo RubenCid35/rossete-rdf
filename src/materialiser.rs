@@ -273,7 +273,12 @@ fn create_rdf_ttl<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<
             let term = match term {
                 Ok(t) => {
                     if t.is_empty(){ // Remove if data is empty
-                        continue
+                        if i == predicates.len() - 1 && i == 0{
+                            buffer.clear();
+                            break
+                        }else{
+                            continue
+                        }
                     }else{
                         t
                     }
@@ -290,9 +295,11 @@ fn create_rdf_ttl<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<
             }else{
                 buffer.push_str(".\n");
             }
+            if i == predicates.len() - 1{
+                buffer.push_str("\n\n");                            
+            }
 
         }
-        buffer.push_str("\n\n");            
 
         write.send(buffer.bytes().collect())?;
         buffer.clear();
@@ -547,7 +554,19 @@ fn term_from_join_object(map: &Mapping, pre: &Parts, db: Arc<Mutex<rusqlite::Con
             values.push(d);
         }
         Ok(values)
-    })?;
+    });
+
+    let row = match row{
+        Ok(rows) => rows,
+        Err(error) => {
+            match error{
+                rusqlite::Error::QueryReturnedNoRows => {
+                    return Ok(String::new())
+                }
+                _ => return Err(error.into())
+            }
+        }
+    };
     
 
     let mut term = String::new();
@@ -598,7 +617,7 @@ fn generate_join_template_query(table_name: &String, other_map: &String, map_ite
             if other_iter.is_empty(){
                 new_field = f.clone();
             }else{
-                new_field = map_iterator.clone();
+                new_field = other_iter.clone();
                 new_field.push_str("||");
                 new_field.extend(f.chars());
             }
@@ -640,10 +659,10 @@ fn generate_join_template_query(table_name: &String, other_map: &String, map_ite
             match obj{
                 Parts::JoinCondition(child, _) => {
                     let mut new_child;
-                    if other_iter.is_empty(){
+                    if map_iterator.is_empty(){
                         new_child = child.clone();
                     }else{
-                        new_child = other_iter.clone();
+                        new_child = map_iterator.clone();
                         new_child.push_str("||");
                         new_child.extend(child.chars());
                     }
