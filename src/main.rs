@@ -227,7 +227,7 @@ fn get_all_files(mapping_paths: PathBuf) -> ResultApp<Vec<PathBuf>>{
         let file = file?;
         let path = file.path();
 
-        if path.is_file() && path.extension().unwrap().to_ascii_lowercase() == "ttl"{
+        if path.is_file() && path.extension().unwrap().to_ascii_lowercase() == "ttl" || path.extension().unwrap().to_ascii_lowercase() == "rml" {
             map_files.push(path);
         }
 

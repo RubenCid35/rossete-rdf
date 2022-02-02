@@ -67,6 +67,7 @@ fn create_rdf(file_con: mpsc::Sender<Vec<u8>>, db: Arc<Mutex<rusqlite::Connectio
                 }else if output_format.is_ttl(){
                     create_rdf_ttl(id, rdf_map, rc, db_c, write, table_co)
                 }else{
+                    warning!("The output format of the result cann't be processed. FORMAT: {:?}", &output_format);
                     rc.send(current_map)?;
                     write.send(Vec::new())?;
                     Ok(())
@@ -167,7 +168,10 @@ fn create_rdf_nt<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<M
     for val in rows.iter(){
         // Getting the subject
         let url = get_subject(temp, val, input, &id_col);
-
+        if url.is_empty(){
+            continue
+        }
+        
         if let Some(class) = &class_term{
             buffer.extend(url.chars());
             buffer.extend(class.chars());
@@ -248,6 +252,9 @@ fn create_rdf_ttl<'a>(id: usize, map: Mapping, rc: mpsc::Sender<usize>, db: Arc<
     let mut buffer = String::with_capacity(1000);
     for val in rows.iter(){
         let url = get_subject(temp, val, input, &id_col);
+        if url.is_empty(){
+            continue
+        }
         if let Some(class) = &class_term{
             buffer.extend(url.chars());
             buffer.extend(class.chars());
@@ -412,6 +419,11 @@ fn format_uri(mut url: String, input: &Vec<String>) -> String{
     }
     url.insert(0, '<');
     url.push('>');
+    if url.contains(' '){
+        warning!("INVALID URI. The folowing URI Contains Spaces so it will be discarded. URI: {}", url);
+        return String::new();
+    }
+
     url.push(' ');
     url 
 }
@@ -479,6 +491,9 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
                 .collect::<Vec<_>>();
                 
                 object = format_uri(template.clone(), &input_data);
+                if object.is_empty(){
+                    return String::new()
+                }
                 break
             }
 
@@ -493,10 +508,12 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
                 term_type = type_data.clone();
             }
             Parts::TermType(type_term) => {
-                if type_term.contains("Literal"){
-                    term_kind = 3;
-                }else{
+                if type_term.contains("IRI") {
                     term_kind = 1;
+                }else if type_term.contains("BlankNode"){
+                    term_kind = 1;
+                }else{
+                    term_kind = 3;
                 }
             }
             Parts::ConstantString(obj) => {
@@ -590,6 +607,9 @@ fn term_from_join_object(map: &Mapping, pre: &Parts, db: Arc<Mutex<rusqlite::Con
     term.extend(pred.chars());
    
     let url = format_uri(template.clone(), &row);
+    if url.is_empty(){
+        return Ok(String::new())
+    }
     term.extend(url.chars());
     
     Ok(term)

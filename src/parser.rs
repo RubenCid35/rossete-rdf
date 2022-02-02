@@ -366,7 +366,7 @@ fn parse_subject_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &s
             static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
             static ref GRAPHMAP: Regex = Regex::new("rr:GraphMap").unwrap();
             static ref CLASSTYPE: Regex = Regex::new("rr:class").unwrap();
-            static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
+            static ref TERMTYPE: Regex = Regex::new("rr:term[tT]ype").unwrap();
         }
         if TEMPLATE.is_match(&tokens[idx]){
             let (template, input_fields) = parse_input_field(&tokens[idx + 1], last_map)?;
