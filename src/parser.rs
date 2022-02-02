@@ -176,7 +176,7 @@ fn parse_tokens(tokens: Vec<String>, debug: bool) -> ResultApp<Vec<Mapping>>{
     while idx < tokens.len(){
         lazy_static!{
             static ref PREFIX: Regex = Regex::new(r#"@(prefix|PREFIX)"#).unwrap();
-            static ref PREFIX_URL: Regex = Regex::new(r#"<(https?://[a-zA-Z0-9:\.\#/_\-]{0,256})>\."#).unwrap();
+            static ref PREFIX_URL: Regex = Regex::new(r#"<(https?://[a-zA-Z0-9:\.\#/_\-]{0,256})>\s*\.?"#).unwrap();
             static ref BASE: Regex = Regex::new(r#"@(base|BASE)"#).unwrap();
             
             static ref MAPPING_INIT: Regex = Regex::new(r#"<#([a-zA-Z0-9_\-]*)>"#).unwrap();
