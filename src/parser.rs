@@ -488,8 +488,8 @@ fn parse_object_map(tokens: &Vec<String>, init: usize, end: usize, last_map: &st
         static ref JOIN: Regex = Regex::new("rr:joinCondition").unwrap();
         static ref CONSTANT: Regex = Regex::new("rr:constant").unwrap();
         static ref REFERENCE: Regex = Regex::new("rml:reference").unwrap();
-        static ref TERMTYPE: Regex = Regex::new("rr:termType").unwrap();
-        static ref DATATYPE: Regex = Regex::new("rr:datatype").unwrap();    
+        static ref TERMTYPE: Regex = Regex::new("rr:term[tT]ype").unwrap();
+        static ref DATATYPE: Regex = Regex::new("rr:data[tT]ype").unwrap();    
         static ref TEMPLATE: Regex = Regex::new("rr:template").unwrap();    
     };
 

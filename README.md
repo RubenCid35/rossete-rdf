@@ -30,6 +30,16 @@ OPTIONS:
         --mappings <MAPPINGS>    Used mapping in the process of generated rdf. Values: Folder or a file
         --output <OUTPUT>        File name where the output file is written
 ```
+
+The app doesn't work with maps with the same name. And it assumes that the following RML prefixes:
+
+| PREFIX     | URL                               |
+|------------|-----------------------------------|
+| rr:        | <http://www.w3.org/ns/r2rml#>.    |
+| rml:       | <http://semweb.mmlab.be/ns/rml#>. |
+| ql:        | <http://semweb.mmlab.be/ns/ql#>.  |
+
+
 ## Example
 
 In this repository, there is an example with the mappings that are used in the RML Documentation of the following link: [LINK](https://rml.io/specs/rml/).

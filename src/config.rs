@@ -250,7 +250,7 @@ impl AppConfiguration{
                 let mut current_spec = FileSpecs::default(); 
                 // ENCODING
                 if let Some(d) = f.get("encoding"){
-                    current_spec.set_encoding(get_encoding_from_str(&d.as_str().unwrap().to_lowercase()));
+                    current_spec.set_encoding(get_encoding_from_str(&d.as_str().unwrap().to_uppercase()));
                 }
                 // TYPE
                 if let Some(d) = f.get("file-type"){

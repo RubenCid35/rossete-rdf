@@ -465,14 +465,14 @@ fn rdf_term(map: &Mapping, predicate_part: &Parts, from_table: &Vec<String>, col
 
 
 fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String>, columns: &HashMap<String, usize>, warn: &mut bool) -> String{
-    let mut term_kind: bool = true; // true: datatype false: uri
+    let mut term_kind: u8 = 3; // true: datatype false: uri
     let mut term_type = String::from("xsd:string");
     let mut object = String::new();
 
     for element in objects{
         match element{
             Parts::Template{template, input_fields} => {
-                term_kind = false;
+                term_kind = 0;
                 let input_data = input_fields.iter()
                 .map(|f| columns[f])
                 .map(|i| from_table[i].clone())
@@ -493,29 +493,35 @@ fn term_from_object(map: &Mapping, objects: &Vec<Parts>, from_table: &Vec<String
                 term_type = type_data.clone();
             }
             Parts::TermType(type_term) => {
-                term_kind = type_term.contains("Literal");
+                if type_term.contains("Literal"){
+                    term_kind = 3;
+                }else{
+                    term_kind = 1;
+                }
             }
             Parts::ConstantString(obj) => {
                 object = obj.clone();
-                term_kind = true;
+                term_kind = 1;
                 break
             }
             Parts::ConstantTerm(obj) => {
                 object = get_predicate(&obj, map, false, warn);
-                term_kind = false;
+                term_kind = 3;
                 break
             }
             _=>{}
         }
     }
 
-    if term_kind{
+    if term_kind == 3{
         let kind = get_predicate(&term_type, map, true, warn);
         return format!("\"{}\"^^{}", object, kind)
     }
-    else{
+    else if term_kind == 1{
         object.insert(0, '<');
         object.push('>');
+        return object
+    }else{
         return object
     }
 
