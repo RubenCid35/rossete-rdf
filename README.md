@@ -1,5 +1,5 @@
 # ROSSETE RDF
-[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](LICENSE)
 [![crates.io](https://img.shields.io/crates/v/rossete-rdf.svg)](https://crates.io/crates/rossete-rdf)
 [![crates.io](https://img.shields.io/crates/d/rossete-rdf.svg)](https://crates.io/crates/rossete-rdf)
 
