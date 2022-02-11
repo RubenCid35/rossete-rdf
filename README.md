@@ -5,6 +5,8 @@
 
 This application is intended to convert the data stored in a database/CSV/JSON/XML/etc to RDF using a RML mapping file or list of them.
 <br>
+# Note
+If you find any issue or knows something that can be improved or added, feel free to create an issue in the github or contact me so it can be addressed.
 
 # Usage
 
