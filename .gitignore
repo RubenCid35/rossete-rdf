@@ -2,8 +2,9 @@
 /target
 Cargo.lock
 
-# No subir la base de datos temporal
+# No subir la base de datos temporal and remove executable
 /rossete-tmp/data_tmp.sqlite 
+*.exe 
 
 # Notas: Mejor no subirlas a internet
 *.txt

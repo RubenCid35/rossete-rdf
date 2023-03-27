@@ -18,6 +18,9 @@ use std::sync::{Arc, mpsc};
 use std::collections::HashMap;
 use regex::Regex;
 
+mod tokenize;
+use tokenize::{tokenize_file, Token};
+
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
 pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, status_transmitter: mpsc::Sender<i32>, debug: bool) -> ResultApp<()>{
     info!("Parsing File ID: {:2.} PATH: \"{}\"",  id, file.display());
