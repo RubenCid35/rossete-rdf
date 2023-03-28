@@ -5,7 +5,7 @@ type ResultApp<T> = Result<T, errors::ApplicationErrors>;
 
 mod mappings;
 mod logging;
-mod parser;
+mod rml_parser;
 mod input;
 mod config;
 mod materialiser;
@@ -181,7 +181,7 @@ fn parse_all_mappings(config: &AppConfiguration, mapping_folder: PathBuf) -> Res
             let map_id = current_path;
             let debug = config.debug_mode();
             let hand = std::thread::spawn(move || -> ResultApp<()>{
-                parser::parse_text(map_id as i32 + 1,map_file_path, tx, rc_tx_2, debug)
+                rml_parser::parse_text(map_id as i32 + 1,map_file_path, tx, rc_tx_2, debug)
             });
             threads.push(hand);
             threads_id.push(current_path as i32 + 1);
