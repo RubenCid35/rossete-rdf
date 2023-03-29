@@ -2,79 +2,78 @@ use std::fmt;
 
 // This structures are only an identifier, they should be able to be copied
 #[derive(Clone, Copy)]
-pub enum AcceptedType{
+pub enum AcceptedType {
     CSV,
     TSV,
     JSON,
     XML,
     Unspecify,
-    Other
+    Other,
 }
-impl fmt::Display for AcceptedType{
+impl fmt::Display for AcceptedType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self{
+        match self {
             Self::CSV => write!(f, "CSV"),
             Self::TSV => write!(f, "TSV"),
             Self::JSON => write!(f, "JSON"),
             Self::XML => write!(f, "XML"),
             Self::Other => write!(f, "Other"),
-            Self::Unspecify => write!(f, "Unspecified")
+            Self::Unspecify => write!(f, "Unspecified"),
         }
     }
 }
-impl fmt::Debug for AcceptedType{
+impl fmt::Debug for AcceptedType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self{
+        match self {
             Self::CSV => write!(f, "CSV"),
             Self::TSV => write!(f, "TSV"),
             Self::JSON => write!(f, "JSON"),
             Self::XML => write!(f, "XML"),
             Self::Other => write!(f, "Other"),
-            Self::Unspecify => write!(f, "Unspecified")
+            Self::Unspecify => write!(f, "Unspecified"),
         }
     }
 }
 
-impl AcceptedType{
-    pub fn from_str(file: &str) -> Self{
-        if file.contains("csv"){
+impl AcceptedType {
+    pub fn from_str(file: &str) -> Self {
+        if file.contains("csv") {
             AcceptedType::CSV
-        }else if file.contains("json"){
+        } else if file.contains("json") {
             AcceptedType::JSON
-        }else if file.contains("tsv"){
+        } else if file.contains("tsv") {
             AcceptedType::TSV
-        }else if file.contains("xml") || file.contains("xpath"){
+        } else if file.contains("xml") || file.contains("xpath") {
             AcceptedType::XML
-        }else{
+        } else {
             AcceptedType::Other
         }
     }
 }
 
-impl AcceptedType{
-    pub fn is_csv(&self) -> bool{
+impl AcceptedType {
+    pub fn is_csv(&self) -> bool {
         match self {
             Self::CSV => true,
             _ => false,
         }
     }
-    pub fn is_tsv(&self) -> bool{
+    pub fn is_tsv(&self) -> bool {
         match self {
             Self::TSV => true,
             _ => false,
         }
     }
-    pub fn is_json(&self) -> bool{
+    pub fn is_json(&self) -> bool {
         match self {
             Self::JSON => true,
             _ => false,
         }
     }
-    pub fn is_xml(&self) -> bool{
+    pub fn is_xml(&self) -> bool {
         match self {
             Self::XML => true,
             _ => false,
         }
-
     }
 }

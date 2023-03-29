@@ -1,7 +1,6 @@
-
 // ShortCuts
 pub mod maps;
-pub mod parts;
 mod others;
+pub mod parts;
 
 pub use others::AcceptedType;
