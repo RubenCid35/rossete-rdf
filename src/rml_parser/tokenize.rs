@@ -1,6 +1,7 @@
 
+#[derive(Clone)]
 pub enum Token {
-    Literal(Vec<u8>), // "dsadsadsadsa"
+    Literal(String), // "dsadsadsadsa"
     Comma,            // ,
     Dot,              // .
     DotComma,         // ;
@@ -19,7 +20,7 @@ pub enum Token {
 impl std::fmt::Debug for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Token::Literal(chain) => write!(f, " Literal({}) ", String::from_utf8_lossy(&chain[..])),
+            Token::Literal(chain) => write!(f, " Literal({}) ", chain ),
             Token::Comma          => write!(f, " Comma(, )"       ),
             Token::Dot            => write!(f, " Dot(. )"         ),
             Token::DotComma       => write!(f, " DotComma(; )"    ),
@@ -37,37 +38,59 @@ impl std::fmt::Debug for Token {
     }
 }
 
+impl std::fmt::Display for Token {
+   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Token::Literal(chain) => write!(f, "{}", chain),
+            Token::Comma                   => write!(f, ","        ),
+            Token::Dot                     => write!(f, "."        ),
+            Token::DotComma                => write!(f, ";"        ),
+            Token::DotDot                  => write!(f, ":"        ),
+            Token::ArrowLeft               => write!(f, "<"        ),
+            Token::ArrowRight              => write!(f, ">"        ),
+            Token::BracketLeft             => write!(f, "["        ),
+            Token::BracketRight            => write!(f, "]"        ),
+            Token::NewLine                 => write!(f, "\n"       ),
+            Token::Hashtag                 => write!(f, "#"        ),
+            Token::Quote                   => write!(f, "'"        ),
+            Token::DoubleQuote             => write!(f, "\""       ),
+            Token::AtSign                  => write!(f, "@"        ),
+        }
+   } 
+}
+
+
 pub fn tokenize_file(file: String) -> Vec<Token> {
     let mut tokens = Vec::with_capacity(128);
 
-    let mut file_bytes = file.bytes();
+    let mut file_chars = file.chars();
     
     let mut force_literal = false;
-    while let Some(b) = file_bytes.next() {
+    while let Some(b) = file_chars.next() {
         match b {
-            b' '  => continue,
-            b'\t' => continue,
+            ' '  => continue,
+            '\t' => continue,
 
-            b'.'  if !force_literal => tokens.push(Token::Dot),
-            b','  => tokens.push(Token::Comma),
-            b':'  => tokens.push(Token::DotDot),
-            b';'  => tokens.push(Token::DotComma),
-            b'<'  => tokens.push(Token::ArrowLeft),
-            b'>'  => tokens.push(Token::ArrowRight),
-            b'['  => tokens.push(Token::BracketLeft),
-            b']'  => tokens.push(Token::BracketRight),
-            b'\n' => tokens.push(Token::NewLine), 
-            b'\r' => tokens.push(Token::NewLine),
-            b'#'  => tokens.push(Token::Hashtag),
-            b'\'' => {
+            '.'  if !force_literal => tokens.push(Token::Dot),
+            ','  => tokens.push(Token::Comma),
+            ':'  => tokens.push(Token::DotDot),
+            ';'  => tokens.push(Token::DotComma),
+            '<'  => tokens.push(Token::ArrowLeft),
+            '>'  => tokens.push(Token::ArrowRight),
+            '['  => tokens.push(Token::BracketLeft),
+            ']'  => tokens.push(Token::BracketRight),
+            '\n' => tokens.push(Token::NewLine), 
+            '\r' => tokens.push(Token::NewLine),
+            '#'  => tokens.push(Token::Hashtag),
+            '\'' => {
                 force_literal = true;
                 tokens.push(Token::Quote);
             }
-            b'"'  => {
+            '"'  => {
                 force_literal = true;
                 tokens.push(Token::DoubleQuote);
             }
-            b'@'  => tokens.push(Token::AtSign),
+            '@'  => tokens.push(Token::AtSign),
             _ => { // Literal
                 let last_token = tokens
                     .last()
@@ -79,39 +102,39 @@ pub fn tokenize_file(file: String) -> Vec<Token> {
                 };
                 let mut buffer = vec![b];
                 let mut end_token = None;
-                while let Some(ob) = file_bytes.next() {
+                while let Some(ob) = file_chars.next() {
                     match ob {
                         // literal case
-                        b'\'' if is_literal => {
+                        '\'' if is_literal => {
                             end_token = Some(Token::Quote);
                             break;
                         }
-                        b'"' if is_literal => {
+                        '"' if is_literal => {
                             end_token = Some(Token::DoubleQuote);
                             break;
                         }
                         // uri case
-                        b'>' if is_uri => {
+                        '>' if is_uri => {
                             end_token = Some(Token::ArrowRight);
                             break;
                         }
 
                         // predicate case
-                        b' ' if !is_literal && !is_uri => break,
-                        b';' if !is_literal && !is_uri => {
+                        ' ' if !is_literal && !is_uri => break,
+                        ';' if !is_literal && !is_uri => {
                             end_token = Some(Token::Comma);
                             break;
                         }
-                        b'.' if !is_literal && !is_uri => {
+                        '.' if !is_literal && !is_uri => {
                             end_token = Some(Token::Dot);
                             break;
                         }
-                        b':' if !is_literal && !is_uri => {
+                        ':' if !is_literal && !is_uri => {
                             end_token = Some(Token::DotDot);
                             break;
                         }
                         
-                        b'\n' if !is_literal && !is_uri => {
+                        '\n' if !is_literal && !is_uri => {
                             end_token = Some(Token::NewLine);
                             break;
                         }
@@ -122,7 +145,7 @@ pub fn tokenize_file(file: String) -> Vec<Token> {
                 }
 
                 force_literal = false;
-                tokens.push(Token::Literal(buffer));
+                tokens.push(Token::Literal(buffer.iter().collect::<String>()));
                 if let Some(token_end) = end_token {
                     tokens.push(token_end);
                 }
