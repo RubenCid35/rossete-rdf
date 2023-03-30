@@ -123,11 +123,21 @@ pub fn tokenize_file(file: String) -> Vec<Token> {
                 let last_token = tokens
                     .last()
                     .expect("At least there should have been the symbol @ of the prefix section");
+                
                 let (is_uri, is_literal) = match last_token {
-                    Token::ArrowLeft | Token::Hashtag => (true, false),
+                    Token::ArrowLeft => (true, false),
+                    Token::Hashtag => {
+                        let pre_prev_token = tokens.get(tokens.len() - 2);
+                        match pre_prev_token {
+                            Some(Token::ArrowLeft) => (true, false),
+                            Some(_) => (false, false),
+                            None => (true, false)
+                        }
+                    }
                     Token::Quote | Token::DoubleQuote => (false, true),
                     _ => (false, false),
                 };
+                
                 let mut buffer = vec![b];
                 let mut end_token = None;
                 while let Some(ob) = file_chars.next() {
