@@ -62,6 +62,7 @@ impl Token {
     pub fn len(&self) -> usize {
         match self {
             Self::Literal(text) => text.len(),
+            Self::ArrowLeft => 2,
             _ => 1,
         }
     }

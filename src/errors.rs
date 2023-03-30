@@ -38,7 +38,8 @@ pub enum ApplicationErrors {
 
     // New Parsing  Errors
     UnknownToken(i32), // Line where error is
-
+    InvalidUSeOfToken,
+    
     // RDF Creations
     FAiledToCreateRDF,
 
