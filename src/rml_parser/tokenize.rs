@@ -160,6 +160,10 @@ pub fn tokenize_file(file: String) -> Vec<Token> {
                         // predicate case
                         ' ' if !is_literal && !is_uri => break,
                         ';' if !is_literal && !is_uri => {
+                            end_token = Some(Token::DotComma);
+                            break;
+                        }
+                        ',' if !is_literal && !is_uri => {
                             end_token = Some(Token::Comma);
                             break;
                         }

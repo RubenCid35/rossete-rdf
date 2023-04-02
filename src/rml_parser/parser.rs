@@ -1,7 +1,6 @@
 
 use crate::ResultApp;
 use crate::errors::ApplicationErrors;
-use crate::{info, warning, error};
 use super::tokenize::Token;
 
 use crate::mappings::parts::Parts;
@@ -9,129 +8,28 @@ use crate::mappings::maps::Mapping;
 use crate::mappings::AcceptedType;
 
 use std::collections::HashMap;
-
-use colored::*;
+use std::path::PathBuf;
 
 use regex::Regex;
 use lazy_static::lazy_static;
+
+use crate::error;
+use super::__print_error_lines;
+use super::find_n_endline;
 
 lazy_static! {
     static ref URL: Regex = Regex::new(r#"https?://(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&/=]*)"#).unwrap();
 }
 
-
-const ERROR_PROMPT_LINES: i32 = 2;
-fn find_n_endline(stream_tokens: &Vec<Token>, start_idx: usize, nline: i32, dir: bool) -> usize {
-    let total = stream_tokens.len();
-
-    let mut read_idx: usize  = start_idx;
-    let mut found_lines = -1;
-    while let Some(token) = stream_tokens.get(read_idx ) {
-        if matches!(token, &Token::NewLine) {
-            found_lines += 1;
-            if found_lines >= nline { 
-                break
-            }
-        }
-        if dir  && read_idx == 0 { return read_idx }
-        if !dir && read_idx == (total - 1) { return read_idx }
-
-        if dir { read_idx -= 1; } else { read_idx += 1; }
-    
-    }
-    
-    read_idx
-    // if dir { read_idx +1 } else { read_idx - 1 }
-}
-
-fn __string_from_tokens(stream_tokens: &Vec<Token>, start: usize, end: usize, interest: bool, start_line: i32) -> ColoredString {
-    let mut ret = String::with_capacity(100);
-    let mut current_line = start_line;
-    let mut prev_newline = ! matches!(&stream_tokens[start], &Token::NewLine);
-
-    if start == end { return ret.white() }
-
-    let mut tokens = stream_tokens[start..=end].iter(); 
-    while let Some(token) = tokens.next() {
-        if prev_newline {
-            let line_number = format!("{:>3}.    ", current_line);
-            ret.push_str(&line_number);
-            current_line += 1;
-            prev_newline = false;
-        }
-        ret.push_str(&token.to_string());
-        match token { 
-            Token::NewLine => { prev_newline = true}
-            Token::Quote => {
-                if let Some(next_token) = tokens.next() {
-                    if matches!(next_token, Token::Literal(_)) {
-                        ret.push(' ');
-                    }
-                    ret.push_str(&next_token.to_string());
-                }
-            }
-            Token::ArrowLeft => {
-                if let Some(next_token) = tokens.next() {
-                    if matches!(next_token, Token::Literal(_)) {
-                        ret.push(' ');
-                    }
-                    ret.push_str(&next_token.to_string());
-                }
-            }
-            Token::Literal(_) => {
-                if let Some(next_token) = tokens.next() {
-                    if matches!(next_token, Token::Literal(_)) {
-                        ret.push(' ');
-                    }
-                    ret.push_str(&next_token.to_string());
-                }
-
-            }
-            _ => {}
-        }
-    }
-    if interest {
-        if !prev_newline { ret.push('\n'); }
-        ret.white() 
-    } else {
-        ret.truecolor( 149, 165, 166 )
-    }
-}
-
-fn __print_error_lines(stream_tokens: &Vec<Token>, idx: usize, error_msg: String, line: i32) {
-
-    let start_previous_line = find_n_endline(stream_tokens, idx, ERROR_PROMPT_LINES, true);
-    let start_current_line = find_n_endline(stream_tokens, idx, 0, true);
-
-    let end_next_line = find_n_endline(stream_tokens, idx, ERROR_PROMPT_LINES, false);
-    let end_current_line = find_n_endline(stream_tokens, idx, 0, false);
-
-
-    let previous_lines = __string_from_tokens(stream_tokens, start_previous_line     , start_current_line, false, line - ERROR_PROMPT_LINES);
-    let current_line   = __string_from_tokens(stream_tokens, start_current_line      , end_current_line, true, line);
-    let next_lines     = __string_from_tokens(stream_tokens, end_current_line , end_next_line, false, line + 1);
-
-    error!("Error In Line {}: Unavailable to Parse the Mapping. ", line);
-    eprint!("{}", previous_lines);
-    eprint!("{}", current_line);
-    
-    
-    let space_left : usize   = stream_tokens[start_current_line..=(idx)].iter().map(|t| t.len()).sum(); 
-    let space_token: usize   = stream_tokens[idx].len() + 8;
-    let space_left = if space_left == 0 { 0 } else { space_left - 1 };
-
-    eprintln!("{}{}", " ".repeat(space_left), "^".repeat(space_token + 2).red());
-    eprintln!("{}{}"  , " ".repeat(space_left), error_msg.red());
-    eprintln!("{}", next_lines); 
-
-}
-
 fn parse_tokens(stream_tokens: Vec<Token>) -> ResultApp<Vec<Mapping>> {
+
     let mut prefix_dict: HashMap<String, String> = HashMap::new();
-    let total_tokens = stream_tokens.len();
+    let mut mappings = Vec::new();
 
     let mut idx = 0;
     let mut last_line = 0;
+    let total_tokens = stream_tokens.len();
+
 
     while idx < total_tokens {
         let token = &stream_tokens[idx];
@@ -142,7 +40,12 @@ fn parse_tokens(stream_tokens: Vec<Token>) -> ResultApp<Vec<Mapping>> {
                 idx += offset;
             },
             Token::ArrowLeft => {
-                let (mappings, used_lines, offset) = parse_mapping_declaration(&stream_tokens, idx, last_line + 1, &prefix_dict)?;
+                let (mut mapping, lines, offset) = parse_mapping_declaration(&stream_tokens, idx, last_line + 1, &prefix_dict)?;
+                let prefx = std::sync::Arc::new(prefix_dict.clone());
+                mapping.change_prefixes(prefx);
+                mappings.push(mapping);
+                last_line = lines;
+                idx += offset;
             },
             Token::Hashtag => { // comment
                 // Skip Comment
@@ -158,7 +61,7 @@ fn parse_tokens(stream_tokens: Vec<Token>) -> ResultApp<Vec<Mapping>> {
     }
 
 
-    Ok(Vec::new())   
+    Ok(mappings)   
 }
 
 fn parse_prefix_tokens(tokens: &Vec<Token>, idx: usize, line: i32) -> ResultApp<(String, String, usize)> {
@@ -171,7 +74,7 @@ fn parse_prefix_tokens(tokens: &Vec<Token>, idx: usize, line: i32) -> ResultApp<
     let mut url = String::new();
     let mut is_base = false;
 
-    let mut offset = 0;
+    let offset: usize;
     if let Some(Token::Literal(word)) = tokens.get(1 + idx) {
         if PREFIX.is_match(&word) {
             if let Some(Token::Literal(pref)) = tokens.get(idx + 2) {
@@ -242,10 +145,229 @@ fn parse_prefix_tokens(tokens: &Vec<Token>, idx: usize, line: i32) -> ResultApp<
     return Ok((prefix, url, offset + 3))
 }
 
-fn parse_mapping_declaration(tokens: &Vec<Token>, idx: usize, line: i32, prefixes: &HashMap<String, String>) -> ResultApp<(Mapping, i32, usize)> {
-
-    todo!()
+fn find_abreviate(prefixes: &HashMap<String, String>, url: &str) -> ResultApp<String> {
+    let ret = prefixes.iter().filter(|(_, uri)| uri.contains(url) ).map(|(pre, _)| pre).next();
+    match ret {
+        Some(pre) => { Ok(pre.clone()) },
+        None => {
+            error!("There is no prefix assigned to the url {} so there are predicates that may not be parsed correctly. \nAdd the prefix to the mapping file to continue.", url);
+            return Err(ApplicationErrors::MissingPrefix)
+        }
+    }
 }
+
+fn parse_mapping_declaration(tokens: &Vec<Token>, start_idx: usize, line: i32, prefixes: &HashMap<String, String>) -> ResultApp<(Mapping, i32, usize)> {
+    // Find RML NameSpace Prefix
+    let rml = find_abreviate(prefixes, r#"http://semweb.mmlab.be/ns/rml#"#)?; 
+    let rr  = find_abreviate(prefixes, r#"http://www.w3.org/ns/r2rml#"#   )?;
+    let ql  = find_abreviate(prefixes, r#"http://semweb.mmlab.be/ns/ql#"# )?;
+
+    let mut mapping = Mapping::new(String::new());
+
+    let mut scope = 0;
+    let mut lines = 0;
+
+    let total_tokens = tokens.len();
+    let mut idx: usize = start_idx;
+    while idx < total_tokens {
+        
+        let token = &tokens[idx];
+        let next_dotdot = matches!(tokens.get(idx + 1), Some(Token::DotDot));
+
+        // TODO remove
+
+
+        match token {
+            Token::ArrowLeft => {
+                if !matches!(tokens.get(idx + 1), Some(Token::Hashtag)) {
+                    __print_error_lines(&tokens, idx + 1, "The mapping name must have the following format: <#MapName>".to_string(), lines + line);
+                    return Err(ApplicationErrors::UnknownToken(line + lines))
+                }
+                let map_name = tokens.get(idx + 2);
+                let map_name = match map_name {
+                    Some(Token::Literal(name)) => name,
+                    _ => {
+                        __print_error_lines(&tokens, idx + 2, "The mapping name must have the following format: <#MapName>".to_string(), lines + line);
+                        return Err(ApplicationErrors::UnknownToken(line + lines))
+                    } 
+                };
+                match tokens.get(idx + 3) {
+                    Some(Token::ArrowRight) => {  }
+                    _ => {
+                        __print_error_lines(&tokens, idx + 3, "The mapping name must have the following format: <#MapName>".to_string(), lines + line);
+                        return Err(ApplicationErrors::UnknownToken(line + lines))
+                    }
+                };
+                idx += 3;
+                mapping.set_identifier(map_name.clone());
+            }
+
+            Token::Literal(pre) if next_dotdot => {
+                let offset;
+                if pre == &rml {
+                    match tokens.get(idx + 2) {
+                        Some(Token::Literal(predicate)) if predicate == "logicalSource" => {
+                            if !matches!(tokens.get(idx + 3), Some(Token::BracketLeft)) {
+                                __print_error_lines(tokens, idx + 3, "The logical source must be followed with `[`".to_string(), line + lines);
+                                return Err(ApplicationErrors::UnknownToken(line + lines))
+            
+                            }
+                            let (logical_source, nlines, off) = parse_logical_source(&tokens, idx + 3, lines, &rml, &ql, prefixes)?; 
+                            offset = off + 3;
+                            lines += nlines; 
+                            mapping.add_component(logical_source);
+                        }
+                        _ => {
+                            __print_error_lines(tokens, idx + 2, "This predicate is unknown. Can't be parsed".to_string(), line + lines);
+                                    return Err(ApplicationErrors::UnknownToken(line + lines))
+                        }
+                    }
+                }else if pre == &rr {
+                    offset = 2;
+                    // todo!()
+                } else {
+                    __print_error_lines(tokens, idx, "This predicate prefix is unknown. ".to_string(), line + lines);
+                    return Err(ApplicationErrors::UnknownToken(line + lines))
+                }
+                idx += offset;
+            }
+            Token::Literal(pre)  => {
+                eprintln!("Literal extra {:?}", pre);
+                // todo!()
+            }
+            Token::DotComma => { }
+            Token::Dot => { break }
+            Token::NewLine => { lines += 1; }
+            other=> {
+                __print_error_lines(&tokens, idx, "This token cann't be parsed".to_string(), lines + line);
+                return Err(ApplicationErrors::UnknownToken(line + lines))
+            }
+        }
+        idx += 1;
+    };
+
+    // TODO Remove Arc from prefixes
+    Ok(( mapping, line + lines, idx - start_idx))
+}
+
+fn parse_logical_source(stream_tokens: &Vec<Token>, start_idx: usize, line: i32, rml: &String, ql: &String, prefixes: &HashMap<String, String>) -> ResultApp<(Parts, i32, usize)> {  
+    // [, rml, :, source, ", oath, ", rml, :, source, ", oath, ",rml, :, source, ", oath, ",]
+    let mut idx = start_idx;
+    let mut lines: i32 = line;
+
+    let mut source = PathBuf::new();    // 0
+    let mut iterator = String::new(); // 1
+    let mut reference_formulation = AcceptedType::Unspecify; // 2
+
+    let mut scope = 0;
+    let mut prev_predicate = -1;
+    let mut end_predicate = false;
+    while idx < stream_tokens.len() {
+        let token = &stream_tokens[idx];
+        let next_dotdot = matches!(stream_tokens.get(idx + 1), Some(Token::DotDot));
+        match token {
+            Token::DotComma if end_predicate => {
+                end_predicate = false;
+            }
+            Token::Dot => {
+                if matches!(stream_tokens.get(idx + 1), Some(Token::BracketRight)) {
+                    idx += 1;
+                    break
+                } else if matches!(stream_tokens.get(idx + 1), Some(Token::NewLine)) && matches!(stream_tokens.get(idx + 2), Some(Token::BracketRight)){
+                    idx += 2;
+                    break
+                }
+                else {
+                    __print_error_lines(&stream_tokens, idx, "The dot indicates the end of a scope or the end of a list of predicates. This should be followed by ']'".to_string(), lines + line);
+                    return Err(ApplicationErrors::UnknownToken(line + lines))
+                }
+            }
+            Token::BracketLeft  => { scope += 1; }
+            Token::BracketRight => { scope -= 1; }
+            Token::Literal(pre) if next_dotdot => { 
+                if pre == rml { 
+                    match stream_tokens.get(idx + 2) {
+                        Some(Token::Literal(predicate)) => {
+                            match &predicate[..] {
+                                "source" => {prev_predicate = 1;},
+                                "iterator" => {prev_predicate = 2;},
+                                "referenceFormulation" => { prev_predicate = 3; }
+                                _ => {
+                                    __print_error_lines(stream_tokens, idx, "This predicate is unknown. Can't be parsed".to_string(), line + lines);
+                                    return Err(ApplicationErrors::UnknownToken(line))
+                                }
+                            }
+                        }
+                        _ => {
+                            __print_error_lines(stream_tokens, idx, "This predicate is unknown. Can't be parsed".to_string(), lines);
+                            return Err(ApplicationErrors::UnknownToken(line))
+                        }
+                    };
+    
+                    idx += 2;
+                } else if (pre == ql && prev_predicate == 3) {
+                    let file_type = match stream_tokens.get(idx + 2) {
+                        Some(Token::Literal(ft)) => ft,
+                        _ => {
+                            __print_error_lines(stream_tokens, idx, "This predicate is unknown. Can't be parsed".to_string(), lines);
+                            return Err(ApplicationErrors::UnknownToken(line))
+                        }
+                    };
+
+                    reference_formulation = AcceptedType::from_str(&file_type);
+                    idx += 2;
+                    end_predicate = true;
+                }
+                else {
+                    __print_error_lines(stream_tokens, idx, "This predicate is unknown. Can't be parsed".to_string(), lines);
+                    return Err(ApplicationErrors::UnknownToken(line))
+                }
+            }
+            Token::DoubleQuote => {
+                if !matches!(stream_tokens.get(idx + 2), Some(Token::DoubleQuote)) {
+                    __print_error_lines(stream_tokens, idx, "This literal must be end with a double quote \"".to_string(), lines);
+                    return Err(ApplicationErrors::UnknownToken(line))
+                };
+                let literal = match stream_tokens.get(idx + 1) {
+                    Some(Token::Literal(lit)) => lit.clone(),
+                    _ => {
+                        __print_error_lines(stream_tokens, idx, "This RML Map Component should not be here. This cann't be parsed".to_string(),lines);
+                        return Err(ApplicationErrors::UnknownToken(line))
+                    }
+                };
+
+                match prev_predicate {
+                    1 => {
+                        source = std::path::PathBuf::from(&literal);
+                    }
+                    2 => {
+                        iterator = literal;
+                    }
+                    _ => {
+                        __print_error_lines(stream_tokens, idx, "This RML Map Component should not be here. This cann't be parsed".to_string(), lines);
+                        return Err(ApplicationErrors::UnknownToken(line))
+                    }
+                }
+                end_predicate = true;
+                idx += 2;
+            }
+            Token::NewLine => { lines += 1;}
+            _ => {
+                __print_error_lines(&stream_tokens, idx, "This token cann't be parsed. Logical Source".to_string(), lines);
+                return Err(ApplicationErrors::UnknownToken(line))
+            }
+        };
+        
+    if scope == 0 { break }
+        idx += 1;
+    };
+
+    
+
+    let logical_source = Parts::LogicalSource { source, reference_formulation, iterator };
+    Ok((logical_source, lines - line, idx - start_idx))
+}
+
 
 #[cfg(test)]
 mod test_parsing {
@@ -281,7 +403,7 @@ mod test_parsing {
         @prefix rml: <http://semweb.mmlab.be/ns/rml#>.
         @prefix ql: <http://semweb.mmlab.be/ns/ql#>.
         @prefix transit : <http://vocab.org/transit/terms/>.
-        @prefix xsd <http://www.w3.org/2001/XMLSchema#>.
+        @prefix xsd : <http://www.w3.org/2001/XMLSchema#>.
         #Esto Sobra <#hola>
         @prefix wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>.
         @base <http://example.com/ns#>. #  No dara error esto
@@ -290,7 +412,36 @@ mod test_parsing {
         
         let tokens = tokenize_file(text);
         let ret = parse_tokens(tokens);
-        assert!(ret.is_err(), "The prefix parsing should work.")
+        assert!(ret.is_ok(), "The prefix parsing should work.")
+    }
+
+    #[test]
+    fn test_parse_map_name () {
+        let text = r#"
+        @prefix rr: <http://www.w3.org/ns/r2rml#>.
+        @prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+        @prefix ex: <http://example.com/ns#>.
+        @prefix ql: <http://semweb.mmlab.be/ns/ql#>.
+        @prefix transit: <http://vocab.org/transit/terms/>.
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+        @base <http://example.com/ns#>.
+        
+        
+        # XML is not supported yet.
+        <#TransportMapping>
+            rml:logicalSource [
+                rml:referenceFormulation ql:XPath;
+                rml:source "./examples/data/file-2.xml" ;
+                rml:iterator "/transport/bus".
+            ].
+        "#.to_string();
+        let tokens = tokenize_file(text);
+        let mappings = parse_tokens(tokens);
+        assert!(mappings.is_ok(), "The mapping should be ok");
+        let maps = mappings.unwrap();
+        let map = maps.first().unwrap();
+        assert_eq!(map.get_identifier(), "TransportMapping");
 
     }
 

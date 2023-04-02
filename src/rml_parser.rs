@@ -23,6 +23,113 @@ use tokenize::{tokenize_file, Token};
 
 mod parser;
 
+use colored::*;
+
+const ERROR_PROMPT_LINES: i32 = 3;
+fn find_n_endline(stream_tokens: &Vec<Token>, start_idx: usize, nline: i32, dir: bool) -> usize {
+    let total = stream_tokens.len();
+
+    let mut read_idx: usize  = start_idx;
+    let mut found_lines = -1;
+    while let Some(token) = stream_tokens.get(read_idx ) {
+        if matches!(token, &Token::NewLine) {
+            found_lines += 1;
+            if found_lines >= nline { 
+                break
+            }
+        }
+        if dir  && read_idx == 0 { return read_idx }
+        if !dir && read_idx == (total - 1) { return read_idx }
+
+        if dir { read_idx -= 1; } else { read_idx += 1; }
+    
+    }
+    
+    read_idx
+    // if dir { read_idx +1 } else { read_idx - 1 }
+}
+
+fn __string_from_tokens(stream_tokens: &Vec<Token>, start: usize, end: usize, interest: bool, start_line: i32) -> ColoredString {
+    let mut ret = String::with_capacity(100);
+    let mut current_line = start_line;
+    let mut prev_newline = ! matches!(&stream_tokens[start], &Token::NewLine);
+
+    if start == end { return ret.white() }
+
+    let mut tokens = stream_tokens[start..=end].iter(); 
+    while let Some(token) = tokens.next() {
+        if prev_newline {
+            let line_number = format!("{:0>3}.    ", current_line);
+            ret.push_str(&line_number);
+            current_line += 1;
+            prev_newline = false;
+        }
+        ret.push_str(&token.to_string());
+        match token { 
+            Token::NewLine => { prev_newline = true}
+            Token::Quote => {
+                if let Some(next_token) = tokens.next() {
+                    if matches!(next_token, Token::Literal(_)) {
+                        ret.push(' ');
+                    }
+                    ret.push_str(&next_token.to_string());
+                }
+            }
+            Token::ArrowLeft => {
+                if let Some(next_token) = tokens.next() {
+                    if matches!(next_token, Token::Literal(_)) {
+                        ret.push(' ');
+                    }
+                    ret.push_str(&next_token.to_string());
+                }
+            }
+            Token::Literal(_) => {
+                if let Some(next_token) = tokens.next() {
+                    if matches!(next_token, Token::Literal(_)) {
+                        ret.push(' ');
+                    }
+                    ret.push_str(&next_token.to_string());
+                }
+
+            }
+            _ => {}
+        }
+    }
+    if interest {
+        if !prev_newline { ret.push('\n'); }
+        ret.white() 
+    } else {
+        ret.truecolor( 149, 165, 166 )
+    }
+}
+
+fn __print_error_lines(stream_tokens: &Vec<Token>, idx: usize, error_msg: String, line: i32) {
+
+    let start_previous_line = find_n_endline(stream_tokens, idx, ERROR_PROMPT_LINES, true);
+    let start_current_line = find_n_endline(stream_tokens, idx, 0, true);
+
+    let end_next_line = find_n_endline(stream_tokens, idx, ERROR_PROMPT_LINES, false);
+    let end_current_line = find_n_endline(stream_tokens, idx, 0, false);
+
+
+    let previous_lines = __string_from_tokens(stream_tokens, start_previous_line     , start_current_line, false, line - ERROR_PROMPT_LINES);
+    let current_line   = __string_from_tokens(stream_tokens, start_current_line      , end_current_line, true, line);
+    let next_lines     = __string_from_tokens(stream_tokens, end_current_line , end_next_line, false, line + 1);
+
+    error!("Error In Line {}: Unavailable to Parse the Mapping. ", line);
+    eprint!("{}", previous_lines);
+    eprint!("{}", current_line);
+    
+    
+    let space_left : usize   = stream_tokens[start_current_line..=(idx)].iter().map(|t| t.len()).sum(); 
+    let space_token: usize   = stream_tokens[idx].len() + 0;
+    let space_left = if space_left == 0 { 0 } else { space_left - 1 };
+
+    eprintln!("{}{}", " ".repeat(space_left + 8), "^".repeat(space_token).red());
+    eprintln!("{}{}"  , " ".repeat(space_left), error_msg.red());
+    eprintln!("{}", next_lines); 
+
+}
 
 /// Main Function that is used to create mapping from a RML File in tbe TTL Format.
 pub fn parse_text(id: i32, file: path::PathBuf, transmitter: mpsc::Sender<ResultApp<Vec<Mapping>>>, status_transmitter: mpsc::Sender<i32>, debug: bool) -> ResultApp<()>{

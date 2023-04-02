@@ -24,6 +24,10 @@ impl Mapping {
         }
     }
 
+    pub fn set_identifier(&mut self, new_identifier: String) {
+        self.identificador = new_identifier;
+    }
+
     /// This function allows to check if the mapping is correct according to the number of some type of components
     pub fn is_valid(&self) -> crate::ResultApp<()> {
         let mut n_logical = 0;
