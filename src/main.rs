@@ -23,8 +23,9 @@ fn get_text_file(file_name: &'static str) -> String {
 
 fn main() -> miette::Result<()> {
     //let text = get_text();
-    let text = get_text_file("./examples/mappings/map2.ttl");
-    println!("original text: {text:?}");
+    let text = get_text_file("./examples/mappings/matey1.rml");
+    // let text = r#"""xdsadsadsadsadsadsadsa ""#;
+    // println!("original text: {text:?}");
     let lexer = Lexer::new(&text);
     for token in lexer {
         match token {

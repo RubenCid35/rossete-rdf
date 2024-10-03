@@ -30,23 +30,33 @@ pub enum TokenKind {
     Term,    // ex:case -> term(ex), colon, term(case)
 
     // SPECIAL
+    A,       // a -> rdf:type
     Prefix, // @prefix
     Base,   // @base
 }
 
 /// Token representation. It is defined by its kind and the associated literal.
 /// If the kind is and URI or a string, the literal corresponds with the whole associated string.
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct Token<'de> {
     /// literal representation of the token.
     literal: &'de str,
     /// Token kind.
     kind: TokenKind,
+
+    /// position information. This may be necesary in the parser for error handling.
+    position: SourceSpan
+}
+
+impl<'de> std::cmp::PartialEq for Token<'de> {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind && self.literal == other.literal
+    }
 }
 
 impl<'de> std::fmt::Display for Token<'de> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "token: {:?}\tliteral: {:?}", self.kind, self.literal)
+        write!(f, "position: {:5}\ttoken: {:?}\tliteral: {:?}", self.position.offset(), self.kind, self.literal)
     }
 }
 
@@ -58,10 +68,21 @@ impl<'de> std::fmt::Display for Token<'de> {
 
 /// Small help to avoid code repetition while creaing the tokens.
 macro_rules! create_token {
-    ($literal:expr, $kind:expr) => {
+    ($self:ident, $literal:expr, $kind:expr) => {
         Some(Ok(Token {
             literal: $literal,
             kind: $kind,
+            position: SourceSpan::from(($self.current_byte - 1)..($self.current_byte))
+        }))
+    };
+}
+
+macro_rules! create_token_position {
+    ($literal:expr, $kind:expr, $range:expr) => {
+        Some(Ok(Token {
+            literal: $literal,
+            kind: $kind,
+            position: SourceSpan::from($range)
         }))
     };
 }
@@ -113,6 +134,22 @@ pub struct InvalidTokenFound {
     err_span: SourceSpan,
 }
 
+/// Location and Identification of an invalid token.
+#[derive(Diagnostic, Debug, Error)]
+#[error("This literal never ends")]
+#[diagnostic(
+    code(rml::parser::lex::literal),
+    help("The literal delimiters are missing at the end. Currently we cann't determine the end of this string.")
+)]
+pub struct MissingEndLiteralError {
+    #[source_code]
+    src: NamedSource<String>,
+
+    #[label = "This is the start of the literal."]
+    err_span: SourceSpan,
+}
+
+
 // -------------------------------------------------------
 // -------------------------------------------------------
 // Lexer State
@@ -161,12 +198,12 @@ impl<'de> Iterator for Lexer<'de> {
 
             match c {
                 ' ' | '\t' | '\n' | '\r' => continue,
-                '[' => return create_token!("[", TokenKind::LBracket),
-                ']' => return create_token!("]", TokenKind::RBracket),
-                '.' => return create_token!(".", TokenKind::Dot),
-                ',' => return create_token!(",", TokenKind::Comma),
-                ':' => return create_token!(":", TokenKind::Colon),
-                ';' => return create_token!(";", TokenKind::DotComma),
+                '[' => return create_token!(self, "[", TokenKind::LBracket),
+                ']' => return create_token!(self, "]", TokenKind::RBracket),
+                '.' => return create_token!(self, ".", TokenKind::Dot),
+                ',' => return create_token!(self, ",", TokenKind::Comma),
+                ':' => return create_token!(self, ":", TokenKind::Colon),
+                ';' => return create_token!(self, ";", TokenKind::DotComma),
                 '@' => {
                     match letters.peek() {
                         Some(l) if l.is_alphabetic() => {}
@@ -193,11 +230,11 @@ impl<'de> Iterator for Lexer<'de> {
                     if literal == "prefix" {
                         self.remaining = &self.remaining[i..];
                         self.current_byte += i;
-                        return create_token!("@prefix", TokenKind::Prefix);
+                        return create_token_position!("@prefix", TokenKind::Prefix, (self.current_byte - 1)..(self.current_byte + i));
                     } else if literal == "base" {
                         self.remaining = &self.remaining[i..];
                         self.current_byte += i;
-                        return create_token!("@base", TokenKind::Base);
+                        return create_token_position!("@base", TokenKind::Base, (self.current_byte - 1)..(self.current_byte + i));
                     } else {
                         generate_invalid_token_error!(
                             self,
@@ -284,7 +321,7 @@ impl<'de> Iterator for Lexer<'de> {
                     let literal = &self.remaining[hashtag_skip..i];
                     self.remaining = &self.remaining[(i + '>'.len_utf8())..];
                     self.current_byte += i + '>'.len_utf8();
-                    return create_token!(literal, kind);
+                    return create_token_position!(literal, kind, (self.current_byte - '<'.len_utf8())..(i + '>'.len_utf8()));
                 }
                 '"' => {
                     let mut i = 0;
@@ -304,20 +341,31 @@ impl<'de> Iterator for Lexer<'de> {
                         let l = match letters.next() {
                             Some(l) => l,
                             None => {
-                                // TODO: change error to literal not closed
-                                let error = InvalidEndOfFile {
-                                    file_name: PathBuf::from("example.png"),
+                                let error = MissingEndLiteralError {
+                                    src: NamedSource::new("example.ong", self.whole.to_string()),
+                                    err_span: SourceSpan::from((self.current_byte)..(self.current_byte))
                                 };
+                                self.found_error = true;
                                 return Some(Err(error.into()));
                             }
                         };
-                        // if there are {scope + 1} double-quotes in a row, it is determine to be the end of the literal.s
-                        if l == '"'
-                            && self.remaining[(left_space + i)..(left_space + i + scope + 1)]
-                                .chars()
-                                .all(|c| c == '"')
-                        {
-                            break;
+                        // if there are {scope + 1} double-quotes in a row, it is determine to be the end of the literal.
+                        if l == '"' {
+                            // avoid some out-of-bounds reading in the string if the literal does not finish.
+                            if (left_space + scope + 1 + i) > self.remaining.len() {
+                                let error = MissingEndLiteralError {
+                                    src: NamedSource::new("example.ong", self.whole.to_string()),
+                                    err_span: SourceSpan::from((self.current_byte)..(self.current_byte))
+                                };
+                                self.found_error = true;
+                                return Some(Err(error.into()));
+                            }
+                            // check usual condition of N consucutive double-quotes.
+                            else if self.remaining[(left_space + i)..(left_space + i + scope + 1)]
+                            .chars()
+                            .all(|c| c == '"') {
+                                break;
+                            }
                         }
                         i += l.len_utf8();
                     }
@@ -325,13 +373,13 @@ impl<'de> Iterator for Lexer<'de> {
                     let literal = &self.remaining[(left_space)..(left_space + i)];
                     self.remaining = &self.remaining[(left_space + i + scope + 1)..];
                     self.current_byte += left_space + i + scope + 1;
-                    return create_token!(literal, TokenKind::Literal);
+                    return create_token_position!(literal, TokenKind::Literal, (self.current_byte - 1)..(self.current_byte + i + left_space));
                 }
                 c if c.is_ascii_alphanumeric() => {
                     let mut i = 0;
                     // only ascii alphanumeric [A-Za-z0-9] are valid characters in a term ident.
                     while let Some(l) = letters.peek() {
-                        if !l.is_ascii_alphanumeric() {
+                        if !l.is_ascii_alphanumeric() && (*l) != '-' && (*l) != '_' {
                             break;
                         }
                         i += l.len_utf8();
@@ -343,7 +391,10 @@ impl<'de> Iterator for Lexer<'de> {
                         &self.whole[(self.current_byte - c.len_utf8())..(self.current_byte + i)];
                     self.remaining = &self.remaining[i..];
                     self.current_byte += i;
-                    return create_token!(literal, TokenKind::Term);
+
+                    // check if the type corresponds with the term a (rdf:type), it may improve parsing.
+                    let kind =  if literal == "a" { TokenKind::A } else { TokenKind::Term };
+                    return create_token_position!(literal, kind, (self.current_byte - c.len_utf8())..(self.current_byte + i));
                 }
                 _ => {
                     generate_invalid_token_error!(self, "all test", c.to_string(), c.len_utf8(), 0);
@@ -354,14 +405,16 @@ impl<'de> Iterator for Lexer<'de> {
 }
 
 #[cfg(test)]
-pub mod tests {
+pub mod lex_tests {
     use super::*;
+    use super::SourceSpan;
 
     macro_rules! result_token {
         ($literal:expr, $kind:expr) => {
             Token {
                 literal: $literal,
                 kind: $kind,
+                position: SourceSpan::from(0..1) 
             }
         };
     }
@@ -392,7 +445,7 @@ pub mod tests {
     }
 
     #[test]
-    fn test_lex_puntuation() {
+    fn test_puntuation() {
         let text = "[].,;:[";
         let lexer = Lexer::new(text);
 
@@ -410,7 +463,7 @@ pub mod tests {
         assert_eq!(compare_token_vec(expected_tokens, lexer_tokens), true);
     }
     #[test]
-    fn test_lex_simple_ident() {
+    fn test_simple_ident() {
         let text = "<#ident>";
         let mut lexer = Lexer::new(text);
 
@@ -421,7 +474,7 @@ pub mod tests {
     }
 
     #[test]
-    fn test_lex_simple_uri() {
+    fn test_simple_uri() {
         let text = "<https://aulaglobal.uc3m.es/pluginfile.php/7309413/mod_resource/content/1/T4Agentes2425.pdf>";
         let mut lexer = Lexer::new(text);
 
@@ -432,20 +485,21 @@ pub mod tests {
     }
 
     #[test]
-    fn test_lex_simple_literal() {
+    fn test_simple_literal() {
         let text = r#""Este texto es falso""#;
         let mut lexer = Lexer::new(text);
 
         let token = result_token!("Este texto es falso", TokenKind::Literal);
 
         let ident_token = lexer.next();
+        eprintln!("{ident_token:?}");
         assert_token(ident_token, token);
 
         assert!(matches!(lexer.next(), None));
     }
 
     #[test]
-    fn test_lex_simple_term() {
+    fn test_simple_term() {
         let text = r#"ex:hasAttribute"#;
         let lexer = Lexer::new(text);
 
@@ -459,7 +513,7 @@ pub mod tests {
         assert_eq!(compare_token_vec(token, ident_token), true);
     }
     #[test]
-    fn test_lex_basic_prefix() {
+    fn test_basic_prefix() {
         let text = r#"@prefix rr: <http://www.w3.org/ns/r2rml#>."#;
         let lexer = Lexer::new(text);
 
@@ -477,7 +531,7 @@ pub mod tests {
 
 
     #[test]
-    fn test_lex_triple() {
+    fn test_triple() {
         let text = r#"<#ThisMapping> has:attr ox:soma;"#;
         let lexer = Lexer::new(text);
 
@@ -495,4 +549,22 @@ pub mod tests {
         let ident_token: Vec<_> = lexer.collect();
         assert_eq!(compare_token_vec(token, ident_token), true);
     }
+
+    #[test]
+    fn test_query_triple() {
+        let text = r#"rr:SQLQuery "SELECT * FROM b;"."#;
+        let lexer = Lexer::new(text);
+
+        let token = vec![
+            result_token!("rr", TokenKind::Term),
+            result_token!(":", TokenKind::Colon),
+            result_token!("SQLQuery", TokenKind::Term),
+            result_token!("SELECT * FROM b;", TokenKind::Literal),
+            result_token!(".", TokenKind::Dot),
+        ];
+
+        let ident_token: Vec<_> = lexer.collect();
+        assert_eq!(compare_token_vec(token, ident_token), true);
+    }
+
 }
