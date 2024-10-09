@@ -8,7 +8,6 @@
 @base <http://example.com/ns#>.
 
 
-# XML is not supported yet.
 <#TransportMapping> a rr:TriplesMap;
 rml:logicalSource [
     rml:source "./examples/data/file-2.xml" ;

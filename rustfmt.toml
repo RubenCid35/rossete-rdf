@@ -1,0 +1,4 @@
+brace_style = "PreferSameLine"
+control_brace_style = "ClosingNextLine"
+binop_separator = "Front"
+max_width = 120

@@ -8,3 +8,6 @@ Cargo.lock
 # Notas: Mejor no subirlas a internet
 *.txt
 TODO.md
+
+# Visual Studio
+.vscode

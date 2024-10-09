@@ -1,10 +1,9 @@
+use super::config::ParseFileConfig;
 use miette::{Diagnostic, NamedSource, SourceSpan};
+use std::iter::Iterator;
 use std::path::PathBuf;
 use thiserror::Error;
 
-use std::iter::Iterator;
-
-//
 // -------------------------------------------------------
 // -------------------------------------------------------
 // Token Definition
@@ -30,7 +29,7 @@ pub enum TokenKind {
     Term,    // ex:case -> term(ex), colon, term(case)
 
     // SPECIAL
-    A,       // a -> rdf:type
+    A,      // a -> rdf:type
     Prefix, // @prefix
     Base,   // @base
 }
@@ -40,12 +39,20 @@ pub enum TokenKind {
 #[derive(Debug)]
 pub struct Token<'de> {
     /// literal representation of the token.
-    literal: &'de str,
+    pub literal: &'de str,
+
     /// Token kind.
-    kind: TokenKind,
+    pub kind: TokenKind,
 
     /// position information. This may be necesary in the parser for error handling.
-    position: SourceSpan
+    pub position: SourceSpan,
+}
+
+impl<'de> Token<'de> {
+    /// Get last position
+    pub fn get_end(&self) -> usize {
+        self.position.offset() + self.position.len()
+    }
 }
 
 impl<'de> std::cmp::PartialEq for Token<'de> {
@@ -56,7 +63,13 @@ impl<'de> std::cmp::PartialEq for Token<'de> {
 
 impl<'de> std::fmt::Display for Token<'de> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "position: {:5}\ttoken: {:?}\tliteral: {:?}", self.position.offset(), self.kind, self.literal)
+        write!(
+            f,
+            "position: {:5}\ttoken: {:?}\tliteral: {:?}",
+            self.position.offset(),
+            self.kind,
+            self.literal
+        )
     }
 }
 
@@ -72,7 +85,7 @@ macro_rules! create_token {
         Some(Ok(Token {
             literal: $literal,
             kind: $kind,
-            position: SourceSpan::from(($self.current_byte - 1)..($self.current_byte))
+            position: SourceSpan::from(($self.current_byte - 1)..($self.current_byte)),
         }))
     };
 }
@@ -82,15 +95,27 @@ macro_rules! create_token_position {
         Some(Ok(Token {
             literal: $literal,
             kind: $kind,
-            position: SourceSpan::from($range)
+            position: SourceSpan::from($range),
         }))
     };
 }
 
 macro_rules! generate_invalid_token_error {
-    ($self:ident, $file:expr, $literal:expr, $loff:expr, $roff:expr) => {
+    (expect, $self:ident, $literal:expr, $loff:expr, $roff:expr) => {
+        let file_name = $self.config.get_file();
         let err = InvalidTokenFound {
-            src: NamedSource::new($file, $self.whole.to_string()),
+            src: NamedSource::new(file_name, $self.whole.to_string()),
+            token: $literal,
+            err_span: SourceSpan::from(($self.current_byte - $loff)..($self.current_byte + $roff)),
+        };
+
+        return Err(err.into());
+    };
+
+    ($self:ident, $literal:expr, $loff:expr, $roff:expr) => {
+        let file_name = $self.config.get_file();
+        let err = InvalidTokenFound {
+            src: NamedSource::new(file_name, $self.whole.to_string()),
             token: $literal,
             err_span: SourceSpan::from(($self.current_byte - $loff)..($self.current_byte + $roff)),
         };
@@ -107,14 +132,14 @@ macro_rules! generate_invalid_token_error {
 // -------------------------------------------------------
 
 /// Error used to mark an unexpected end of file while lexing.
-#[derive(Diagnostic, Debug, Error)]
+#[derive(Diagnostic, Debug, Error, Clone)]
 #[error("invalid end of file in the mapping file {:?}.", .file_name)]
 #[diagnostic(
     code(rml::parser::eof),
     help("This file terminated prematurely. Check if the mapping is finished.")
 )]
 pub struct InvalidEndOfFile {
-    file_name: PathBuf,
+    pub file_name: PathBuf,
 }
 
 /// Location and Identification of an invalid token.
@@ -126,12 +151,12 @@ pub struct InvalidEndOfFile {
 )]
 pub struct InvalidTokenFound {
     #[source_code]
-    src: NamedSource<String>,
+    pub src: NamedSource<String>,
 
     pub token: String,
 
     #[label = "This token is invalid at this position."]
-    err_span: SourceSpan,
+    pub err_span: SourceSpan,
 }
 
 /// Location and Identification of an invalid token.
@@ -148,7 +173,6 @@ pub struct MissingEndLiteralError {
     #[label = "This is the start of the literal."]
     err_span: SourceSpan,
 }
-
 
 // -------------------------------------------------------
 // -------------------------------------------------------
@@ -167,15 +191,89 @@ pub struct Lexer<'de> {
     current_byte: usize,
     /// whether a error was found or not
     found_error: bool,
+    // config reference. To get the file name
+    config: &'de ParseFileConfig,
+
+    // Peeked Token
+    peeked: Option<Result<Token<'de>, miette::Error>>,
 }
 
+type LexerItem<'de> = Result<Token<'de>, miette::Error>;
 impl<'de> Lexer<'de> {
-    pub fn new(src: &'de str) -> Self {
+    pub fn new(config: &'de ParseFileConfig, src: &'de str) -> Self {
         Self {
             whole: src,
             remaining: src,
             current_byte: 0,
             found_error: false,
+            config: config,
+            peeked: None,
+        }
+    }
+
+    /// Custom Next Method. This method returns an Results. If the next
+    /// method returns None it returns a EOF.
+    pub fn next_filtered(&mut self) -> LexerItem<'de> {
+        self.next().unwrap_or(Err(InvalidEndOfFile {
+            file_name: self.config.file_path.clone(),
+        }
+        .into()))
+    }
+
+    // Get current lexer position
+    pub fn get_position(&self) -> usize {
+        self.current_byte
+    }
+
+    /// Peek method
+    pub fn peek(&mut self) -> Option<&Result<Token<'de>, miette::Error>> {
+        if self.peeked.is_some() {
+            return self.peeked.as_ref();
+        }
+        self.peeked = self.next();
+        self.peeked.as_ref()
+    }
+
+    /// returns the token if it is the expected type or an error if it was not.
+    pub fn expected_token(
+        &mut self,
+        expected_kind: TokenKind,
+    ) -> Result<Token<'de>, miette::Error> {
+        let next_token = self.next();
+        match next_token {
+            // Found Correct Token
+            Some(Ok(token)) if token.kind == expected_kind => Ok(token),
+            Some(Ok(token)) => {
+                generate_invalid_token_error!(
+                    expect,
+                    self,
+                    token.literal.to_string(),
+                    token.position.offset(),
+                    token.position.offset() + token.position.len()
+                );
+            }
+            Some(Err(error)) => return Err(error),
+            _ => {
+                return Err(InvalidEndOfFile {
+                    file_name: self.config.file_path.clone(),
+                }
+                .into())
+            }
+        }
+    }
+
+    /// returns the token if it is the expected type or an error if it was not.
+    pub fn peek_expected_token(&mut self, expected_kind: TokenKind) -> Result<bool, miette::Error> {
+        match self.peek() {
+            // Found Correct Token
+            Some(Ok(token)) if token.kind == expected_kind => Ok(true),
+            Some(_) => Ok(false),
+            _ => {
+                return Err(InvalidEndOfFile {
+                    file_name: self.config.file_path.clone(),
+                }
+                .into())
+            }
         }
     }
 }
@@ -187,6 +285,9 @@ impl<'de> Iterator for Lexer<'de> {
         if self.found_error {
             return None;
         };
+        if let Some(token) = self.peeked.take() {
+            return Some(token);
+        }
 
         loop {
             let mut letters = self.remaining.chars().peekable();
@@ -208,13 +309,7 @@ impl<'de> Iterator for Lexer<'de> {
                     match letters.peek() {
                         Some(l) if l.is_alphabetic() => {}
                         _ => {
-                            generate_invalid_token_error!(
-                                self,
-                                "all test",
-                                c.to_string(),
-                                c.len_utf8(),
-                                0
-                            );
+                            generate_invalid_token_error!(self, c.to_string(), c.len_utf8(), 0);
                         }
                     }
                     let mut i = 0;
@@ -230,19 +325,21 @@ impl<'de> Iterator for Lexer<'de> {
                     if literal == "prefix" {
                         self.remaining = &self.remaining[i..];
                         self.current_byte += i;
-                        return create_token_position!("@prefix", TokenKind::Prefix, (self.current_byte - 1)..(self.current_byte + i));
+                        return create_token_position!(
+                            "@prefix",
+                            TokenKind::Prefix,
+                            (self.current_byte - i - 1)..(self.current_byte - 1)
+                        );
                     } else if literal == "base" {
                         self.remaining = &self.remaining[i..];
                         self.current_byte += i;
-                        return create_token_position!("@base", TokenKind::Base, (self.current_byte - 1)..(self.current_byte + i));
-                    } else {
-                        generate_invalid_token_error!(
-                            self,
-                            "example file",
-                            literal.to_string(),
-                            0,
-                            i
+                        return create_token_position!(
+                            "@base",
+                            TokenKind::Base,
+                            (self.current_byte - i - 1)..(self.current_byte - 1)
                         );
+                    } else {
+                        generate_invalid_token_error!(self, literal.to_string(), 0, i);
                     }
                 }
                 '<' => {
@@ -281,33 +378,41 @@ impl<'de> Iterator for Lexer<'de> {
                     } else {
                         // the uri and url are defined by the <uri>.
                         // It is expected that the columns are uri-encoded so there is no clossing arrow in them.
-                        while let Some(l) = letters.next() {
-                            match l {
-                                // Allow alphanumeric characters
-                                'a'..='z' | 'A'..='Z' | '0'..='9' |
-                                // Allow hyphen, underscore, period, and tilde
-                                '-' | '_' | '.' | '~' |
-                                // Allow URL reserved characters
-                                '!' | '$' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' |
-                                ';' | '=' | ':' | '@' | '/' | '?' | '#' | '[' | ']' => {
-                                    i += l.len_utf8();
-                                },
-                                '>' => break,
-                                // Anything else is invalid
-                                _ => {
-                                    let err = InvalidTokenFound {
-                                        src: NamedSource::new(
-                                            "example.rml",
-                                            self.whole.to_string(),
-                                        ),
-                                        token: c.to_string(),
-                                        err_span: SourceSpan::from(
-                                            (self.current_byte + i)..(self.current_byte + i  + l.len_utf8()),
-                                        ),
-                                    };
-                                    self.found_error = true;
-                                    return Some(Err(err.into()));
+                        loop {
+                            if let Some(l) = letters.next() {
+                                match l {
+                                    // Allow alphanumeric characters
+                                    'a'..='z' | 'A'..='Z' | '0'..='9' |
+                                    // Allow hyphen, underscore, period, and tilde
+                                    '-' | '_' | '.' | '~' |
+                                    // Allow URL reserved characters
+                                    '!' | '$' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' |
+                                    ';' | '=' | ':' | '@' | '/' | '?' | '#' | '[' | ']' => {
+                                        i += l.len_utf8();
+                                    },
+                                    '>' => break,
+                                    // Anything else is invalid
+                                    _ => {
+                                        let err = InvalidTokenFound {
+                                            src: NamedSource::new(
+                                                "example.rml",
+                                                self.whole.to_string(),
+                                            ),
+                                            token: c.to_string(),
+                                            err_span: SourceSpan::from(
+                                                (self.current_byte + i)..(self.current_byte + i + l.len_utf8()),
+                                            ),
+                                        };
+                                        self.found_error = true;
+                                        return Some(Err(err.into()));
+                                    }
                                 }
+                            } else {
+                                self.found_error = true;
+                                return Some(Err(InvalidEndOfFile {
+                                    file_name: self.config.file_path.clone(),
+                                }
+                                .into()));
                             }
                         }
                     }
@@ -318,10 +423,15 @@ impl<'de> Iterator for Lexer<'de> {
                     } else {
                         0
                     };
+
                     let literal = &self.remaining[hashtag_skip..i];
                     self.remaining = &self.remaining[(i + '>'.len_utf8())..];
                     self.current_byte += i + '>'.len_utf8();
-                    return create_token_position!(literal, kind, (self.current_byte - '<'.len_utf8())..(i + '>'.len_utf8()));
+                    return create_token_position!(
+                        literal,
+                        kind,
+                        (self.current_byte - 1 - i)..(self.current_byte)
+                    );
                 }
                 '"' => {
                     let mut i = 0;
@@ -343,7 +453,9 @@ impl<'de> Iterator for Lexer<'de> {
                             None => {
                                 let error = MissingEndLiteralError {
                                     src: NamedSource::new("example.ong", self.whole.to_string()),
-                                    err_span: SourceSpan::from((self.current_byte)..(self.current_byte))
+                                    err_span: SourceSpan::from(
+                                        (self.current_byte)..(self.current_byte),
+                                    ),
                                 };
                                 self.found_error = true;
                                 return Some(Err(error.into()));
@@ -355,15 +467,18 @@ impl<'de> Iterator for Lexer<'de> {
                             if (left_space + scope + 1 + i) > self.remaining.len() {
                                 let error = MissingEndLiteralError {
                                     src: NamedSource::new("example.ong", self.whole.to_string()),
-                                    err_span: SourceSpan::from((self.current_byte)..(self.current_byte))
+                                    err_span: SourceSpan::from(
+                                        (self.current_byte)..(self.current_byte),
+                                    ),
                                 };
                                 self.found_error = true;
                                 return Some(Err(error.into()));
                             }
                             // check usual condition of N consucutive double-quotes.
                             else if self.remaining[(left_space + i)..(left_space + i + scope + 1)]
-                            .chars()
-                            .all(|c| c == '"') {
+                                .chars()
+                                .all(|c| c == '"')
+                            {
                                 break;
                             }
                         }
@@ -373,7 +488,12 @@ impl<'de> Iterator for Lexer<'de> {
                     let literal = &self.remaining[(left_space)..(left_space + i)];
                     self.remaining = &self.remaining[(left_space + i + scope + 1)..];
                     self.current_byte += left_space + i + scope + 1;
-                    return create_token_position!(literal, TokenKind::Literal, (self.current_byte - 1)..(self.current_byte + i + left_space));
+                    return create_token_position!(
+                        literal,
+                        TokenKind::Literal,
+                        (self.current_byte - 1 - i - left_space - scope)
+                            ..(self.current_byte - scope)
+                    );
                 }
                 c if c.is_ascii_alphanumeric() => {
                     let mut i = 0;
@@ -393,11 +513,20 @@ impl<'de> Iterator for Lexer<'de> {
                     self.current_byte += i;
 
                     // check if the type corresponds with the term a (rdf:type), it may improve parsing.
-                    let kind =  if literal == "a" { TokenKind::A } else { TokenKind::Term };
-                    return create_token_position!(literal, kind, (self.current_byte - c.len_utf8())..(self.current_byte + i));
+                    let kind = if literal == "a" {
+                        TokenKind::A
+                    } else {
+                        TokenKind::Term
+                    };
+
+                    return create_token_position!(
+                        literal,
+                        kind,
+                        (self.current_byte - c.len_utf8() - i)..(self.current_byte)
+                    );
                 }
                 _ => {
-                    generate_invalid_token_error!(self, "all test", c.to_string(), c.len_utf8(), 0);
+                    generate_invalid_token_error!(self, c.to_string(), c.len_utf8(), 0);
                 }
             }
         }
@@ -406,15 +535,15 @@ impl<'de> Iterator for Lexer<'de> {
 
 #[cfg(test)]
 pub mod lex_tests {
-    use super::*;
     use super::SourceSpan;
+    use super::*;
 
     macro_rules! result_token {
         ($literal:expr, $kind:expr) => {
             Token {
                 literal: $literal,
                 kind: $kind,
-                position: SourceSpan::from(0..1) 
+                position: SourceSpan::from(0..1),
             }
         };
     }
@@ -447,7 +576,11 @@ pub mod lex_tests {
     #[test]
     fn test_puntuation() {
         let text = "[].,;:[";
-        let lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let lexer = Lexer::new(&config, text);
 
         let expected_tokens = vec![
             result_token!("[", TokenKind::LBracket),
@@ -465,7 +598,11 @@ pub mod lex_tests {
     #[test]
     fn test_simple_ident() {
         let text = "<#ident>";
-        let mut lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let mut lexer = Lexer::new(&config, text);
 
         let token = result_token!("ident", TokenKind::Ident);
 
@@ -476,7 +613,11 @@ pub mod lex_tests {
     #[test]
     fn test_simple_uri() {
         let text = "<https://aulaglobal.uc3m.es/pluginfile.php/7309413/mod_resource/content/1/T4Agentes2425.pdf>";
-        let mut lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let mut lexer = Lexer::new(&config, text);
 
         let token = result_token!("https://aulaglobal.uc3m.es/pluginfile.php/7309413/mod_resource/content/1/T4Agentes2425.pdf", TokenKind::URI);
 
@@ -487,7 +628,11 @@ pub mod lex_tests {
     #[test]
     fn test_simple_literal() {
         let text = r#""Este texto es falso""#;
-        let mut lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let mut lexer = Lexer::new(&config, text);
 
         let token = result_token!("Este texto es falso", TokenKind::Literal);
 
@@ -501,7 +646,11 @@ pub mod lex_tests {
     #[test]
     fn test_simple_term() {
         let text = r#"ex:hasAttribute"#;
-        let lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let lexer = Lexer::new(&config, text);
 
         let token = vec![
             result_token!("ex", TokenKind::Term),
@@ -515,7 +664,11 @@ pub mod lex_tests {
     #[test]
     fn test_basic_prefix() {
         let text = r#"@prefix rr: <http://www.w3.org/ns/r2rml#>."#;
-        let lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let lexer = Lexer::new(&config, text);
 
         let token = vec![
             result_token!("@prefix", TokenKind::Prefix),
@@ -529,11 +682,14 @@ pub mod lex_tests {
         assert_eq!(compare_token_vec(token, ident_token), true);
     }
 
-
     #[test]
     fn test_triple() {
         let text = r#"<#ThisMapping> has:attr ox:soma;"#;
-        let lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let lexer = Lexer::new(&config, text);
 
         let token = vec![
             result_token!("ThisMapping", TokenKind::Ident),
@@ -553,7 +709,11 @@ pub mod lex_tests {
     #[test]
     fn test_query_triple() {
         let text = r#"rr:SQLQuery "SELECT * FROM b;"."#;
-        let lexer = Lexer::new(text);
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let lexer = Lexer::new(&config, text);
 
         let token = vec![
             result_token!("rr", TokenKind::Term),
@@ -567,4 +727,17 @@ pub mod lex_tests {
         assert_eq!(compare_token_vec(token, ident_token), true);
     }
 
+    #[test]
+    fn test_unfinished_uri() {
+        let text = r#"<uri"#;
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true
+        };
+        let mut lexer = Lexer::new(&config, text);
+
+        let ident_token = lexer.next().expect("At least, an error is expected.");
+        assert!(ident_token.is_err());
+        eprintln!("{ident_token:?}");
+    }
 }
