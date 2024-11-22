@@ -1,3 +1,6 @@
+mod config;
 pub mod lex;
 pub mod parser;
-pub mod config;
+
+pub use config::ParseFileConfig;
+pub use parser::Parser;

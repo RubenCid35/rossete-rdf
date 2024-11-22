@@ -29,7 +29,8 @@ map:om_000 rdf:type rr:ObjectMap ;
 	rr:termType rr:IRI .
 
 map:om_001 rml:reference "firstname" ;
-	rdf:type rr:ObjectMap ;
+    rr:datatype xsd:string;
+    rdf:type rr:ObjectMap ;
 	rr:termType rr:Literal .
 
 map:om_002 rdf:type rr:ObjectMap ;
@@ -94,6 +95,7 @@ map:rules_000 <http://rdfs.org/ns/void#exampleResource> map:map_movie_000, map:m
 	rdf:type <http://rdfs.org/ns/void#Dataset> .
 
 map:s_000 rdf:type rr:SubjectMap ;
+    rr:class ex:sala;
 	rr:template "http://example.com/person/{firstname}" .
 
 map:s_001 rdf:type rr:SubjectMap ;
@@ -108,3 +110,12 @@ map:source_001 rml:referenceFormulation ql:CSV ;
 	rml:source "movies.csv" ;
 	rdf:type rml:LogicalSource .
 
+map:map_prd2 a rr:predicateObjectMap;
+    rr:predicate wgs84_pos:long;
+    rr:objectMap [
+      rml:reference "longitude".
+    ].
+
+map:map_prd3 a rr:predicateObjectMap;
+    rr:predicate rdf:type;
+    rr:object ex:Stop.

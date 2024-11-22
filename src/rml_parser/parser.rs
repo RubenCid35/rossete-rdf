@@ -1,4 +1,5 @@
 use super::config::ParseFileConfig;
+use super::lex;
 use super::lex::InvalidTokenFound;
 use super::lex::Lexer;
 use super::lex::{Token, TokenKind};
@@ -6,8 +7,18 @@ use super::lex::{Token, TokenKind};
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-use miette::{Diagnostic, NamedSource, SourceSpan};
+use miette::{Diagnostic, NamedSource, Result as MietteResult, SourceSpan};
 use thiserror::Error;
+
+use crate::rml::common::TermGenerators;
+use crate::rml::common::TermType;
+use crate::rml::predicate::JoinCondition;
+use crate::rml::predicate::PredicateBuilder;
+use crate::rml::predicate::PredicateMap;
+use crate::rml::sources::LogicalSource;
+use crate::rml::sources::RefFormulation;
+use crate::rml::subject::SubjectMap;
+use crate::rml::RMLComponent;
 
 // -------------------------------------------------------
 // -------------------------------------------------------
@@ -21,7 +32,8 @@ pub type PrefixMap<'de> = HashMap<&'de str, String>;
 #[derive(Clone)]
 pub enum Term<'de> {
     /// Simple term representation. ej ex:opt -> FullTerm(ex, opt)
-    FullTerm(&'de str, &'de str),
+    // FullTerm(&'de str, &'de str),
+    FullTerm(String, String),
 
     /// Literal Representation. This is a tuple.
     /// Thee first value is the literal and the second is flag for wheter it is a URI or a literal string.
@@ -32,6 +44,17 @@ pub enum Term<'de> {
 
     /// Term A (rdf:type)
     A,
+}
+
+impl<'de> Term<'de> {
+    pub fn to_string(&self) -> String {
+        match self {
+            Term::FullTerm(pre, post) => format!("{}:{}", pre, post),
+            Term::Literal(literal, _) => literal.to_string(),
+            Term::Ident(ident) => format!("{}", ident),
+            Term::A => "rdf:type".to_string(),
+        }
+    }
 }
 
 impl<'de> Debug for Term<'de> {
@@ -86,12 +109,28 @@ impl<'de> Debug for TermPair<'de> {
 #[derive(Debug)]
 pub struct ObjectMap<'de> {
     /// associated ident to object in the mapping
-    #[allow(dead_code)]
     id: String,
 
     /// All the pairs token content
-    #[allow(dead_code)]
     term_pairs: Vec<TermPair<'de>>,
+
+    /// FIle Span that corresponds to this object. This is ideal for the generation of errors.
+    span: SourceSpan,
+}
+
+/// Quick method that can be used to find the `rdf:type | a` in a list of triples.
+fn get_type<'de>(grammar: &'de GrammarPrefix, triples: &'de Vec<TermPair<'de>>) -> Option<&'de Term<'de>> {
+    triples.iter().find_map(|term| match term {
+        TermPair::TermPair(Term::A, ty) => Some(ty),
+        TermPair::TermPair(Term::FullTerm(pre, post), ty) => {
+            if grammar.rdf == Some(pre) && *post == "type" {
+                Some(ty)
+            } else {
+                None
+            }
+        }
+        _ => None,
+    })
 }
 
 // -------------------------------------------------------
@@ -152,6 +191,51 @@ pub struct InvalidParserTokenFound {
     pub err_span: SourceSpan,
 }
 
+#[derive(Diagnostic, Debug, Error)]
+#[error("Missing Grammar Prefix")]
+#[diagnostic(
+    code(rml::parser::prefix::missing),
+    help("The grammar prefix associated wit the uri: \"{uri}\" is missing, usual prefix: {prefix}")
+)]
+pub struct MissingGrammarPrefix {
+    src: NamedSource<String>,
+    uri: &'static str,
+    prefix: &'static str,
+}
+
+#[derive(Diagnostic, Debug, Error)]
+#[error("Missing Field in Object")]
+#[diagnostic(
+    code(rml::parser::object::missing),
+    help("The field {field} is missing or incorrectly field in the object <{id}>")
+)]
+pub struct MissingFieldError {
+    src: NamedSource<String>,
+
+    field: &'static str,
+    id: String,
+
+    #[label = "Required Field Location"]
+    pub span: SourceSpan,
+}
+
+#[derive(Diagnostic, Debug, Error)]
+#[error("Missing Field in Object")]
+#[diagnostic(
+    severity(Warning),
+    code(rml::parser::object::missing),
+    help("The field {field} is missing or incorrectly field in the object <{id}>")
+)]
+pub struct MissingFieldWarning {
+    src: NamedSource<String>,
+
+    field: &'static str,
+    id: String,
+
+    #[label = "Required Field Location"]
+    pub span: SourceSpan,
+}
+
 // -------------------------------------------------------
 // -------------------------------------------------------
 // Error Macros
@@ -160,7 +244,7 @@ pub struct InvalidParserTokenFound {
 
 macro_rules! missing_puntuation_warning {
     ($self:ident, $punct:expr, $pos:expr) => {
-        if (! $self.config.silent) {
+        if (!$self.config.silent) {
             let file_name = &($self).config.get_file();
             let warning: miette::Error = MissingPunctuationWarning {
                 src: NamedSource::new(file_name, $self.whole.to_string()),
@@ -168,7 +252,7 @@ macro_rules! missing_puntuation_warning {
                 err_span: SourceSpan::from(($pos)..($pos + 1)),
             }
             .into();
-    
+
             eprintln!("{warning:?}");
         }
     };
@@ -208,6 +292,45 @@ macro_rules! invalid_token {
         }
         .into())
     };
+
+    ($self:ident, $token:expr, $literal:expr, $span:ident) => {
+        Err(InvalidParserTokenFound {
+            src: NamedSource::new(&($self).config.get_file(), $self.whole.to_string()),
+            token: $token.into(),
+            msg: $literal.to_string(),
+            err_span: $span,
+        }
+        .into())
+    };
+}
+
+/// Special Macro design to improve legibility of the code by initializing the errors
+/// and warnings.
+///
+/// This error is related to the missing fields in the objects. For instance, the missing `source` field in a logicalSource.
+/// The macro allows to treat as a warning or an error.
+macro_rules! missing_field {
+    ($self: ident, $id: ident, $field: expr, $span: ident) => {
+        Err(MissingFieldError {
+            src: NamedSource::new(&($self).config.get_file(), $self.whole.to_string()),
+            field: $field,
+            id: $id.to_string(),
+            span: $span
+        }.into())
+    };
+
+    ($self: ident, $id: ident, $field: expr, $span: ident, warning) => {
+        if (!$self.config.silent) {
+            let err: miette::Error = Err(MissingFieldWarning {
+                src: NamedSource::new(&($self).config.get_file(), $self.whole.to_string()),
+                field: $field,
+                id: $id.to_string(),
+                span: $span
+            }.into())
+            eprintln!("{err:?}");
+        }
+    };
+
 }
 
 // -------------------------------------------------------
@@ -215,6 +338,45 @@ macro_rules! invalid_token {
 // Parsing
 // -------------------------------------------------------
 // -------------------------------------------------------
+
+// Grammar prefixes
+const PREFIX_RML: &str = "http://semweb.mmlab.be/ns/rml#";
+const PREFIX_QL: &str = "http://semweb.mmlab.be/ns/ql#";
+const PREFIX_RR: &str = "http://www.w3.org/ns/r2rml#";
+const PREFIX_RDF: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+const PREFIX_RDFS: &str = "http://www.w3.org/2000/01/rdf-schema#";
+const PREFIX_XSD: &str = "http://www.w3.org/2001/XMLSchema#";
+
+/// Prefixes that are related to the grammar and logic of a map.
+#[doc(hidden)]
+#[derive(Default)]
+struct GrammarPrefix<'de> {
+    rml: &'de str,
+    ql: &'de str,
+    rr: &'de str,
+    rdf: Option<&'de str>,
+    rdfs: Option<&'de str>,
+    xsd: Option<&'de str>,
+}
+
+impl<'de> GrammarPrefix<'de> {
+    /// Create a grammar prefix dictionary using a prefix map
+    fn from_prefix_map(prefix_map: &PrefixMap<'de>) -> Self {
+        let mut grammar = Self::default();
+        for (&prefix, uri) in prefix_map.iter() {
+            match uri.as_str() {
+                PREFIX_RML => grammar.rml = prefix,
+                PREFIX_QL => grammar.ql = prefix,
+                PREFIX_RR => grammar.rr = prefix,
+                PREFIX_RDF => grammar.rdf = Some(prefix),
+                PREFIX_RDFS => grammar.rdfs = Some(prefix),
+                PREFIX_XSD => grammar.xsd = Some(prefix),
+                _ => continue,
+            }
+        }
+        grammar
+    }
+}
 
 /// Parser object that gets a file path and generates all the tokens, structs and
 /// relevant parts.
@@ -228,9 +390,30 @@ pub struct Parser<'de> {
     /// Intermediate mapping Objects:
     prefix_map: PrefixMap<'de>,
 
-    // TODO: maybe change to hashmap?
     /// Vec with all objects maps that are found
     objects: Vec<ObjectMap<'de>>,
+}
+
+/// Small Function that attemps to capitalize the first letter in a string.
+fn capitalize_term(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+    }
+}
+
+/// Extracts the predicate term from a term pair. It just returns the prefix and the term as literal strings.
+///
+/// Arguments:
+/// * **term** (TermPair). Term that contains a predicate and some kind of object element (term or node with other pairs).
+fn get_predicate<'de>(term: &'de TermPair) -> Option<(&'de str, &'de str)> {
+    match term {
+        TermPair::TermPair(Term::FullTerm(pre, pos), _) => Some((pre, pos)),
+        TermPair::BlankNode(Term::FullTerm(pre, pos), _) => Some((pre, pos)),
+        TermPair::TermPair(Term::A, _) => Some(("rdf", "type")),
+        _ => None
+    }
 }
 
 impl<'de> Parser<'de> {
@@ -248,7 +431,7 @@ impl<'de> Parser<'de> {
     /// Parses the final part of prefix declaration. This part corresponds
     /// to the URI and the final dot. This procedure is common in the case
     /// of `@prefix` and `@base`.
-    fn parse_prefix(&mut self, lexer: &mut Lexer<'de>, prefix: &'de str) -> Result<(), miette::Error> {
+    fn parse_prefix(&mut self, lexer: &mut Lexer<'de>, prefix: &'de str) -> MietteResult<()> {
         // get URI
         let prefix_uri = lexer.expected_token(TokenKind::URI)?;
         let last_pos = prefix_uri.position.offset() + prefix_uri.position.len();
@@ -268,10 +451,12 @@ impl<'de> Parser<'de> {
     }
 
     /// Creates a full term from a pair of term tokens and a colon. It fails if there is no colon in the middle.
-    fn generate_term(&self, lexer: &mut Lexer<'de>, pre: &Token<'de>) -> Result<Term<'de>, miette::Error> {
+    fn generate_term(&self, lexer: &mut Lexer<'de>, pre: &Token<'de>) -> MietteResult<Term<'de>> {
         lexer.expected_token(TokenKind::Colon)?;
         let post = lexer.expected_token(TokenKind::Term)?;
-        Ok(Term::FullTerm(pre.literal, post.literal))
+
+        let post_text = post.literal.to_lowercase();
+        Ok(Term::FullTerm(pre.literal.to_string(), post_text))
     }
 
     /// Given the start of a named object, it extracts and parses all the inner components.
@@ -280,7 +465,7 @@ impl<'de> Parser<'de> {
         lexer: &mut Lexer<'de>,
         ident: &Token<'de>,
         scope: usize,
-    ) -> Result<Vec<TermPair<'de>>, miette::Error> {
+    ) -> MietteResult<Vec<TermPair<'de>>> {
         let mut predicate: Option<Term<'_>> = None;
         let mut scoped = vec![];
 
@@ -428,14 +613,15 @@ impl<'de> Parser<'de> {
     }
 
     /// **Parse Structural Layer**
+    ///
     /// This method parse the tokens and structures its content into a prefix mapping
     /// and list of all the entity / object with their contens. This steps allows to extract
     /// the structure in the file for futher semantical processing.
-    pub fn parse_structures(&mut self) -> Result<(), miette::Error> {
+    pub fn parse_structures(&mut self) -> MietteResult<()> {
         let mut lexer = Lexer::new(self.config, self.whole);
         while let Some(token) = lexer.next() {
             let token = token?;
-
+            let start_pos = token.position.offset();
             match token.kind {
                 // prefix definition
                 TokenKind::Prefix => {
@@ -455,6 +641,7 @@ impl<'de> Parser<'de> {
                     self.objects.push(ObjectMap {
                         id: format!("{:?}", term_full),
                         term_pairs: term_pairs,
+                        span: SourceSpan::from(start_pos..lexer.get_position()),
                     });
                 }
 
@@ -464,6 +651,7 @@ impl<'de> Parser<'de> {
                     self.objects.push(ObjectMap {
                         id: token.literal.to_string(),
                         term_pairs: term_pairs,
+                        span: SourceSpan::from(start_pos..lexer.get_position()),
                     });
                     //
                 }
@@ -473,9 +661,383 @@ impl<'de> Parser<'de> {
             }
         }
 
-        println!("\nprefixes:\n{:#?}\n", self.prefix_map);
-        println!("\nobjects :\n{:#?}\n", self.objects);
+        // println!("\nprefixes:\n{:#?}\n", self.prefix_map);
+        // println!("\nobjects :\n{:#?}\n", self.objects);
 
+        Ok(())
+    }
+
+    /// check if the grammar prefixes are declared and returns the prefix
+    fn check_grammar_prefixes(&self) -> MietteResult<GrammarPrefix<'de>> {
+        let grammar = GrammarPrefix::from_prefix_map(&self.prefix_map);
+        if grammar.rml.is_empty() {
+            return Err(MissingGrammarPrefix {
+                src: NamedSource::new(self.config.get_file(), "".to_string()),
+                uri: &PREFIX_RML,
+                prefix: "rml",
+            }
+            .into());
+        }
+
+        if grammar.ql.is_empty() {
+            return Err(MissingGrammarPrefix {
+                src: NamedSource::new(self.config.get_file(), "".to_string()),
+                uri: &PREFIX_QL,
+                prefix: "ql",
+            }
+            .into());
+        }
+
+        if grammar.rr.is_empty() {
+            return Err(MissingGrammarPrefix {
+                src: NamedSource::new(self.config.get_file(), "".to_string()),
+                uri: &PREFIX_RR,
+                prefix: "rr",
+            }
+            .into());
+        }
+
+        Ok(grammar)
+    }
+
+    // ----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
+    // Semantic Parsing of the File
+    // ----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
+
+    fn parse_logical(&self, grammar: &GrammarPrefix, terms: &ObjectMap<'de>) -> Result<LogicalSource, miette::Error> {
+        let mut source = None;
+        let mut reference = None;
+        let mut iterator = String::new();
+
+        // TODO: no db supported yet
+        for term in &terms.term_pairs {
+            match term {
+                TermPair::TermPair(Term::FullTerm(pre, post), term1) => {
+                    if *pre == grammar.rml {
+                        match (post.as_str(), term1) {
+                            ("source", _) => {
+                                if let Term::Literal(text, _) = term1 {
+                                    source = Some(text.to_string());
+                                }
+                            }
+                            ("referenceformulation", Term::FullTerm(prefix, form)) => {
+                                if *prefix == grammar.ql {
+                                    reference = RefFormulation::from_str(form);
+                                }
+                            }
+                            ("iterator", Term::Literal(text, _)) => {
+                                iterator = text.to_string();
+                            }
+                            _ => continue,
+                        }
+                    }
+                }
+                _ => continue,
+            }
+        }
+        let id = terms.id.clone();
+        let span = terms.span;
+
+        if let Some(source) = source {
+            if let Some(reference) = reference {
+                let logical = LogicalSource::new(source, iterator, reference);
+                return Ok(logical);
+            } else {
+                return missing_field!(self, id, "rml:referenceformulation", span);
+            }
+        } else {
+            return missing_field!(self, id, "rml:source", span);
+        }
+    }
+
+    /// Given a list of term pairs, this function generates a subject generator.
+    /// The function assumes that the data added terms are inside a subject map. Therefore, the corresponding
+    /// checks were not added. This allows working with independent objects (like the ones generated by parsing YARRML)
+    /// and inner nodes from a TriplesMap mapping.
+    fn parse_subject(&self, grammar: &GrammarPrefix, terms: &ObjectMap<'de>) -> Result<SubjectMap, miette::Error> {
+        let mut template: Option<TermGenerators> = None;
+        let mut class: Option<TermGenerators> = None;
+
+        for term in &terms.term_pairs {
+            match term {
+                TermPair::TermPair(Term::FullTerm(pre, post), term1) => {
+                    if pre != &grammar.rr {
+                        continue;
+                    }
+                    if *post == "template" {
+                        if let Term::Literal(text, _) = term1 {
+                            template = Some(TermGenerators::template_from_str(text.to_string(), true));
+                        }
+                    } else if *post == "class" {
+                        if matches!(term1, Term::Literal(_, _) | Term::FullTerm(_, _)) {
+                            class = Some(TermGenerators::Constant(term1.to_string(), TermType::IRI, None));
+                        }
+                    }
+                }
+                _ => continue,
+            }
+        }
+
+        if template.is_none() {
+            let id = terms.id.clone();
+            let span = terms.span;
+            return missing_field!(self, id, "rr:template", span);
+        }
+
+        let mut subject = SubjectMap::new(template.unwrap());
+        if let Some(class) = class {
+            subject.add_type(class);
+        }
+        Ok(subject)
+    }
+
+    /// Parse Predicate (rr:PredicateMap). THis object only contains a constant with the predicate.
+    fn parse_predicate(
+        &self,
+        grammar: &GrammarPrefix,
+        terms: &ObjectMap<'de>,
+    ) -> Result<TermGenerators, miette::Error> {
+        let mut predicate = None;
+        for term in &terms.term_pairs {
+            match term {
+                TermPair::TermPair(Term::FullTerm(pre, post), pred_term @ Term::FullTerm(_, _)) => {
+                    if pre == &grammar.rr && *post == "constant" {
+                        predicate = Some(TermGenerators::Constant(pred_term.to_string(), TermType::Pair, None));
+                    }
+                }
+                TermPair::TermPair(Term::FullTerm(pre, post), Term::Literal(uri, true)) => {
+                    if pre == &grammar.rr && *post == "constant" {
+                        predicate = Some(TermGenerators::Constant(uri.to_string(), TermType::IRI, None));
+                    }
+                }
+                _ => continue,
+            }
+        }
+
+        let id = terms.id.clone();
+        let span = terms.span;
+
+        if let Some(pred) = predicate {
+            return Ok(pred);
+        } else {
+            return missing_field!(self, id, "rr:constant", span);
+        }
+    }
+
+    /// Parse Object (rr:ObjectMap). THis object only contains a constant with the predicate.
+    fn parse_object(&self, grammar: &GrammarPrefix, terms: &ObjectMap<'de>) -> Result<PredicateMap, miette::Error> {
+        let mut has_join = false;
+
+        enum TermTy {
+            Const,
+            Reference,
+            Join,
+            None,
+        }
+
+        let mut gen_ty: TermTy = TermTy::None;
+        let mut term_ty = TermType::Text;
+        let mut generator = String::new();
+        let mut data_ty = String::new();
+
+        let mut parent = String::new();
+        let mut join = Some(JoinCondition {});
+
+        for term in &terms.term_pairs {
+            match term {
+                TermPair::TermPair(Term::FullTerm(pre, post), pred_term) if *pre == grammar.rr => {
+                    if *post == "constant" {
+                        gen_ty = TermTy::Const;
+                        if let Term::Literal(field, _) = pred_term {
+                            term_ty = TermType::Text;
+                            generator = field.to_string();
+                        } else if let fullterm @ Term::FullTerm(_, _) = pred_term {
+                            term_ty = TermType::Pair;
+                            generator = fullterm.to_string();
+                        } else {
+                            let span = terms.span;
+                            return invalid_token!(
+                                self,
+                                format!("{pred_term:?}"),
+                                "Only literal terms are valid objects.",
+                                span
+                            );
+                        }
+                    } else if *post == "datatype" {
+                        data_ty = pred_term.to_string();
+                    } else if *post == "parenttriplesmap" {
+                        // TODO: implement parsing of join condition
+                        has_join = true;
+                        gen_ty = TermTy::Join;
+                    }
+                }
+                TermPair::TermPair(Term::FullTerm(pre, post), pred_term) if *pre == grammar.rml => {
+                    if *post == "reference" {
+                        term_ty = TermType::Text;
+                        gen_ty = TermTy::Reference;
+                        if let Term::Literal(field, _) = pred_term {
+                            generator = field.to_string();
+                        } else {
+                            let span = terms.span;
+                            return invalid_token!(
+                                self,
+                                format!("{pred_term:?}"),
+                                "Only literal terms are valid objects.",
+                                span
+                            );
+                        }
+                    }
+                }
+                _ => continue,
+            }
+        }
+        let data_ty = if !data_ty.is_empty() { Some(data_ty) } else { None };
+        let term_gen = match gen_ty {
+            TermTy::Const => TermGenerators::Constant(generator, term_ty, data_ty),
+            TermTy::Reference => TermGenerators::Reference(generator, term_ty, data_ty),
+            TermTy::Join => TermGenerators::Undeclared,
+            TermTy::None => TermGenerators::Undeclared,
+        };
+
+        if has_join {
+            Ok(PredicateMap::ByJoin(TermGenerators::Undeclared, String::new(), join))
+        } else {
+            Ok(PredicateMap::ByField(TermGenerators::Undeclared, term_gen))
+        }
+    }
+
+    /// Parsing of predicateObjectMap
+    fn parse_predicate_object(
+        &self,
+        grammar: &GrammarPrefix,
+        terms: &ObjectMap<'de>,
+    ) -> Result<Box<dyn RMLComponent>, miette::Error> {
+
+        let mut object_ref: String = String::from("example");
+        let mut predicate_ref: String = String::from("example");
+        let mut object: Option<Box<dyn RMLComponent>> = None;
+        let mut predicate: Option<Box<dyn RMLComponent>> = None;
+
+        for term in &terms.term_pairs {
+            let (pre, post) = get_predicate(term).expect("The predicate must be full term with a prefix and term.");
+            if pre != grammar.rr {
+                continue;
+            } // TODO: maybe add warning of unknown predicate
+
+            match post {
+                "predicatemap" => {
+                    match term {
+                        TermPair::TermPair(_, term1) => {
+                            predicate_ref  = term1.to_string();
+                        },
+                        TermPair::BlankNode(_, vec) => {
+                            continue
+                        },
+                    }
+                }
+                "objectmap" => {
+                    match term {
+                        TermPair::TermPair(_, term1) => {
+                            object_ref = term1.to_string();
+                        },
+                        TermPair::BlankNode(_, vec) => {
+                            continue
+                        },
+                    }
+                }
+                "predicate" => {
+                    if let TermPair::TermPair(_, object_term) = term {
+                        predicate = Some(Box::new(TermGenerators::Constant(
+                            object_term.to_string(),
+                            TermType::IRI,
+                            None,
+                        )));
+                    }
+                }
+                "object" => {
+                    if let TermPair::TermPair(_, object_term) = term {
+                        object = Some(Box::new(TermGenerators::Constant(
+                            object_term.to_string(),
+                            TermType::IRI,
+                            None,
+                        )));
+                    }
+                }
+                _ => continue,
+            }
+        }
+
+        if (predicate.is_none() & predicate_ref.is_empty()) || (object.is_none() & object_ref.is_empty()) {
+            let span = terms.span;
+            return invalid_token!(
+                self,
+                "rr:predicate / rr:object",
+                "A predicateObjectMap requires at least a `rr:predicateMap` and a `rr:objectMap`",
+                span
+            );
+        }
+
+        let predicate_map = PredicateBuilder::new(predicate_ref, object_ref, predicate, object);
+        if predicate_map.is_complete() {
+            // TODO: build the predicate and return that instead.
+        }
+
+        Ok(Box::new(predicate_map))
+    }
+
+    /// **Lexical Parsing**
+    ///
+    /// This method parses the object using the lexical meaning of the terms.
+    pub fn parse_semantic(&mut self) -> Result<(), miette::Error> {
+        let grammar = self.check_grammar_prefixes()?;
+        println!("number of objects: {}", self.objects.len());
+
+        let mut components: HashMap<String, Box<dyn RMLComponent>> = HashMap::with_capacity(self.objects.len());
+        for (i, obj) in self.objects.iter().enumerate() {
+            if let Some(ty) = get_type(&grammar, &obj.term_pairs) {
+                if let Term::FullTerm(pre, post) = ty {
+                    if pre == &grammar.rr {
+                        match post.as_str() {
+                            "subjectmap" => {
+                                let subject = self.parse_subject(&grammar, &obj)?;
+                                println!("[{i:>3}] id: {: >15}\tsubject : {:?}", obj.id, subject);
+                                components.insert(obj.id.clone(), Box::new(subject));
+                            }
+                            "objectmap" => {
+                                let object = self.parse_object(&grammar, &obj)?;
+                                println!("[{i:>3}] id: {: >15}\tobject : {:?}", obj.id, object);
+                                components.insert(obj.id.clone(), Box::new(object));
+                            }
+                            "predicatemap" => {
+                                let predicate = self.parse_predicate(&grammar, &obj)?;
+                                println!("[{i:>3}] id: {: >15}\tpredicate : {:?}", obj.id, predicate);
+                                components.insert(obj.id.clone(), Box::new(predicate));
+                            }
+                            "predicateobjectmap" => {
+                                let predicate = self.parse_predicate_object(&grammar, &obj)?;
+                                println!("[{i:>3}] id: {: >15}\tpredicate-object : {:?}", obj.id, predicate);
+                                components.insert(obj.id.clone(), predicate);
+                            }
+                            "triplesmap" => {
+                                println!("[{i:>3}] mapping");
+                            }
+                            _ => {
+                                println!("[{i:>3}] {ty:?}");
+                            }
+                        }
+                    } else if pre == &grammar.rml && *post == "logicalsource" {
+                        let source = self.parse_logical(&grammar, &obj)?;
+                        println!("[{i:>3}] id: {: >15}\tsource  : {:?}", obj.id, source);
+                        components.insert(obj.id.clone(), Box::new(source));
+                    }
+                }
+            } else {
+                // Determine from predicate
+                println!("[{i:>3}] {obj:?}");
+            }
+        }
         Ok(())
     }
 }
@@ -484,15 +1046,11 @@ impl<'de> Parser<'de> {
 mod tests_structure {
     use super::*;
     use std::collections::hash_map::Entry;
-    use std::path::PathBuf;
 
     #[test]
     fn test_prefix_declaration() {
         let text = "@prefix rr: <example.com>.";
-        let config = ParseFileConfig {
-            file_path: PathBuf::new(),
-            silent: true,
-        };
+        let config = ParseFileConfig::default();
 
         let mut parser = Parser::new(&config, text);
         assert_eq!(parser.parse_structures().is_ok(), true);
@@ -506,10 +1064,7 @@ mod tests_structure {
     #[test]
     fn test_base_declaration() {
         let text = "@base <example.com>.";
-        let config = ParseFileConfig {
-            file_path: PathBuf::new(),
-            silent: true,
-        };
+        let config = ParseFileConfig::default();
 
         let mut parser = Parser::new(&config, text);
         assert_eq!(parser.parse_structures().is_ok(), true);
@@ -524,10 +1079,7 @@ mod tests_structure {
     #[test]
     fn test_simple_object() {
         let text = "<#ident> a rr:TriplesMap.";
-        let config = ParseFileConfig {
-            file_path: PathBuf::new(),
-            silent: true,
-        };
+        let config = ParseFileConfig::default();
 
         let mut parser = Parser::new(&config, text);
         assert_eq!(parser.parse_structures().is_ok(), true);

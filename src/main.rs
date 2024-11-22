@@ -1,6 +1,6 @@
 use clap::Parser as ArgParser;
-use rossete_rdf::rml_parser::config::ParseFileConfig;
-use rossete_rdf::rml_parser::parser::Parser;
+use rossete_rdf::rml_parser::ParseFileConfig;
+use rossete_rdf::rml_parser::Parser;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
@@ -14,7 +14,7 @@ struct Args {
     #[arg(short, long, default_value_t = String::from("@prefix rr: <www.sample.text>.\n<#dsadsa> a rr:logicalSource."))]
     text: String,
 
-    #[arg(short, long, help="Hide Warnings")]
+    #[arg(short, long, help = "Hide Warnings")]
     silent: bool,
 }
 
@@ -31,7 +31,8 @@ impl Args {
     pub fn get_text(&self) -> String {
         if let Some(file) = &self.file {
             get_text_file(file)
-        } else {
+        }
+        else {
             self.text.clone()
         }
     }
@@ -39,12 +40,13 @@ impl Args {
         if let Some(file) = &self.file {
             ParseFileConfig {
                 file_path: file.clone(),
-                silent: self.silent
+                silent: self.silent,
             }
-        } else {
+        }
+        else {
             ParseFileConfig {
                 file_path: PathBuf::from("example.text"),
-                silent: self.silent
+                silent: self.silent,
             }
         }
     }
@@ -57,6 +59,7 @@ fn main() -> miette::Result<()> {
 
     let mut parser = Parser::new(&config, &text);
     parser.parse_structures()?;
+    parser.parse_semantic()?;
 
     Ok(())
 }
