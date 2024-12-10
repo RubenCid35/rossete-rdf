@@ -18,6 +18,9 @@ impl ParseFileConfig {
 
 impl std::default::Default for ParseFileConfig {
     fn default() -> Self {
-        Self { file_path: PathBuf::new(), silent: true }
+        Self {
+            file_path: PathBuf::new(),
+            silent: true,
+        }
     }
 }

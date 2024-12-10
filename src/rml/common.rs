@@ -1,42 +1,75 @@
+//! # Terms & Literal Representation
+//! 
+//! This module provides a foundational set of term-type definitions and term generation mechanisms.
+//! In an RML mapping, term generators specify how to generate output terms or literals. 
+//! For example, when processing a data source like a CSV file, term generators define how to create terms
+//! (subjects, predicates, or objects) for each row in the input.
+//! 
+//! This information is essential for generating output knowledge graphs and ensuring their correct interpretation.
+//! By supporting the creation of RDF triples, this module facilitates the building blocks of the output graph, 
+//! ensuring consistency and precision.
+//! 
+
 use super::RMLComponent;
 
-/// Kind of the Output Term. This represents the display and format type of the term.
+/// # Different types for node representation.
+/// 
+/// Each of the terms or nodes can be represented in one of three forms: literal (string), IRI (a encoded url) or
+/// term pair. This enum allows the definition of type in the final output of the program.
 #[derive(Debug)]
-pub enum TermType {
-    /// IRI output. Ths is the case for subjects and other kind of object/subject components. 
+pub(crate) enum TermType {
+    /// Representation of a node as an IRI-encoded text, e.g., `<http://example.com>`.
+    /// This type of node is commonly used in the subject and object positions of RDF triples. 
     IRI,
 
-    /// Literal Text
+    /// Literal text representation. Although the representation is textual, its content may represent a number, date, 
+    /// or other data types, often associated with a specific datatype. This is commonly used in the object part of a knowledge triple. 
+    /// For example: `"text"^^xsd:string`
     Text,
 
-    /// pair that is composed by a prefix and uri.
+    /// Compose Term representation. In some output and input formats, the term is defined by a prefix (predefined) and 
+    /// the tag of the node. This representation is common in the predicate and some object parts of a knowledge triple. One example is: `ex:mapping`
     Pair,
 }
 
-/// Diferent types of object and term generators. They are based on the diferent object creation methods
-/// from the specifications. This terms will correspond with the object or subject in the triple.
+/// Different methods of generating terms or literals in an RML mapping context. 
+/// 
+/// This enum represents the different methods of generating terms or literals in an RML mapping context.
+/// These terms can serve as subjects, predicates, or objects in RDF triples, enabling the creation
+/// of knowledge graphs.
 #[derive(Debug)]
-pub enum TermGenerators {
-    /// Generates a constant triple object or subject.
+pub(crate) enum TermGenerators {
+    /// Constant Term Generation. In a mapping, there are terms that a preset in the mapping such it is the caso 
+    /// of predicate objects. There are other cases like objects with terms. The generator contains the following fields:
+    /// 1. Raw Constant (String)
+    /// 2. Term Type ([TermType]) with the final representation.
+    /// 3. Data Type. Each value has its corresponding data type. By default, each literal is considered a string. 
+    ///     This **only applies to literal terms**.
     Constant(String, TermType, Option<String>),
 
-    /// Object creation using a raw field from the data source. The value of the field is added as a string
+    /// Creates a term from a raw field in the data source. The value from the field is
+    /// treated as a string and converted into the specified term type. The generator contains the following fields:
+    /// 1. Field Reference as a String. The existence of the field was not checked when generator was created.
+    /// 2. Term Type ([TermType]) with the final representation.
+    /// 3. Data Type. Each value has its corresponding data type. By default, each literal is assumed ot be a string. 
+    ///     This **only applies to literal terms**.
     Reference(String, TermType, Option<String>),
 
-    /// Object creation using a template string and the value of raw-fields. The values are added as they are.
-    /// In contains 2 values: a template string and a list of values.
+    /// Generates a term by interpolating raw field values into a template string. This allows
+    /// for more complex term creation based on patterns or dynamic data from multiple fields.The generator contains the following fields:
+    /// 1. Base Template that was formatted to be used in `format!`.
+    /// 2. List of referenced fields. Their existence was not checked while parsing.
+    /// 3. Term Type ([TermType]) with the final representation.
     TemplateTerm(String, Vec<String>, TermType),
 
-    /// None. THis variant is only usefull to initilize a predicate in a mapping with split declarations.
-    /// For instance, when a YARMML map is transfromed to RML.
+    /// A placeholder variant used to initialize terms or predicates in mappings with split declarations. This has no attached logic for the generation of terms.
     Undeclared,
 }
 
 impl TermGenerators {
     /// Generate a template term generator with the extracted fields from a string.
-    /// This function extracts the information about the fields from the string. The last
-    /// argument determines if the final value is an IRI or literal. This is important for the
-    /// subject generation.
+    /// The last argument determines if the final value is an IRI or literal. This
+    /// is important for the subject generation.
     ///
     /// Arguments:
     /// * `template`: original string with the template.
@@ -64,8 +97,7 @@ impl TermGenerators {
                 _ => {
                     if is_field {
                         field.push(c);
-                    }
-                    else {
+                    } else {
                         template_text.push(c);
                     }
                 }

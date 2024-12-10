@@ -1,5 +1,8 @@
+
 use super::RMLComponent;
 use super::TermGenerators;
+
+// TODO: add documentation
 
 #[derive(Debug)]
 pub struct SubjectMap {
@@ -13,7 +16,10 @@ pub struct SubjectMap {
 impl SubjectMap {
     /// Create a new subject map from a template uri generator. This can be constant.
     pub fn new(template: TermGenerators) -> Self {
-        Self { subject: template, r#type: None }
+        Self {
+            subject: template,
+            r#type: None,
+        }
     }
 
     /// Add information about the type associated to a subject.

@@ -1,6 +1,6 @@
+use super::predicate::PredicateMap;
 use super::sources::DataSourceIterator;
 use super::subject::SubjectMap;
-use super::predicate::PredicateMap;
 use super::RMLComponent;
 
 #[derive(Debug)]

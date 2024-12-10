@@ -1,4 +1,3 @@
-//!
 //! # RML representation for the program execution.
 //!
 //! This module contains all the required abstractions and components that are necessary to
@@ -20,13 +19,15 @@ pub use map::Mapping;
 /// for box and type managment while parsing. This trait will be used in all
 /// the components from logical sources to mapping object itself.
 pub trait RMLComponent: std::fmt::Debug {
-    /// Method used to determine if the *RMLComponent* is predicateBuilder or not. There are 
+    /// Method used to determine if the *RMLComponent* is predicateBuilder or not. There are
     /// some intermidiate builders that are only defined using references to other components.
-    /// For example, this mapping `PredicateObjectMap`: 
+    /// For example, this mapping `PredicateObjectMap`:
     /// ```
     /// map:pom_001 rdf:type rr:PredicateObjectMap ;
     ///     rr:objectMap map:om_001 ;
     ///     rr:predicateMap map:pm_001 .
     /// ```
-    fn is_predicate_builder(&self) -> bool { false }
+    fn is_predicate_builder(&self) -> bool {
+        false
+    }
 }

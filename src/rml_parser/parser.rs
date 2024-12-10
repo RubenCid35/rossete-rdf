@@ -412,7 +412,7 @@ fn get_predicate<'de>(term: &'de TermPair) -> Option<(&'de str, &'de str)> {
         TermPair::TermPair(Term::FullTerm(pre, pos), _) => Some((pre, pos)),
         TermPair::BlankNode(Term::FullTerm(pre, pos), _) => Some((pre, pos)),
         TermPair::TermPair(Term::A, _) => Some(("rdf", "type")),
-        _ => None
+        _ => None,
     }
 }
 
@@ -914,7 +914,6 @@ impl<'de> Parser<'de> {
         grammar: &GrammarPrefix,
         terms: &ObjectMap<'de>,
     ) -> Result<Box<dyn RMLComponent>, miette::Error> {
-
         let mut object_ref: String = String::from("example");
         let mut predicate_ref: String = String::from("example");
         let mut object: Option<Box<dyn RMLComponent>> = None;
@@ -927,26 +926,18 @@ impl<'de> Parser<'de> {
             } // TODO: maybe add warning of unknown predicate
 
             match post {
-                "predicatemap" => {
-                    match term {
-                        TermPair::TermPair(_, term1) => {
-                            predicate_ref  = term1.to_string();
-                        },
-                        TermPair::BlankNode(_, vec) => {
-                            continue
-                        },
+                "predicatemap" => match term {
+                    TermPair::TermPair(_, term1) => {
+                        predicate_ref = term1.to_string();
                     }
-                }
-                "objectmap" => {
-                    match term {
-                        TermPair::TermPair(_, term1) => {
-                            object_ref = term1.to_string();
-                        },
-                        TermPair::BlankNode(_, vec) => {
-                            continue
-                        },
+                    TermPair::BlankNode(_, vec) => continue,
+                },
+                "objectmap" => match term {
+                    TermPair::TermPair(_, term1) => {
+                        object_ref = term1.to_string();
                     }
-                }
+                    TermPair::BlankNode(_, vec) => continue,
+                },
                 "predicate" => {
                     if let TermPair::TermPair(_, object_term) = term {
                         predicate = Some(Box::new(TermGenerators::Constant(

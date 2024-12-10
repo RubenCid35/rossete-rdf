@@ -327,8 +327,7 @@ impl<'de> Iterator for Lexer<'de> {
                             TokenKind::Prefix,
                             (self.current_byte - i - 1)..(self.current_byte - 1)
                         );
-                    }
-                    else if literal == "base" {
+                    } else if literal == "base" {
                         self.remaining = &self.remaining[i..];
                         self.current_byte += i;
                         return create_token_position!(
@@ -336,8 +335,7 @@ impl<'de> Iterator for Lexer<'de> {
                             TokenKind::Base,
                             (self.current_byte - i - 1)..(self.current_byte - 1)
                         );
-                    }
-                    else {
+                    } else {
                         generate_invalid_token_error!(self, literal.to_string(), 0, i);
                     }
                 }
@@ -370,8 +368,7 @@ impl<'de> Iterator for Lexer<'de> {
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
                         // the uri and url are defined by the <uri>.
                         // It is expected that the columns are uri-encoded so there is no clossing arrow in them.
                         loop {
@@ -403,8 +400,7 @@ impl<'de> Iterator for Lexer<'de> {
                                         return Some(Err(err.into()));
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 self.found_error = true;
                                 return Some(Err(InvalidEndOfFile {
                                     file_name: self.config.file_path.clone(),

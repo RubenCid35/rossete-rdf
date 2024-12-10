@@ -2,7 +2,6 @@ use std::{fmt::Debug, path::PathBuf};
 
 use super::RMLComponent;
 
-
 pub trait DataSourceIterator: Debug {
     /// Read and parses a block of data from the data source. The result is contained in the
     fn read_block(&mut self) -> miette::Result<()>;
@@ -53,6 +52,11 @@ impl DataSourceIterator for LogicalSource {
 }
 
 impl LogicalSource {
+    /// Create a new instance of the LogicalSource from its basic fields
+    /// Arguments:
+    /// * `source`: File path of the data source
+    /// * `iterator`: Determines how is the data iterated over. In the case of the CSV, it will be the rows.
+    /// * `formulation`: Determines the file formulation for the parsing of elements.
     pub fn new(source: String, iterator: String, formulation: RefFormulation) -> Self {
         let extension = source.split('.').last().unwrap();
         let source_type = match extension {

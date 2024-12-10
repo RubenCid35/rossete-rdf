@@ -31,8 +31,7 @@ impl Args {
     pub fn get_text(&self) -> String {
         if let Some(file) = &self.file {
             get_text_file(file)
-        }
-        else {
+        } else {
             self.text.clone()
         }
     }
@@ -42,8 +41,7 @@ impl Args {
                 file_path: file.clone(),
                 silent: self.silent,
             }
-        }
-        else {
+        } else {
             ParseFileConfig {
                 file_path: PathBuf::from("example.text"),
                 silent: self.silent,
