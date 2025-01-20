@@ -22,7 +22,7 @@ pub trait RMLComponent: std::fmt::Debug {
     /// Method used to determine if the *RMLComponent* is predicateBuilder or not. There are
     /// some intermidiate builders that are only defined using references to other components.
     /// For example, this mapping `PredicateObjectMap`:
-    /// ```
+    /// ```yaml
     /// map:pom_001 rdf:type rr:PredicateObjectMap ;
     ///     rr:objectMap map:om_001 ;
     ///     rr:predicateMap map:pm_001 .

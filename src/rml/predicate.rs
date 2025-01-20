@@ -20,7 +20,7 @@ use super::TermGenerators;
 /// There are cases where the predicate-object map is defined only by reference to its components.
 /// These kinds of declarations are common in translations from YARRML to RML and give some
 /// legibility benefits for computers. An example of this behaviour is the following extract from an example mapping:
-/// ```
+/// ```yaml
 /// map:om_001 rml:reference "firstname" ;
 ///     rr:datatype xsd:string;
 ///     rdf:type rr:ObjectMap ;
@@ -39,7 +39,7 @@ use super::TermGenerators;
 /// For its creation, the mapping takes the references and then it can build the corresponding (PredicateMap)[`PredicateMap`] using
 /// this information and the remaining detected components.
 #[derive(Debug)]
-pub struct PredicateBuilder {
+pub(crate) struct PredicateBuilder {
     /// References to the predicate declaration. In most instances, this will be defined by a [`TermGenerators`]
     predicate_ref: String,
 
@@ -52,6 +52,9 @@ pub struct PredicateBuilder {
 
     /// Instances of [`PredicateMap`]. The object may have been created without indirection.
     object_object: Option<Box<dyn RMLComponent>>,
+
+    /// Boolean value that indicates if the object is a join condition or not
+    has_join: Option<bool>
 }
 
 impl PredicateBuilder {
@@ -62,12 +65,14 @@ impl PredicateBuilder {
         object_ref: String,
         predicate: Option<Box<dyn RMLComponent>>,
         object: Option<Box<dyn RMLComponent>>,
+        has_join: Option<bool>
     ) -> Self {
         Self {
             predicate_ref: predicate_ref,
             object_ref: object_ref,
             object_object: object,
             predicate_object: predicate,
+            has_join: has_join
         }
     }
 
@@ -86,6 +91,7 @@ impl PredicateBuilder {
     pub fn is_complete(&self) -> bool {
         self.predicate_object.is_some() & self.object_object.is_some()
     }
+
 }
 
 impl RMLComponent for PredicateBuilder {
@@ -99,9 +105,17 @@ impl RMLComponent for PredicateBuilder {
 /// 
 /// This struct allows the configuration of how two mapping are connected. In the RML context, 
 /// a join-predicate allows references to other objects that are created at the same time. For example,
-/// in a map the user defines the buildings and in other there is an entity that is the street. 
+/// in a map the user defines the buildings and in other there is an entity that is the street.
+/// 
+/// To avoid confusion, the `child` corresponds to the current triples-map and the `parent` corresponds to 
+/// the triple-map that that the map tries to connect to. 
 #[derive(Debug)]
-pub struct JoinCondition {}
+pub(crate) struct JoinCondition {
+    /// Which value of the child is used as reference for the condition
+    pub child_condition: String,
+    /// Which value of the parent is used as reference for the condition
+    pub parent_condition: String,
+}
 
 /// # Predicate Mappings
 /// 

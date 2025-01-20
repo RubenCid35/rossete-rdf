@@ -1,5 +1,4 @@
 use super::config::ParseFileConfig;
-use super::lex;
 use super::lex::InvalidTokenFound;
 use super::lex::Lexer;
 use super::lex::{Token, TokenKind};
@@ -87,6 +86,15 @@ pub enum TermPair<'de> {
     BlankNode(Term<'de>, Box<Vec<TermPair<'de>>>),
 }
 
+impl<'de> TermPair<'de> {
+    // Retrieve a reference to the predicate term
+    fn get_predicate(&self) -> &Term<'de> {
+        match self {
+            TermPair::TermPair(term, _) => &term,
+            TermPair::BlankNode(term, _) => &term,
+        }
+    }
+}
 impl<'de> Debug for TermPair<'de> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -131,6 +139,24 @@ fn get_type<'de>(grammar: &'de GrammarPrefix, triples: &'de Vec<TermPair<'de>>) 
         }
         _ => None,
     })
+}
+
+/// Determine if an unidentified object is a triples map or not. 
+fn is_triple_map<'de>(grammar: &'de GrammarPrefix, mapping: &ObjectMap<'de>) -> bool {
+    mapping
+        .term_pairs.iter()
+        .any(| term | match term.get_predicate() {
+            Term::FullTerm(pre, post) => {
+                if grammar.rr != pre { return false }
+                let post = post.to_lowercase();
+                match post.as_str() {
+                    "subjectmap" | "logicasource" | "predicateobjectmap" => true,
+                    _ => false
+                }
+            }
+            _ => false
+        })
+
 }
 
 // -------------------------------------------------------
@@ -341,11 +367,11 @@ macro_rules! missing_field {
 
 // Grammar prefixes
 const PREFIX_RML: &str = "http://semweb.mmlab.be/ns/rml#";
-const PREFIX_QL: &str = "http://semweb.mmlab.be/ns/ql#";
-const PREFIX_RR: &str = "http://www.w3.org/ns/r2rml#";
+const PREFIX_QL : &str = "http://semweb.mmlab.be/ns/ql#";
+const PREFIX_RR : &str = "http://www.w3.org/ns/r2rml#";
 const PREFIX_RDF: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 const PREFIX_RDFS: &str = "http://www.w3.org/2000/01/rdf-schema#";
-const PREFIX_XSD: &str = "http://www.w3.org/2001/XMLSchema#";
+const PREFIX_XSD : &str = "http://www.w3.org/2001/XMLSchema#";
 
 /// Prefixes that are related to the grammar and logic of a map.
 #[doc(hidden)]
@@ -843,7 +869,8 @@ impl<'de> Parser<'de> {
         let mut data_ty = String::new();
 
         let mut parent = String::new();
-        let mut join = Some(JoinCondition {});
+        let mut join_child = String::new();
+        let mut join_parent = String::new();
 
         for term in &terms.term_pairs {
             match term {
@@ -890,7 +917,13 @@ impl<'de> Parser<'de> {
                         }
                     }
                 }
-                _ => continue,
+                TermPair::BlankNode(Term::FullTerm(pre, post), pred_term) => {
+                    eprintln!("{term:?}");
+                }
+                _ => {
+                    // eprintln!("{term:?}");
+                    continue
+                },
             }
         }
         let data_ty = if !data_ty.is_empty() { Some(data_ty) } else { None };
@@ -902,6 +935,11 @@ impl<'de> Parser<'de> {
         };
 
         if has_join {
+            let join = Some(JoinCondition{
+                child_condition: join_child,
+                parent_condition: join_parent,
+            });
+
             Ok(PredicateMap::ByJoin(TermGenerators::Undeclared, String::new(), join))
         } else {
             Ok(PredicateMap::ByField(TermGenerators::Undeclared, term_gen))
@@ -925,6 +963,7 @@ impl<'de> Parser<'de> {
                 continue;
             } // TODO: maybe add warning of unknown predicate
 
+            // println!("object-term: {}", post);
             match post {
                 "predicatemap" => match term {
                     TermPair::TermPair(_, term1) => {
@@ -970,9 +1009,9 @@ impl<'de> Parser<'de> {
             );
         }
 
-        let predicate_map = PredicateBuilder::new(predicate_ref, object_ref, predicate, object);
+        let predicate_map = PredicateBuilder::new(predicate_ref, object_ref, predicate, object, None);
         if predicate_map.is_complete() {
-            // TODO: build the predicate and return that instead.
+            // TODO: build the predicate and return that instead. this option is for full / normal mappings.
         }
 
         Ok(Box::new(predicate_map))
@@ -988,6 +1027,7 @@ impl<'de> Parser<'de> {
         let mut components: HashMap<String, Box<dyn RMLComponent>> = HashMap::with_capacity(self.objects.len());
         for (i, obj) in self.objects.iter().enumerate() {
             if let Some(ty) = get_type(&grammar, &obj.term_pairs) {
+                println!("type {:?}", ty);
                 if let Term::FullTerm(pre, post) = ty {
                     if pre == &grammar.rr {
                         match post.as_str() {
@@ -1025,8 +1065,14 @@ impl<'de> Parser<'de> {
                     }
                 }
             } else {
-                // Determine from predicate
-                println!("[{i:>3}] {obj:?}");
+                // detect possible unmarked triples map
+                if is_triple_map(&grammar, &obj) {
+                    println!("[{i:>3}] mapping");
+                } else {
+                    // Determine from predicate
+                    println!("[{i:>3}]  (other)  {obj:?}");
+
+                }
             }
         }
         Ok(())
