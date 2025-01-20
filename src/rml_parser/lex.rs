@@ -475,6 +475,16 @@ impl<'de> Iterator for Lexer<'de> {
                         (self.current_byte - 1 - i - left_space - scope)..(self.current_byte - scope)
                     );
                 }
+                '#' => { // remove comments
+                    let mut i = 0;
+                    while let Some(l) = letters.next() {
+                        i += 1;
+                        if l == '\n' { break; }
+                    }    
+
+                    self.remaining = &self.remaining[i..];
+                    self.current_byte += i;   
+                }
                 c if c.is_ascii_alphanumeric() => {
                     let mut i = 0;
                     // only ascii alphanumeric [A-Za-z0-9] are valid characters in a term ident.
@@ -533,13 +543,16 @@ pub mod lex_tests {
 
     fn compare_token_vec<'de>(expected: Vec<Token<'de>>, generated: Vec<Result<Token<'de>, miette::Error>>) -> bool {
         if expected.len() != generated.len() {
+            for token in generated {
+                eprintln!("{token:?}");
+            }
             return false;
         };
 
         expected.iter().zip(generated.iter()).all(|(e, g)| match g {
             Ok(token) => e == token,
             Err(error) => {
-                eprintln!("{error}");
+                eprintln!("{error:?}");
                 return false;
             }
         })
@@ -636,6 +649,26 @@ pub mod lex_tests {
         let ident_token: Vec<_> = lexer.collect();
         assert_eq!(compare_token_vec(token, ident_token), true);
     }
+
+    #[test]
+    fn test_term_comment() {
+        let text = r#"ex:hasAttribute # this should not be considered"#;
+        let config = ParseFileConfig {
+            file_path: PathBuf::new(),
+            silent: true,
+        };
+        let lexer = Lexer::new(&config, text);
+
+        let token = vec![
+            result_token!("ex", TokenKind::Term),
+            result_token!(":", TokenKind::Colon),
+            result_token!("hasAttribute", TokenKind::Term),
+        ];
+
+        let ident_token: Vec<_> = lexer.collect();
+        assert_eq!(compare_token_vec(token, ident_token), true);
+    }
+
     #[test]
     fn test_basic_prefix() {
         let text = r#"@prefix rr: <http://www.w3.org/ns/r2rml#>."#;

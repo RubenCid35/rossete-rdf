@@ -14,8 +14,8 @@ struct Args {
     #[arg(short, long, default_value_t = String::from("@prefix rr: <www.sample.text>.\n<#dsadsa> a rr:logicalSource."))]
     text: String,
 
-    #[arg(short, long, help = "Hide Warnings")]
-    silent: bool,
+    #[arg(short, long, help = "Shows all possible grammar improvements (missing dots, formatting)")]
+    strict: bool,
 }
 
 #[inline]
@@ -39,12 +39,12 @@ impl Args {
         if let Some(file) = &self.file {
             ParseFileConfig {
                 file_path: file.clone(),
-                silent: self.silent,
+                silent: !self.strict,
             }
         } else {
             ParseFileConfig {
                 file_path: PathBuf::from("example.text"),
-                silent: self.silent,
+                silent: !self.strict,
             }
         }
     }
