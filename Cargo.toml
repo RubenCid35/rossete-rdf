@@ -1,6 +1,26 @@
 [package]
 name = "rossete-rdf"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
+authors = ["Rubén Cid Costa"] # <https://github.com/RubenCid35>
+readme = "./README.md"
+license = "MIT"
+repository = "https://github.com/RubenCid35/rossete-rdf"
+description = "This application is intended to generate a rdf file from one or varios datasets in different formats and a RML mapping."
+keywords = [
+    "rdf",
+    "linked-data"
+]
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+]
 
 [dependencies]
+# Error handling 
+miette = { version = "7.6.0", features = ["fancy", "derive"]}
+thiserror = "2.0.18"
+# YAML parsing
+yaml-rust2 = "0.11.0"
+
+[dev-dependencies]
